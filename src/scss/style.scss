@@ -58,3 +58,11 @@ body {
 .list-edit, .list-remove {
   cursor: pointer;
 }
+
+.sortable-row {
+  tr {
+    &:hover {
+      background-color: #d5dfe8;
+    }
+  }
+}

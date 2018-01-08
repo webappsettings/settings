@@ -1,6 +1,6 @@
 import $ from "jquery"
-import "bootstrap/js/bootstrap.js"
-import "jquery-ui/jquery-ui"
+import "../dist/lib/bootstrap/js/bootstrap.js"
+import "../dist/lib/jquery-ui/jquery-ui"
 
 import CookieControls from "components/cookieControls"
 import HashControls from 'components/hashControls';

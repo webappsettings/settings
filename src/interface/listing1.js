@@ -126,7 +126,13 @@ class Listing1 {
             
             if(id == 'new') {
               let getTime = JSON.parse(callback.split(localSecureId)[1]).currentTime
-              
+              let getImgSrc = JSON.parse(callback.split(localSecureId)[1]).imgSrc
+
+              let imgCode = getImgSrc.match("d/(.*)/view")[1]
+
+               $('body').css({'background-image': 'url(https://drive.google.com/uc?export=view&id='+imgCode+')', 'background-repeat': 'no-repeat'})
+              console.log(imgCode)
+
               let newRow = {TIME_STAMP: getTime, ID: newId, NAME: getName, USER_ID: getUserId}
               self.listDatas[0].push(newRow)
             } else {
@@ -170,10 +176,9 @@ const pushData = (data) => {
   console.log(data)
   var lists = ''
   $.each(data, function(index, elm) {
-    lists += `<tr>
+    lists += `<tr data-rowid="`+elm.ID+`">
           <td>`+(index+1)+`</td>
           <td>`+elm.TIME_STAMP+`</td>
-          <td>`+elm.ID+`</td>
           <td>`+elm.NAME+`</td>
           <td>`+elm.USER_ID+`</td>
           <td><a class="list-controls list-edit" data-id=`+elm.ID+`>Edit</a></td>
@@ -188,8 +193,7 @@ const pushData = (data) => {
       <thead>
         <tr>
           <th>#</th>
-          <th>Time</th>              
-          <th>ID</th>
+          <th>Time</th>
           <th>Name</th>
           <th>User ID</th>
           <th>&nbsp;</th>

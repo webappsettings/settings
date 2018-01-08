@@ -68,6 +68,159 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+/* WEBPACK VAR INJECTION */(function($) {
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _allPages = __webpack_require__(3);
+
+var _allPages2 = _interopRequireDefault(_allPages);
+
+var _hashControls = __webpack_require__(2);
+
+var _hashControls2 = _interopRequireDefault(_hashControls);
+
+var _pageView = __webpack_require__(6);
+
+var _pageView2 = _interopRequireDefault(_pageView);
+
+var _codeComp = __webpack_require__(5);
+
+var _codeComp2 = _interopRequireDefault(_codeComp);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var CookieControls = function () {
+  function CookieControls(loginE, loginP) {
+    _classCallCheck(this, CookieControls);
+
+    this.loginE = loginE;
+    this.loginP = loginP;
+    this.loginCode = 'AKfycbw12GxJrVm1TiUj_3m-eskmt8oAoNr9-K0tgZq0-X9snIF-hLw';
+    this.googleURL = new _codeComp2.default(this.loginCode).getCode();
+  }
+
+  _createClass(CookieControls, [{
+    key: 'checkCookie',
+    value: function checkCookie(prevHistory) {
+
+      var localSecureId = this.getCookie("localSecureId");
+      var self = this;
+      if (localSecureId != "") {
+        var paramURL = this.googleURL + "?cb&id=" + localSecureId + "&action=vw";
+
+        $.getJSON(paramURL, function (callback) {
+
+          if (!callback.result) {
+
+            self.deleteCookie();
+
+            new _hashControls2.default('login').setHash();
+          } else {
+
+            if (callback.main != self.getCookie('main') || callback.result != decodeURIComponent(self.getCookie('user'))) {
+              self.deleteCookie();
+
+              new _hashControls2.default('login').setHash();
+            } else {
+              // alert(prevHistory);
+              //yes all ok
+              if (!prevHistory) {
+                var urlHash = new _hashControls2.default().getHash();
+              } else {
+                var urlHash = prevHistory;
+              }
+
+              if (urlHash == '' || urlHash == 'login' || !urlHash) {
+                new _hashControls2.default('dashboard').setHash();
+                new _pageView2.default('dashboard').visible();
+              } else {
+                new _pageView2.default(urlHash).visible();
+                new _hashControls2.default(urlHash).setHash();
+              }
+            }
+          }
+        });
+      } else {
+        this.deleteCookie();
+
+        new _hashControls2.default('login').setHash();
+      }
+    }
+  }, {
+    key: 'toCookie',
+    value: function toCookie() {
+
+      $('.loader').fadeIn();
+      var param = "?cb&name=" + this.loginE + "&id=" + this.loginP + "&action=chk";
+      var paramURL = this.googleURL + param;
+      var self = this;
+
+      $.getJSON(paramURL, function (callback) {
+        console.log(callback);
+        if (callback.result) {
+          self.setCookie('main', callback.main, 20);
+          self.setCookie('localSecureId', callback.result, 20);
+          self.setCookie('user', self.loginE, 20);
+          new _hashControls2.default('dashboard').setHash();
+        } else {
+          alert('Email ID or Password Invalid!!!');
+        }
+        $('.loader').fadeOut();
+      });
+    }
+  }, {
+    key: 'setCookie',
+    value: function setCookie(cname, cvalue, exdays) {
+      var d = new Date();
+      d.setTime(d.getTime() + exdays * 24 * 60 * 60 * 1000);
+      var expires = "expires=" + d.toUTCString();
+      document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+  }, {
+    key: 'getCookie',
+    value: function getCookie(cname) {
+      var name = cname + "=";
+      var ca = document.cookie.split(';');
+      for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+          c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+          return c.substring(name.length, c.length);
+        }
+      }
+      return "";
+    }
+  }, {
+    key: 'deleteCookie',
+    value: function deleteCookie() {
+      this.setCookie('localSecureId', "", -1);
+      this.setCookie('user', "", -1);
+      this.setCookie('main', "", -1);
+      this.setCookie('history', "", -1);
+      new _hashControls2.default('login').setHash();
+    }
+  }]);
+
+  return CookieControls;
+}();
+
+exports.default = CookieControls;
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 /* WEBPACK VAR INJECTION */(function(module) {var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -9900,159 +10053,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)(module)))
 
 /***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function($) {
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _allPages = __webpack_require__(3);
-
-var _allPages2 = _interopRequireDefault(_allPages);
-
-var _hashControls = __webpack_require__(2);
-
-var _hashControls2 = _interopRequireDefault(_hashControls);
-
-var _pageView = __webpack_require__(6);
-
-var _pageView2 = _interopRequireDefault(_pageView);
-
-var _codeComp = __webpack_require__(5);
-
-var _codeComp2 = _interopRequireDefault(_codeComp);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var CookieControls = function () {
-  function CookieControls(loginE, loginP) {
-    _classCallCheck(this, CookieControls);
-
-    this.loginE = loginE;
-    this.loginP = loginP;
-    this.loginCode = 'AKfycbw12GxJrVm1TiUj_3m-eskmt8oAoNr9-K0tgZq0-X9snIF-hLw';
-    this.googleURL = new _codeComp2.default(this.loginCode).getCode();
-  }
-
-  _createClass(CookieControls, [{
-    key: 'checkCookie',
-    value: function checkCookie(prevHistory) {
-
-      var localSecureId = this.getCookie("localSecureId");
-      var self = this;
-      if (localSecureId != "") {
-        var paramURL = this.googleURL + "?cb&id=" + localSecureId + "&action=vw";
-
-        $.getJSON(paramURL, function (callback) {
-
-          if (!callback.result) {
-
-            self.deleteCookie();
-
-            new _hashControls2.default('login').setHash();
-          } else {
-
-            if (callback.main != self.getCookie('main') || callback.result != decodeURIComponent(self.getCookie('user'))) {
-              self.deleteCookie();
-
-              new _hashControls2.default('login').setHash();
-            } else {
-              // alert(prevHistory);
-              //yes all ok
-              if (!prevHistory) {
-                var urlHash = new _hashControls2.default().getHash();
-              } else {
-                var urlHash = prevHistory;
-              }
-
-              if (urlHash == '' || urlHash == 'login' || !urlHash) {
-                new _hashControls2.default('dashboard').setHash();
-                new _pageView2.default('dashboard').visible();
-              } else {
-                new _pageView2.default(urlHash).visible();
-                new _hashControls2.default(urlHash).setHash();
-              }
-            }
-          }
-        });
-      } else {
-        this.deleteCookie();
-
-        new _hashControls2.default('login').setHash();
-      }
-    }
-  }, {
-    key: 'toCookie',
-    value: function toCookie() {
-
-      $('.loader').fadeIn();
-      var param = "?cb&name=" + this.loginE + "&id=" + this.loginP + "&action=chk";
-      var paramURL = this.googleURL + param;
-      var self = this;
-
-      $.getJSON(paramURL, function (callback) {
-        console.log(callback);
-        if (callback.result) {
-          self.setCookie('main', callback.main, 20);
-          self.setCookie('localSecureId', callback.result, 20);
-          self.setCookie('user', self.loginE, 20);
-          new _hashControls2.default('dashboard').setHash();
-        } else {
-          alert('Email ID or Password Invalid!!!');
-        }
-        $('.loader').fadeOut();
-      });
-    }
-  }, {
-    key: 'setCookie',
-    value: function setCookie(cname, cvalue, exdays) {
-      var d = new Date();
-      d.setTime(d.getTime() + exdays * 24 * 60 * 60 * 1000);
-      var expires = "expires=" + d.toUTCString();
-      document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-    }
-  }, {
-    key: 'getCookie',
-    value: function getCookie(cname) {
-      var name = cname + "=";
-      var ca = document.cookie.split(';');
-      for (var i = 0; i < ca.length; i++) {
-        var c = ca[i];
-        while (c.charAt(0) == ' ') {
-          c = c.substring(1);
-        }
-        if (c.indexOf(name) == 0) {
-          return c.substring(name.length, c.length);
-        }
-      }
-      return "";
-    }
-  }, {
-    key: 'deleteCookie',
-    value: function deleteCookie() {
-      this.setCookie('localSecureId', "", -1);
-      this.setCookie('user', "", -1);
-      this.setCookie('main', "", -1);
-      this.setCookie('history', "", -1);
-      new _hashControls2.default('login').setHash();
-    }
-  }]);
-
-  return CookieControls;
-}();
-
-exports.default = CookieControls;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
-
-/***/ }),
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10106,7 +10106,7 @@ var _hashControls = __webpack_require__(2);
 
 var _hashControls2 = _interopRequireDefault(_hashControls);
 
-var _ = __webpack_require__(12);
+var _ = __webpack_require__(10);
 
 var _2 = _interopRequireDefault(_);
 
@@ -10114,11 +10114,11 @@ var _login = __webpack_require__(4);
 
 var _login2 = _interopRequireDefault(_login);
 
-var _dashboard = __webpack_require__(13);
+var _dashboard = __webpack_require__(11);
 
 var _dashboard2 = _interopRequireDefault(_dashboard);
 
-var _listing = __webpack_require__(14);
+var _listing = __webpack_require__(12);
 
 var _listing2 = _interopRequireDefault(_listing);
 
@@ -10154,7 +10154,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _cookieControls = __webpack_require__(1);
+var _cookieControls = __webpack_require__(0);
 
 var _cookieControls2 = _interopRequireDefault(_cookieControls);
 
@@ -10192,7 +10192,7 @@ var Login = function () {
 }();
 
 exports.default = Login;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
 /* 5 */
@@ -10207,7 +10207,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _cookieControls = __webpack_require__(1);
+var _cookieControls = __webpack_require__(0);
 
 var _cookieControls2 = _interopRequireDefault(_cookieControls);
 
@@ -10254,7 +10254,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _cookieControls = __webpack_require__(1);
+var _cookieControls = __webpack_require__(0);
 
 var _cookieControls2 = _interopRequireDefault(_cookieControls);
 
@@ -10316,14 +10316,14 @@ var PageView = function () {
 }();
 
 exports.default = PageView;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(8);
-module.exports = __webpack_require__(15);
+module.exports = __webpack_require__(13);
 
 
 /***/ }),
@@ -10333,15 +10333,15 @@ module.exports = __webpack_require__(15);
 "use strict";
 
 
-var _jquery = __webpack_require__(0);
+var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-__webpack_require__(10);
+__webpack_require__(18);
 
-__webpack_require__(11);
+__webpack_require__(19);
 
-var _cookieControls = __webpack_require__(1);
+var _cookieControls = __webpack_require__(0);
 
 var _cookieControls2 = _interopRequireDefault(_cookieControls);
 
@@ -10452,6 +10452,306 @@ module.exports = function (module) {
 
 /***/ }),
 /* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _cookieControls = __webpack_require__(0);
+
+var _cookieControls2 = _interopRequireDefault(_cookieControls);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var _404 = function () {
+  function _404() {
+    _classCallCheck(this, _404);
+  }
+
+  _createClass(_404, [{
+    key: "render",
+    value: function render() {
+      var tpl = "\n    <div class=\"container\">\n      404\n    </div>\n    ";
+      return tpl;
+    }
+  }, {
+    key: "clickHandler",
+    value: function clickHandler() {}
+  }]);
+
+  return _404;
+}();
+
+exports.default = _404;
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _cookieControls = __webpack_require__(0);
+
+var _cookieControls2 = _interopRequireDefault(_cookieControls);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Dashboard = function () {
+  function Dashboard(id) {
+    _classCallCheck(this, Dashboard);
+
+    this.id = id;
+  }
+
+  _createClass(Dashboard, [{
+    key: "render",
+    value: function render() {
+      var tpl = "\n    <div class=\"container\">\n      <div class=\"col-md-4\">\n        <div class=\"panel panel-default\">\n          <div class=\"panel-body\">\n            <a href=\"#listing1\">fgfghfh</a>\n          </div>\n        </div>\n      </div>\n    </div>\n    ";
+      return tpl;
+    }
+  }, {
+    key: "clickHandler",
+    value: function clickHandler() {}
+  }]);
+
+  return Dashboard;
+}();
+
+exports.default = Dashboard;
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function($, jQuery) {
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _cookieControls = __webpack_require__(0);
+
+var _cookieControls2 = _interopRequireDefault(_cookieControls);
+
+var _codeComp = __webpack_require__(5);
+
+var _codeComp2 = _interopRequireDefault(_codeComp);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Listing1 = function () {
+  function Listing1(id) {
+    _classCallCheck(this, Listing1);
+
+    this.id = id;
+    this.googleListingURL = new _codeComp2.default().mainCode();
+    this.listDatas = [];
+  }
+
+  _createClass(Listing1, [{
+    key: 'render',
+    value: function render() {
+      var tpl = '\n    <div class="container" id="listing-view">\n      Listing 1\n    </div> \n    ';
+      return tpl;
+    }
+  }, {
+    key: 'clickHandler',
+    value: function clickHandler() {
+      var self = this;
+      var paramURL = self.googleListingURL + '&action=read';
+      console.log(paramURL);
+      $('.loader').fadeIn();
+
+      $.getJSON(paramURL, function (callback) {
+        console.log(callback);
+        self.listDatas.push(callback);
+        pushData(self.listDatas[0]);
+        $('.loader').fadeOut();
+      });
+
+      $(document).off().on('click', '.list-controls', function (event) {
+
+        var getId = $(this).attr('data-id');
+        $('body').attr('selectedid', getId);
+
+        if ($(this).hasClass('list-remove')) {
+          removeThis(getId);
+        }
+        if ($(this).hasClass('list-edit')) {
+          editThis(getId);
+        }
+      });
+
+      //Remove
+      function removeThis(id) {
+        $('.loader').fadeIn();
+        var deleteAction = self.googleListingURL + '&id=' + id + '&action=delete';
+        $.get(deleteAction, function (callback) {
+          var localSecureId = new _cookieControls2.default().getCookie('localSecureId');
+          // console.log(JSON.parse(callback.split(localSecureId)[1]).result)
+          if (JSON.parse(callback.split(localSecureId)[1]).result) {
+            $('.loader').fadeOut();
+            self.listDatas[0] = jQuery.grep(self.listDatas[0], function (a) {
+              return a.ID != id;
+            });
+            pushData(self.listDatas[0]);
+            // $('[data-id="'+id+'"]').closest('tr').remove()
+          }
+        });
+      }
+
+      function getObjects(obj, key, val) {
+        var objects = [];
+        for (var i in obj) {
+          if (!obj.hasOwnProperty(i)) continue;
+          if (_typeof(obj[i]) == 'object') {
+            objects = objects.concat(getObjects(obj[i], key, val));
+          } else if (i == key && obj[key] == val) {
+            objects.push(obj);
+          }
+        }
+        return objects;
+      }
+
+      function editThis(id) {
+
+        var getThisArray = getObjects(self.listDatas[0], 'ID', id);
+
+        console.log(self.listDatas[0]);
+
+        $('#listing-modal .modal-title').text('Edit');
+
+        $('#listing-modal #listing-name').val(getThisArray[0].NAME);
+        $('#listing-modal #listing-userid').val(getThisArray[0].USER_ID);
+        $('#listing-modal').modal('show');
+      }
+
+      function randomId(x) {
+        if (x) {
+          return x + Math.floor(Math.random() * 89561346 * 2);
+        } else {
+          return Math.floor(Math.random() * 89561346 * 2);
+        }
+      }
+
+      //Update
+      $(document).on('click', '#listing-okBtn', function () {
+
+        var id = $('body').attr('selectedid');
+
+        var getName = $('#listing-modal #listing-name').val();
+        var getUserId = $('#listing-modal #listing-userid').val();
+
+        $('.loader').fadeIn();
+        var updateAction, newId;
+        var timestamp = new Date();
+        if (id == 'new') {
+
+          newId = timestamp.toISOString().replace(/\D/g, "").substr(0, 14);
+          updateAction = self.googleListingURL + '&id=' + newId + '&name=' + getName + '&userid=' + getUserId + '+&action=insert';
+        } else {
+          updateAction = self.googleListingURL + '&id=' + id + '&name=' + getName + '&userid=' + getUserId + '+&action=update';
+        }
+
+        $.get(updateAction, function (callback) {
+          var localSecureId = new _cookieControls2.default().getCookie('localSecureId');
+
+          console.log(callback);
+          if (JSON.parse(callback.split(localSecureId)[1]).result) {
+            $('.loader').fadeOut();
+
+            if (id == 'new') {
+              var getTime = JSON.parse(callback.split(localSecureId)[1]).currentTime;
+              var getImgSrc = JSON.parse(callback.split(localSecureId)[1]).imgSrc;
+
+              var imgCode = getImgSrc.match("d/(.*)/view")[1];
+
+              $('body').css({ 'background-image': 'url(https://drive.google.com/uc?export=view&id=' + imgCode + ')', 'background-repeat': 'no-repeat' });
+              console.log(imgCode);
+
+              var newRow = { TIME_STAMP: getTime, ID: newId, NAME: getName, USER_ID: getUserId };
+              self.listDatas[0].push(newRow);
+            } else {
+              self.listDatas[0] = jQuery.grep(self.listDatas[0], function (a) {
+                if (a.ID == id) {
+                  a.NAME = getName;
+                  a.USER_ID = getUserId;
+                }
+                return a;
+              });
+            }
+
+            console.log(self.listDatas[0]);
+            pushData(self.listDatas[0]);
+            $('#listing-modal').modal('hide');
+          }
+        });
+      });
+
+      //Create New
+      $(document).on('click', '#listing-create-btn', function () {
+        $('#listing-modal .modal-title').text('Create New');
+        $('#listing-modal #listing-name').val('');
+        $('#listing-modal #listing-userid').val('');
+        $('#listing-modal').modal('show');
+
+        $('body').attr('selectedid', 'new');
+      });
+    }
+  }]);
+
+  return Listing1;
+}();
+
+var pushData = function pushData(data) {
+  console.log(data);
+  var lists = '';
+  $.each(data, function (index, elm) {
+    lists += '<tr data-rowid="' + elm.ID + '">\n          <td>' + (index + 1) + '</td>\n          <td>' + elm.TIME_STAMP + '</td>\n          <td>' + elm.NAME + '</td>\n          <td>' + elm.USER_ID + '</td>\n          <td><a class="list-controls list-edit" data-id=' + elm.ID + '>Edit</a></td>\n          <td><a class="list-controls list-remove" data-id=' + elm.ID + '>Remove</a></td>\n        </tr>';
+  });
+
+  $('#listing-view').html('\n    <div class="pull-right"><button type="button" class="btn btn-primary" id="listing-create-btn">Create New</button></div>\n    <div class="clearfix"></div>\n    <table class="table table-responsive sortable-row">\n      <thead>\n        <tr>\n          <th>#</th>\n          <th>Time</th>\n          <th>Name</th>\n          <th>User ID</th>\n          <th>&nbsp;</th>\n          <th>&nbsp;</th>\n        </tr>\n      </thead>\n      <tbody>\n        ' + lists + '            \n      </tbody>\n    </table>\n  ');
+};
+
+exports.default = Listing1;
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(1)))
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 14 */,
+/* 15 */,
+/* 16 */,
+/* 17 */,
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12629,10 +12929,10 @@ if (typeof jQuery === 'undefined') {
     });
   });
 }(jQuery);
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 11 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12647,7 +12947,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -18064,296 +18364,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 	});
 });
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _cookieControls = __webpack_require__(1);
-
-var _cookieControls2 = _interopRequireDefault(_cookieControls);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var _404 = function () {
-  function _404() {
-    _classCallCheck(this, _404);
-  }
-
-  _createClass(_404, [{
-    key: "render",
-    value: function render() {
-      var tpl = "\n    <div class=\"container\">\n      404\n    </div>\n    ";
-      return tpl;
-    }
-  }, {
-    key: "clickHandler",
-    value: function clickHandler() {}
-  }]);
-
-  return _404;
-}();
-
-exports.default = _404;
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _cookieControls = __webpack_require__(1);
-
-var _cookieControls2 = _interopRequireDefault(_cookieControls);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Dashboard = function () {
-  function Dashboard(id) {
-    _classCallCheck(this, Dashboard);
-
-    this.id = id;
-  }
-
-  _createClass(Dashboard, [{
-    key: "render",
-    value: function render() {
-      var tpl = "\n    <div class=\"container\">\n      <div class=\"col-md-4\">\n        <div class=\"panel panel-default\">\n          <div class=\"panel-body\">\n            <a href=\"#listing1\">fgfghfh</a>\n          </div>\n        </div>\n      </div>\n    </div>\n    ";
-      return tpl;
-    }
-  }, {
-    key: "clickHandler",
-    value: function clickHandler() {}
-  }]);
-
-  return Dashboard;
-}();
-
-exports.default = Dashboard;
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function($, jQuery) {
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _cookieControls = __webpack_require__(1);
-
-var _cookieControls2 = _interopRequireDefault(_cookieControls);
-
-var _codeComp = __webpack_require__(5);
-
-var _codeComp2 = _interopRequireDefault(_codeComp);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Listing1 = function () {
-  function Listing1(id) {
-    _classCallCheck(this, Listing1);
-
-    this.id = id;
-    this.googleListingURL = new _codeComp2.default().mainCode();
-    this.listDatas = [];
-  }
-
-  _createClass(Listing1, [{
-    key: 'render',
-    value: function render() {
-      var tpl = '\n    <div class="container" id="listing-view">\n      Listing 1\n    </div> \n    ';
-      return tpl;
-    }
-  }, {
-    key: 'clickHandler',
-    value: function clickHandler() {
-      var self = this;
-      var paramURL = self.googleListingURL + '&action=read';
-      console.log(paramURL);
-      $('.loader').fadeIn();
-
-      $.getJSON(paramURL, function (callback) {
-        console.log(callback);
-        self.listDatas.push(callback);
-        pushData(self.listDatas[0]);
-        $('.loader').fadeOut();
-      });
-
-      $(document).off().on('click', '.list-controls', function (event) {
-
-        var getId = $(this).attr('data-id');
-        $('body').attr('selectedid', getId);
-
-        if ($(this).hasClass('list-remove')) {
-          removeThis(getId);
-        }
-        if ($(this).hasClass('list-edit')) {
-          editThis(getId);
-        }
-      });
-
-      //Remove
-      function removeThis(id) {
-        $('.loader').fadeIn();
-        var deleteAction = self.googleListingURL + '&id=' + id + '&action=delete';
-        $.get(deleteAction, function (callback) {
-          var localSecureId = new _cookieControls2.default().getCookie('localSecureId');
-          // console.log(JSON.parse(callback.split(localSecureId)[1]).result)
-          if (JSON.parse(callback.split(localSecureId)[1]).result) {
-            $('.loader').fadeOut();
-            self.listDatas[0] = jQuery.grep(self.listDatas[0], function (a) {
-              return a.ID != id;
-            });
-            pushData(self.listDatas[0]);
-            // $('[data-id="'+id+'"]').closest('tr').remove()
-          }
-        });
-      }
-
-      function getObjects(obj, key, val) {
-        var objects = [];
-        for (var i in obj) {
-          if (!obj.hasOwnProperty(i)) continue;
-          if (_typeof(obj[i]) == 'object') {
-            objects = objects.concat(getObjects(obj[i], key, val));
-          } else if (i == key && obj[key] == val) {
-            objects.push(obj);
-          }
-        }
-        return objects;
-      }
-
-      function editThis(id) {
-
-        var getThisArray = getObjects(self.listDatas[0], 'ID', id);
-
-        console.log(self.listDatas[0]);
-
-        $('#listing-modal .modal-title').text('Edit');
-
-        $('#listing-modal #listing-name').val(getThisArray[0].NAME);
-        $('#listing-modal #listing-userid').val(getThisArray[0].USER_ID);
-        $('#listing-modal').modal('show');
-      }
-
-      function randomId(x) {
-        if (x) {
-          return x + Math.floor(Math.random() * 89561346 * 2);
-        } else {
-          return Math.floor(Math.random() * 89561346 * 2);
-        }
-      }
-
-      //Update
-      $(document).on('click', '#listing-okBtn', function () {
-
-        var id = $('body').attr('selectedid');
-
-        var getName = $('#listing-modal #listing-name').val();
-        var getUserId = $('#listing-modal #listing-userid').val();
-
-        $('.loader').fadeIn();
-        var updateAction, newId;
-        var timestamp = new Date();
-        if (id == 'new') {
-
-          newId = timestamp.toISOString().replace(/\D/g, "").substr(0, 14);
-          updateAction = self.googleListingURL + '&id=' + newId + '&name=' + getName + '&userid=' + getUserId + '+&action=insert';
-        } else {
-          updateAction = self.googleListingURL + '&id=' + id + '&name=' + getName + '&userid=' + getUserId + '+&action=update';
-        }
-
-        $.get(updateAction, function (callback) {
-          var localSecureId = new _cookieControls2.default().getCookie('localSecureId');
-
-          console.log(callback);
-          if (JSON.parse(callback.split(localSecureId)[1]).result) {
-            $('.loader').fadeOut();
-
-            if (id == 'new') {
-              var getTime = JSON.parse(callback.split(localSecureId)[1]).currentTime;
-
-              var newRow = { TIME_STAMP: getTime, ID: newId, NAME: getName, USER_ID: getUserId };
-              self.listDatas[0].push(newRow);
-            } else {
-              self.listDatas[0] = jQuery.grep(self.listDatas[0], function (a) {
-                if (a.ID == id) {
-                  a.NAME = getName;
-                  a.USER_ID = getUserId;
-                }
-                return a;
-              });
-            }
-
-            console.log(self.listDatas[0]);
-            pushData(self.listDatas[0]);
-            $('#listing-modal').modal('hide');
-          }
-        });
-      });
-
-      //Create New
-      $(document).on('click', '#listing-create-btn', function () {
-        $('#listing-modal .modal-title').text('Create New');
-        $('#listing-modal #listing-name').val('');
-        $('#listing-modal #listing-userid').val('');
-        $('#listing-modal').modal('show');
-
-        $('body').attr('selectedid', 'new');
-      });
-    }
-  }]);
-
-  return Listing1;
-}();
-
-var pushData = function pushData(data) {
-  console.log(data);
-  var lists = '';
-  $.each(data, function (index, elm) {
-    lists += '<tr>\n          <td>' + (index + 1) + '</td>\n          <td>' + elm.TIME_STAMP + '</td>\n          <td>' + elm.ID + '</td>\n          <td>' + elm.NAME + '</td>\n          <td>' + elm.USER_ID + '</td>\n          <td><a class="list-controls list-edit" data-id=' + elm.ID + '>Edit</a></td>\n          <td><a class="list-controls list-remove" data-id=' + elm.ID + '>Remove</a></td>\n        </tr>';
-  });
-
-  $('#listing-view').html('\n    <div class="pull-right"><button type="button" class="btn btn-primary" id="listing-create-btn">Create New</button></div>\n    <div class="clearfix"></div>\n    <table class="table table-responsive sortable-row">\n      <thead>\n        <tr>\n          <th>#</th>\n          <th>Time</th>              \n          <th>ID</th>\n          <th>Name</th>\n          <th>User ID</th>\n          <th>&nbsp;</th>\n          <th>&nbsp;</th>\n        </tr>\n      </thead>\n      <tbody>\n        ' + lists + '            \n      </tbody>\n    </table>\n  ');
-};
-
-exports.default = Listing1;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(0)))
-
-/***/ }),
-/* 15 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
 
 /***/ })
 /******/ ]);

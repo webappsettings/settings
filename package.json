@@ -7,7 +7,7 @@
   "scripts": {
     "start": "concurrently \"http-server -p 3000 -s --cors -o -c-1\" \"webpack\"",
     "webpack": "webpack",
-    "deploy": "gh-pages -d dist && surge -p dist --domain surge.greenwebapps.com"
+    "deploy": "git add --all && git commit -m 'updates' && git subtree push --prefix dist origin gh-pages"
   },
   "author": "googleApps.online",
   "license": "MIT",
