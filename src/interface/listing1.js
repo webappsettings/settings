@@ -89,13 +89,7 @@ class Listing1 {
 
     }
 
-    function randomId(x){
-      if(x) {
-        return x+Math.floor((Math.random() * 89561346*2));
-      } else {
-        return Math.floor((Math.random() * 89561346*2));
-      }
-    }
+    
 
     //Update
     $(document).on('click', '#listing-okBtn', function() {
