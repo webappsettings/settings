@@ -85,8 +85,6 @@ class Listing1 {
       $('#listing-modal #listing-name').val(getThisArray[0].NAME)
       $('#listing-modal #listing-userid').val(getThisArray[0].USER_ID)
       $('#listing-modal').modal('show')
-
-
     }
 
     
