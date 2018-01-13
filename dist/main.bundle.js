@@ -18185,6 +18185,7 @@ var Listing1 = function () {
     this.id = id;
     this.googleListingURL = new _codeComp2.default().mainCode();
     this.listDatas = [];
+    // this.imageURI = []
   }
 
   _createClass(Listing1, [{
@@ -18196,6 +18197,7 @@ var Listing1 = function () {
   }, {
     key: 'clickHandler',
     value: function clickHandler() {
+      var imageURI, fileName;
       var self = this;
       var paramURL = self.googleListingURL + '&action=read';
       console.log(paramURL);
@@ -18265,6 +18267,30 @@ var Listing1 = function () {
         $('#listing-modal').modal('show');
       }
 
+      $("#listing-imageupload").on('change', function (event) {
+
+        var inputFiles = this.files;
+        if (inputFiles == undefined || inputFiles.length == 0) return;
+        var inputFile = inputFiles[0];
+
+        var reader = new FileReader();
+
+        fileName = $(this).val().replace(/.*[\/\\]/, '');
+
+        reader.onload = function (event) {
+          // console.log(event)
+          imageURI = event.target.result;
+
+          // self.imageURI.push(event.target.result)
+          // console.log(self.imageURI)
+        };
+        reader.onerror = function (event) {
+          alert("ERROR: " + event.target.error.code);
+        };
+
+        reader.readAsDataURL(inputFile);
+      });
+
       //Update
       $(document).on('click', '#listing-okBtn', function () {
 
@@ -18273,50 +18299,131 @@ var Listing1 = function () {
         var getName = $('#listing-modal #listing-name').val();
         var getUserId = $('#listing-modal #listing-userid').val();
 
-        $('.loader').fadeIn();
         var updateAction, newId;
         var timestamp = new Date();
+
+        /*var file, 
+          reader = new FileReader();*/
+
         if (id == 'new') {
 
-          newId = timestamp.toISOString().replace(/\D/g, "").substr(0, 14);
-          updateAction = self.googleListingURL + '&id=' + newId + '&name=' + getName + '&userid=' + getUserId + '+&action=insert';
+          if (imageURI) {
+
+            // with image
+
+            // var params = {
+            //       filename: 'myfile',
+            //       imageformat: 'PNG'
+            //   };
+
+            // params.file = imageURI.replace(/^.*,/, '');
+
+            var url = 'https://script.google.com/macros/s/AKfycbzQybv3UTzz66rKp0eA30Xif20lWiBbl4mmz0xQxWJt6T9UHw/exec';
+
+            // postJump()
+
+
+            var formdata = new FormData();
+
+            // console.log();
+
+
+            // console.log(imageURI.substr(imageURI.indexOf('base64,')+7));
+
+            var filetype = imageURI.substring(5, imageURI.indexOf(';'));
+
+            var img = imageURI.replace(/^.*,/, '');
+
+            newId = timestamp.toISOString().replace(/\D/g, "").substr(0, 14);
+
+            // updateAction = self.googleListingURL+'&id='+newId+'&name='+getName+'&userid='+getUserId+'+&action=insert'
+
+
+            formdata.append('action', 'insert');
+            formdata.append('id', newId);
+            formdata.append('name', getName);
+            formdata.append('userid', getUserId);
+
+            formdata.append('file', img);
+            formdata.append('filename', fileName);
+            formdata.append('filetype', filetype);
+            formdata.append('foldername', 'listing');
+
+            $.ajax({
+              method: 'POST',
+              url: url,
+              data: formdata,
+              dataType: 'json',
+              contentType: false,
+              processData: false,
+              beforeSend: function beforeSend() {
+                $('.loader').fadeIn();
+              }
+            }).done(function (d) {
+
+              // var fileUrl = d.result.match("d/(.*)/view")[1];
+
+              // fileUrl = d.result.substring(d.result.lastIndexOf("d/")+2,d.result.lastIndexOf("/view"));
+
+              // var fileUrl = 'https://drive.google.com/uc?export=view&id='+d.result
+              var outputDatas = JSON.parse(d.result);
+
+              var setData = {
+                'TIME_STAMP': outputDatas.currentTime,
+                'ID': outputDatas.id,
+                'NAME': outputDatas.name,
+                'USER_ID': outputDatas.userId,
+                'IMAGE_PATH': outputDatas.imagePath
+              };
+
+              console.log(setData);
+
+              self.listDatas[0].push(setData);
+
+              pushData(self.listDatas[0]);
+              $('#listing-modal').modal('hide');
+              // $('body').css({'background-image': 'url('+'https://drive.google.com/uc?export=view&id='+imgUrl+')', 'background-repeat': 'no-repeat'})
+            }).fail(function (d) {
+              console.log('fail');
+            }).always(function () {
+              $('.loader').fadeOut();
+            });
+          } else {
+            alert('no');
+          }
         } else {
           updateAction = self.googleListingURL + '&id=' + id + '&name=' + getName + '&userid=' + getUserId + '+&action=update';
         }
 
-        $.get(updateAction, function (callback) {
-          var localSecureId = new _cookieControls2.default().getCookie('localSecureId');
-
-          console.log(callback);
-          if (JSON.parse(callback.split(localSecureId)[1]).result) {
-            $('.loader').fadeOut();
-
-            if (id == 'new') {
-              var getTime = JSON.parse(callback.split(localSecureId)[1]).currentTime;
-              var getImgSrc = JSON.parse(callback.split(localSecureId)[1]).imgSrc;
-
-              var imgCode = getImgSrc.match("d/(.*)/view")[1];
-
-              $('body').css({ 'background-image': 'url(https://drive.google.com/uc?export=view&id=' + imgCode + ')', 'background-repeat': 'no-repeat' });
-              console.log(imgCode);
-
-              var newRow = { TIME_STAMP: getTime, ID: newId, NAME: getName, USER_ID: getUserId };
-              self.listDatas[0].push(newRow);
+        /*$.get(updateAction, function(callback) {
+          var localSecureId = new CookieControls().getCookie('localSecureId')
+            console.log(callback)
+          if(JSON.parse(callback.split(localSecureId)[1]).result) {
+            $('.loader').fadeOut()
+            
+            if(id == 'new') {
+              let getTime = JSON.parse(callback.split(localSecureId)[1]).currentTime
+              let getImgSrc = JSON.parse(callback.split(localSecureId)[1]).imgSrc
+                let imgCode = getImgSrc.match("d/(.*)/view")[1]
+                 $('body').css({'background-image': 'url(https://drive.google.com/uc?export=view&id='+imgCode+')', 'background-repeat': 'no-repeat'})
+              console.log(imgCode)
+                let newRow = {TIME_STAMP: getTime, ID: newId, NAME: getName, USER_ID: getUserId}
+              self.listDatas[0].push(newRow)
             } else {
-              self.listDatas[0] = jQuery.grep(self.listDatas[0], function (a) {
-                if (a.ID == id) {
-                  a.NAME = getName;
-                  a.USER_ID = getUserId;
-                }
-                return a;
-              });
+              self.listDatas[0] = jQuery.grep(self.listDatas[0], function( a ) {
+                 if(a.ID == id) {
+                  a.NAME = getName
+                  a.USER_ID = getUserId
+                 }
+                 return a
+              })
             }
-
-            console.log(self.listDatas[0]);
-            pushData(self.listDatas[0]);
-            $('#listing-modal').modal('hide');
-          }
-        });
+                console.log(self.listDatas[0])
+            pushData(self.listDatas[0])
+            $('#listing-modal').modal('hide')
+            
+          }        
+        })*/
       });
 
       //Create New
@@ -18338,7 +18445,7 @@ var pushData = function pushData(data) {
   console.log(data);
   var lists = '';
   $.each(data, function (index, elm) {
-    lists += '<tr data-rowid="' + elm.ID + '">\n          <td>' + (index + 1) + '</td>\n          <td>' + elm.TIME_STAMP + '</td>\n          <td>' + elm.NAME + '</td>\n          <td>' + elm.USER_ID + '</td>\n          <td><a class="list-controls list-edit" data-id=' + elm.ID + '>Edit</a></td>\n          <td><a class="list-controls list-remove" data-id=' + elm.ID + '>Remove</a></td>\n        </tr>';
+    lists += '<tr data-rowid="' + elm.ID + '">\n          <td>' + (index + 1) + '</td>\n          <td>' + elm.TIME_STAMP + '</td>\n          <td>' + elm.NAME + '</td>\n          <td>' + elm.USER_ID + '</td>\n          <td><div class="img-thumb" style="background-image:url(' + elm.IMAGE_PATH + ')"></div></td>\n          <td><a class="list-controls list-edit" data-id=' + elm.ID + '>Edit</a></td>\n          <td><a class="list-controls list-remove" data-id=' + elm.ID + '>Remove</a></td>\n        </tr>';
   });
 
   $('#listing-view').html('\n    <div class="pull-right"><button type="button" class="btn btn-primary" id="listing-create-btn">Create New</button></div>\n    <div class="clearfix"></div>\n    <table class="table table-responsive sortable-row">\n      <thead>\n        <tr>\n          <th>#</th>\n          <th>Time</th>\n          <th>Name</th>\n          <th>User ID</th>\n          <th>&nbsp;</th>\n          <th>&nbsp;</th>\n        </tr>\n      </thead>\n      <tbody>\n        ' + lists + '            \n      </tbody>\n    </table>\n  ');

@@ -6,6 +6,7 @@ class Listing1 {
     this.id = id
     this.googleListingURL = new CodeComp().mainCode()
     this.listDatas = []
+    // this.imageURI = []
   }
   render() {
     const tpl =  `
@@ -17,6 +18,7 @@ class Listing1 {
   }
 
   clickHandler() {
+    var imageURI, fileName
     let self = this
     let paramURL = self.googleListingURL+'&action=read'
     console.log(paramURL)
@@ -89,6 +91,32 @@ class Listing1 {
 
     
 
+    $("#listing-imageupload").on('change', function(event) {
+        
+        var inputFiles = this.files;
+        if(inputFiles == undefined || inputFiles.length == 0) return;
+        var inputFile = inputFiles[0];
+
+        var reader = new FileReader();
+
+        fileName = $(this).val().replace(/.*[\/\\]/, '')
+
+        reader.onload = function(event) {
+          // console.log(event)
+          imageURI = event.target.result
+
+          // self.imageURI.push(event.target.result)
+          // console.log(self.imageURI)
+
+        };
+        reader.onerror = function(event) {
+            alert("ERROR: " + event.target.error.code);
+        };
+
+        reader.readAsDataURL(inputFile);
+
+    });
+
     //Update
     $(document).on('click', '#listing-okBtn', function() {
 
@@ -98,18 +126,124 @@ class Listing1 {
         let getName = $('#listing-modal #listing-name').val()
         let getUserId = $('#listing-modal #listing-userid').val()
 
-        $('.loader').fadeIn()
+        
         var updateAction, newId
         var timestamp = new Date();
+
+
+        /*var file, 
+          reader = new FileReader();*/
+
+          
+
+
         if(id == 'new') {
 
-          newId = timestamp.toISOString().replace(/\D/g,"").substr(0,14)
-          updateAction = self.googleListingURL+'&id='+newId+'&name='+getName+'&userid='+getUserId+'+&action=insert'
+          if(imageURI) {
+
+            // with image
+
+            // var params = {
+            //       filename: 'myfile',
+            //       imageformat: 'PNG'
+            //   };
+
+            // params.file = imageURI.replace(/^.*,/, '');
+            
+            var url = 'https://script.google.com/macros/s/AKfycbzQybv3UTzz66rKp0eA30Xif20lWiBbl4mmz0xQxWJt6T9UHw/exec';
+
+            // postJump()
+
+
+            var formdata = new FormData();
+
+            // console.log();
+
+            
+
+            // console.log(imageURI.substr(imageURI.indexOf('base64,')+7));
+
+            var filetype = imageURI.substring(5,imageURI.indexOf(';'));
+
+            var img = imageURI.replace(/^.*,/, '');
+
+
+            newId = timestamp.toISOString().replace(/\D/g,"").substr(0,14)
+
+            // updateAction = self.googleListingURL+'&id='+newId+'&name='+getName+'&userid='+getUserId+'+&action=insert'
+
+
+            formdata.append('action', 'insert');
+            formdata.append('id', newId);
+            formdata.append('name', getName);
+            formdata.append('userid', getUserId);
+
+            formdata.append('file', img);
+            formdata.append('filename', fileName);
+            formdata.append('filetype', filetype);
+            formdata.append('foldername', 'listing');
+
+
+            $.ajax({
+             method: 'POST',
+             url: url,
+             data: formdata,
+             dataType: 'json',
+             contentType: false,
+             processData: false,
+             beforeSend: function(){
+                $('.loader').fadeIn()
+              }
+            })
+            .done(function(d){
+              
+              // var fileUrl = d.result.match("d/(.*)/view")[1];
+
+               // fileUrl = d.result.substring(d.result.lastIndexOf("d/")+2,d.result.lastIndexOf("/view"));
+
+              // var fileUrl = 'https://drive.google.com/uc?export=view&id='+d.result
+              var outputDatas = JSON.parse(d.result)
+
+              var setData = {
+                'TIME_STAMP':outputDatas.currentTime,
+                'ID':outputDatas.id,
+                'NAME':outputDatas.name,
+                'USER_ID':outputDatas.userId,
+                'IMAGE_PATH':outputDatas.imagePath
+              }
+
+              console.log(setData)
+
+              self.listDatas[0].push(setData)
+
+
+              pushData(self.listDatas[0])
+              $('#listing-modal').modal('hide')
+              // $('body').css({'background-image': 'url('+'https://drive.google.com/uc?export=view&id='+imgUrl+')', 'background-repeat': 'no-repeat'})
+            
+            })
+            .fail(function(d) {
+             console.log('fail')
+           })
+           .always(function(){
+             $('.loader').fadeOut()
+           });
+
+
+
+          
+
+            
+            
+        } else {
+          alert('no')
+        }
+
         } else {
           updateAction = self.googleListingURL+'&id='+id+'&name='+getName+'&userid='+getUserId+'+&action=update'
         }
         
-        $.get(updateAction, function(callback) {
+        /*$.get(updateAction, function(callback) {
           var localSecureId = new CookieControls().getCookie('localSecureId')
 
           console.log(callback)
@@ -137,14 +271,13 @@ class Listing1 {
               })
             }
 
-          
 
             console.log(self.listDatas[0])
             pushData(self.listDatas[0])
             $('#listing-modal').modal('hide')
             
           }        
-        })
+        })*/
       });
 
     //Create New
@@ -173,6 +306,7 @@ const pushData = (data) => {
           <td>`+elm.TIME_STAMP+`</td>
           <td>`+elm.NAME+`</td>
           <td>`+elm.USER_ID+`</td>
+          <td><div class="img-thumb" style="background-image:url(`+elm.IMAGE_PATH+`)"></div></td>
           <td><a class="list-controls list-edit" data-id=`+elm.ID+`>Edit</a></td>
           <td><a class="list-controls list-remove" data-id=`+elm.ID+`>Remove</a></td>
         </tr>`
