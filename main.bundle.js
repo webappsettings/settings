@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 7);
+/******/ 	return __webpack_require__(__webpack_require__.s = 8);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -9897,7 +9897,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	return jQuery;
 });
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)(module)))
 
 /***/ }),
 /* 1 */
@@ -9920,13 +9920,17 @@ var _hashControls = __webpack_require__(2);
 
 var _hashControls2 = _interopRequireDefault(_hashControls);
 
-var _pageView = __webpack_require__(6);
+var _pageView = __webpack_require__(7);
 
 var _pageView2 = _interopRequireDefault(_pageView);
 
-var _codeComp = __webpack_require__(5);
+var _codeComp = __webpack_require__(6);
 
 var _codeComp2 = _interopRequireDefault(_codeComp);
+
+var _globalArray = __webpack_require__(4);
+
+var _globalArray2 = _interopRequireDefault(_globalArray);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -9960,7 +9964,13 @@ var CookieControls = function () {
             new _hashControls2.default('login').setHash();
           } else {
 
-            if (callback.main != self.getCookie('main') || callback.result != decodeURIComponent(self.getCookie('user'))) {
+            _globalArray2.default.globalArray['main'] = callback.main;
+
+            // alert(callback.main)
+
+            // callback.main != self.getCookie('main') ||
+
+            if (callback.result != decodeURIComponent(self.getCookie('user'))) {
               self.deleteCookie();
 
               new _hashControls2.default('login').setHash();
@@ -9977,6 +9987,7 @@ var CookieControls = function () {
                 new _hashControls2.default('dashboard').setHash();
                 new _pageView2.default('dashboard').visible();
               } else {
+
                 new _pageView2.default(urlHash).visible();
                 new _hashControls2.default(urlHash).setHash();
               }
@@ -9999,9 +10010,17 @@ var CookieControls = function () {
       var self = this;
 
       $.getJSON(paramURL, function (callback) {
+
         console.log(callback);
         if (callback.result) {
-          self.setCookie('main', callback.main, 20);
+          console.log(callback.main);
+          // console.log(GlobalArray.globalArray)
+
+          _globalArray2.default.globalArray['main'] = callback.main;
+
+          // console.log(GlobalArray.globalArray.main)
+
+          // self.setCookie('main', callback.main, 20)
           self.setCookie('localSecureId', callback.result, 20);
           self.setCookie('user', self.loginE, 20);
           new _hashControls2.default('dashboard').setHash();
@@ -10038,9 +10057,10 @@ var CookieControls = function () {
   }, {
     key: 'deleteCookie',
     value: function deleteCookie() {
+      delete _globalArray2.default.globalArray['main'];
       this.setCookie('localSecureId', "", -1);
       this.setCookie('user', "", -1);
-      this.setCookie('main', "", -1);
+      // this.setCookie('main',"",-1);
       this.setCookie('history', "", -1);
       new _hashControls2.default('login').setHash();
     }
@@ -10106,19 +10126,19 @@ var _hashControls = __webpack_require__(2);
 
 var _hashControls2 = _interopRequireDefault(_hashControls);
 
-var _ = __webpack_require__(12);
+var _ = __webpack_require__(13);
 
 var _2 = _interopRequireDefault(_);
 
-var _login = __webpack_require__(4);
+var _login = __webpack_require__(5);
 
 var _login2 = _interopRequireDefault(_login);
 
-var _dashboard = __webpack_require__(13);
+var _dashboard = __webpack_require__(14);
 
 var _dashboard2 = _interopRequireDefault(_dashboard);
 
-var _listing = __webpack_require__(14);
+var _listing = __webpack_require__(15);
 
 var _listing2 = _interopRequireDefault(_listing);
 
@@ -10143,6 +10163,27 @@ exports.default = Allpages;
 
 /***/ }),
 /* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var GlobalArray = function GlobalArray() {
+  _classCallCheck(this, GlobalArray);
+
+  this.globalArray = [];
+};
+
+exports.default = new GlobalArray();
+
+/***/ }),
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10195,7 +10236,7 @@ exports.default = Login;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10211,6 +10252,10 @@ var _cookieControls = __webpack_require__(1);
 
 var _cookieControls2 = _interopRequireDefault(_cookieControls);
 
+var _globalArray = __webpack_require__(4);
+
+var _globalArray2 = _interopRequireDefault(_globalArray);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -10223,14 +10268,15 @@ var CodeComp = function () {
   }
 
   _createClass(CodeComp, [{
-    key: 'getCode',
+    key: "getCode",
     value: function getCode() {
       return 'https://script.google.com/macros/s/' + this.loginCode + '/exec';
     }
   }, {
-    key: 'mainCode',
+    key: "mainCode",
     value: function mainCode() {
-      var main = new _cookieControls2.default().getCookie('main');
+      // let main = new CookieControls().getCookie('main')
+      var main = _globalArray2.default.globalArray.main;
       var localSecureId = new _cookieControls2.default().getCookie('localSecureId');
       return 'https://script.google.com/macros/s/' + main + '/exec?localcode=' + localSecureId;
     }
@@ -10242,7 +10288,7 @@ var CodeComp = function () {
 exports.default = CodeComp;
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10319,15 +10365,15 @@ exports.default = PageView;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(8);
-module.exports = __webpack_require__(15);
+__webpack_require__(9);
+module.exports = __webpack_require__(16);
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10337,9 +10383,9 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-__webpack_require__(10);
-
 __webpack_require__(11);
+
+__webpack_require__(12);
 
 var _cookieControls = __webpack_require__(1);
 
@@ -10349,11 +10395,15 @@ var _hashControls = __webpack_require__(2);
 
 var _hashControls2 = _interopRequireDefault(_hashControls);
 
-var _pageView = __webpack_require__(6);
+var _pageView = __webpack_require__(7);
 
 var _pageView2 = _interopRequireDefault(_pageView);
 
-var _login = __webpack_require__(4);
+var _globalArray = __webpack_require__(4);
+
+var _globalArray2 = _interopRequireDefault(_globalArray);
+
+var _login = __webpack_require__(5);
 
 var _login2 = _interopRequireDefault(_login);
 
@@ -10413,7 +10463,8 @@ var load = function load() {
 
   function login() {
     if (new _cookieControls2.default().getCookie('localSecureId') && new _cookieControls2.default().getCookie('user')) {
-      return new _cookieControls2.default().getCookie('main');
+      return _globalArray2.default.globalArray.main;
+      // return new CookieControls().getCookie('main')
     }
   }
 };
@@ -10421,7 +10472,7 @@ var load = function load() {
 window.onload = load;
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10451,7 +10502,7 @@ module.exports = function (module) {
 };
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12632,7 +12683,7 @@ if (typeof jQuery === 'undefined') {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18066,7 +18117,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18108,7 +18159,7 @@ var _404 = function () {
 exports.default = _404;
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18152,7 +18203,7 @@ var Dashboard = function () {
 exports.default = Dashboard;
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18170,7 +18221,7 @@ var _cookieControls = __webpack_require__(1);
 
 var _cookieControls2 = _interopRequireDefault(_cookieControls);
 
-var _codeComp = __webpack_require__(5);
+var _codeComp = __webpack_require__(6);
 
 var _codeComp2 = _interopRequireDefault(_codeComp);
 
@@ -18205,7 +18256,11 @@ var Listing1 = function () {
 
       $.getJSON(paramURL, function (callback) {
         console.log(callback);
-        self.listDatas.push(callback);
+        if (callback) {
+          self.listDatas.push(callback);
+        } else {
+          self.listDatas.push([]);
+        }
         pushData(self.listDatas[0]);
         $('.loader').fadeOut();
       });
@@ -18230,6 +18285,7 @@ var Listing1 = function () {
         $.get(deleteAction, function (callback) {
           var localSecureId = new _cookieControls2.default().getCookie('localSecureId');
           // console.log(JSON.parse(callback.split(localSecureId)[1]).result)
+          alert(JSON.parse(callback.split(localSecureId)[1]).result);
           if (JSON.parse(callback.split(localSecureId)[1]).result) {
             $('.loader').fadeOut();
             self.listDatas[0] = jQuery.grep(self.listDatas[0], function (a) {
@@ -18311,14 +18367,8 @@ var Listing1 = function () {
 
             // with image
 
-            // var params = {
-            //       filename: 'myfile',
-            //       imageformat: 'PNG'
-            //   };
 
-            // params.file = imageURI.replace(/^.*,/, '');
-
-            var url = 'https://script.google.com/macros/s/AKfycbzQybv3UTzz66rKp0eA30Xif20lWiBbl4mmz0xQxWJt6T9UHw/exec';
+            var url = self.googleListingURL;
 
             // postJump()
 
@@ -18338,11 +18388,15 @@ var Listing1 = function () {
 
             // updateAction = self.googleListingURL+'&id='+newId+'&name='+getName+'&userid='+getUserId+'+&action=insert'
 
+            // var localSecureId = new CookieControls().getCookie('localSecureId')
 
+            // formdata.append('localcode', localSecureId);
             formdata.append('action', 'insert');
             formdata.append('id', newId);
             formdata.append('name', getName);
             formdata.append('userid', getUserId);
+
+            formdata.append('group', 'secondary');
 
             formdata.append('file', img);
             formdata.append('filename', fileName);
@@ -18366,30 +18420,33 @@ var Listing1 = function () {
               // fileUrl = d.result.substring(d.result.lastIndexOf("d/")+2,d.result.lastIndexOf("/view"));
 
               // var fileUrl = 'https://drive.google.com/uc?export=view&id='+d.result
+              console.log(d);
+
               var outputDatas = JSON.parse(d.result);
+              if (outputDatas.result) {
+                var setData = {
+                  'TIME_STAMP': outputDatas.currentTime,
+                  'ID': outputDatas.id,
+                  'NAME': outputDatas.name,
+                  'USER_ID': outputDatas.userId,
+                  'IMAGE_PATH': outputDatas.imagePath
+                };
 
-              var setData = {
-                'TIME_STAMP': outputDatas.currentTime,
-                'ID': outputDatas.id,
-                'NAME': outputDatas.name,
-                'USER_ID': outputDatas.userId,
-                'IMAGE_PATH': outputDatas.imagePath
-              };
+                console.log('self.listDatas', self.listDatas);
 
-              console.log(setData);
+                self.listDatas[0].push(setData);
 
-              self.listDatas[0].push(setData);
-
-              pushData(self.listDatas[0]);
-              $('#listing-modal').modal('hide');
-              // $('body').css({'background-image': 'url('+'https://drive.google.com/uc?export=view&id='+imgUrl+')', 'background-repeat': 'no-repeat'})
+                pushData(self.listDatas[0]);
+                $('#listing-modal').modal('hide');
+                // $('body').css({'background-image': 'url('+'https://drive.google.com/uc?export=view&id='+imgUrl+')', 'background-repeat': 'no-repeat'})
+              }
             }).fail(function (d) {
               console.log('fail');
             }).always(function () {
               $('.loader').fadeOut();
             });
           } else {
-            alert('no');
+            alert('Please add an image');
           }
         } else {
           updateAction = self.googleListingURL + '&id=' + id + '&name=' + getName + '&userid=' + getUserId + '+&action=update';
@@ -18455,7 +18512,7 @@ exports.default = Listing1;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(0)))
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
