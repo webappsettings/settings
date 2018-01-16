@@ -3,6 +3,8 @@ import HashControls from 'components/hashControls';
 import PageView from 'components/pageView';
 import CodeComp from 'components/codeComp';
 
+import GlobalArray from "components/globalArray";
+
 class CookieControls {
   constructor(loginE, loginP){
     this.loginE = loginE
@@ -21,6 +23,8 @@ class CookieControls {
       let paramURL = this.googleURL+"?cb&id="+localSecureId+"&action=vw"
 
       $.getJSON(paramURL, function(callback) {
+
+
        
         if(!callback.result) {
           
@@ -30,7 +34,13 @@ class CookieControls {
 
         } else {
 
-              if(callback.main != self.getCookie('main') || callback.result != decodeURIComponent(self.getCookie('user'))) {
+            GlobalArray.globalArray['main'] = callback.main
+
+            // alert(callback.main)
+
+            // callback.main != self.getCookie('main') ||
+
+              if(callback.result != decodeURIComponent(self.getCookie('user'))) {
                 self.deleteCookie()
                 
                 new HashControls('login').setHash()
@@ -48,6 +58,7 @@ class CookieControls {
                   new HashControls('dashboard').setHash()
                   new PageView('dashboard').visible()
                 } else {
+
                   new PageView(urlHash).visible()
                   new HashControls(urlHash).setHash()
                 }
@@ -80,9 +91,17 @@ class CookieControls {
 
 
     $.getJSON(paramURL, function(callback) {
+      
       console.log(callback);
       if(callback.result) {
-        self.setCookie('main', callback.main, 20)
+        console.log(callback.main)
+        // console.log(GlobalArray.globalArray)
+
+        GlobalArray.globalArray['main'] = callback.main
+
+        // console.log(GlobalArray.globalArray.main)
+
+        // self.setCookie('main', callback.main, 20)
         self.setCookie('localSecureId', callback.result, 20)
         self.setCookie('user', self.loginE, 20)
         new HashControls('dashboard').setHash()
@@ -118,9 +137,10 @@ class CookieControls {
   }               
 
   deleteCookie() {
+    delete GlobalArray.globalArray['main'];
     this.setCookie('localSecureId',"",-1);
     this.setCookie('user',"",-1);
-    this.setCookie('main',"",-1);
+    // this.setCookie('main',"",-1);
     this.setCookie('history',"",-1);
     new HashControls('login').setHash()
   };

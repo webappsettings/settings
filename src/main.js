@@ -5,6 +5,7 @@ import "../dist/lib/jquery-ui/jquery-ui"
 import CookieControls from "components/cookieControls"
 import HashControls from 'components/hashControls';
 import PageView from 'components/pageView';
+import GlobalArray from "components/globalArray";
 
 import Login from 'interface/login';
 import Allpages from 'interface/allPages';
@@ -76,7 +77,8 @@ const load = () => {
 
     function login() {
       if((new CookieControls().getCookie('localSecureId')) && (new CookieControls().getCookie('user'))) {
-        return new CookieControls().getCookie('main')
+        return GlobalArray.globalArray.main
+        // return new CookieControls().getCookie('main')
       }
       
     }

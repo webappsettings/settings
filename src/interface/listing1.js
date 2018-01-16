@@ -27,7 +27,11 @@ class Listing1 {
 
     $.getJSON(paramURL, function(callback) {
       console.log(callback)
-      self.listDatas.push(callback)
+      if(callback) {
+        self.listDatas.push(callback)
+      } else {
+        self.listDatas.push([])
+      }
       pushData(self.listDatas[0])
       $('.loader').fadeOut()
     })
@@ -52,6 +56,7 @@ class Listing1 {
       $.get(deleteAction, function(callback) {
         var localSecureId = new CookieControls().getCookie('localSecureId')
         // console.log(JSON.parse(callback.split(localSecureId)[1]).result)
+        alert(JSON.parse(callback.split(localSecureId)[1]).result)
         if(JSON.parse(callback.split(localSecureId)[1]).result) {
           $('.loader').fadeOut()
           self.listDatas[0] = jQuery.grep(self.listDatas[0], function( a ) {
@@ -143,14 +148,9 @@ class Listing1 {
 
             // with image
 
-            // var params = {
-            //       filename: 'myfile',
-            //       imageformat: 'PNG'
-            //   };
-
-            // params.file = imageURI.replace(/^.*,/, '');
+           
             
-            var url = 'https://script.google.com/macros/s/AKfycbzQybv3UTzz66rKp0eA30Xif20lWiBbl4mmz0xQxWJt6T9UHw/exec';
+            var url = self.googleListingURL;
 
             // postJump()
 
@@ -172,11 +172,15 @@ class Listing1 {
 
             // updateAction = self.googleListingURL+'&id='+newId+'&name='+getName+'&userid='+getUserId+'+&action=insert'
 
+            // var localSecureId = new CookieControls().getCookie('localSecureId')
 
+            // formdata.append('localcode', localSecureId);
             formdata.append('action', 'insert');
             formdata.append('id', newId);
             formdata.append('name', getName);
             formdata.append('userid', getUserId);
+
+            formdata.append('group', 'secondary');
 
             formdata.append('file', img);
             formdata.append('filename', fileName);
@@ -202,25 +206,27 @@ class Listing1 {
                // fileUrl = d.result.substring(d.result.lastIndexOf("d/")+2,d.result.lastIndexOf("/view"));
 
               // var fileUrl = 'https://drive.google.com/uc?export=view&id='+d.result
+              console.log(d)
+
               var outputDatas = JSON.parse(d.result)
+              if(outputDatas.result) {
+                var setData = {
+                  'TIME_STAMP':outputDatas.currentTime,
+                  'ID':outputDatas.id,
+                  'NAME':outputDatas.name,
+                  'USER_ID':outputDatas.userId,
+                  'IMAGE_PATH':outputDatas.imagePath
+                }
 
-              var setData = {
-                'TIME_STAMP':outputDatas.currentTime,
-                'ID':outputDatas.id,
-                'NAME':outputDatas.name,
-                'USER_ID':outputDatas.userId,
-                'IMAGE_PATH':outputDatas.imagePath
+                console.log('self.listDatas',self.listDatas)
+
+                self.listDatas[0].push(setData)
+
+
+                pushData(self.listDatas[0])
+                $('#listing-modal').modal('hide')
+                // $('body').css({'background-image': 'url('+'https://drive.google.com/uc?export=view&id='+imgUrl+')', 'background-repeat': 'no-repeat'})
               }
-
-              console.log(setData)
-
-              self.listDatas[0].push(setData)
-
-
-              pushData(self.listDatas[0])
-              $('#listing-modal').modal('hide')
-              // $('body').css({'background-image': 'url('+'https://drive.google.com/uc?export=view&id='+imgUrl+')', 'background-repeat': 'no-repeat'})
-            
             })
             .fail(function(d) {
              console.log('fail')
@@ -229,14 +235,9 @@ class Listing1 {
              $('.loader').fadeOut()
            });
 
-
-
           
-
-            
-            
         } else {
-          alert('no')
+          alert('Please add an image')
         }
 
         } else {
