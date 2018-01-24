@@ -33,6 +33,41 @@
 
   <section class="section-view"></section>
 
+  <div class="modal fade" id="dashboard-create-modal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title"></h4>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Name</label>
+                <input type="text" class="form-control" value="" id="dashboard-create-name">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Type</label>
+                <select id="dashboard-create-type" class="form-control">
+                  <option value="listing">Listing</option>
+                  <option value="detail">Detail</option>
+                </select>
+              </div>
+            </div>
+            <div class="clearfix"></div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="dashboard-create-okBtn">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="modal fade" id="listing-modal">
     <div class="modal-dialog">
       <div class="modal-content">
