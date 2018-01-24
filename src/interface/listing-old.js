@@ -37,7 +37,6 @@ class Listing1 {
     })
 
     $(document).off().on('click', '.list-controls', function(event) {
-
       let getId = $(this).attr('data-id')
       $('body').attr('selectedid', getId)
 
@@ -180,7 +179,7 @@ class Listing1 {
             formdata.append('name', getName);
             formdata.append('userid', getUserId);
 
-            formdata.append('group', 'secondary');
+            // formdata.append('group', 'secondary');
 
             formdata.append('file', img);
             formdata.append('filename', fileName);
@@ -244,6 +243,19 @@ class Listing1 {
           updateAction = self.googleListingURL+'&id='+id+'&name='+getName+'&userid='+getUserId+'+&action=update'
         }
         
+        alert(id)
+
+
+        /*if(id != 'new') {
+              self.listDatas[0] = jQuery.grep(self.listDatas[0], function( a ) {
+                 if(a.ID == id) {
+                  a.NAME = getName
+                  a.USER_ID = getUserId
+                 }
+                 return a
+              })
+            }*/
+
         /*$.get(updateAction, function(callback) {
           var localSecureId = new CookieControls().getCookie('localSecureId')
 

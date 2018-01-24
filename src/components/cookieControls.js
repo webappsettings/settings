@@ -58,8 +58,9 @@ class CookieControls {
                   new HashControls('dashboard').setHash()
                   new PageView('dashboard').visible()
                 } else {
-
-                  new PageView(urlHash).visible()
+                  if(! prevHistory) {
+                    new PageView(urlHash).visible()
+                  }
                   new HashControls(urlHash).setHash()
                 }
 
@@ -137,7 +138,7 @@ class CookieControls {
   }               
 
   deleteCookie() {
-    delete GlobalArray.globalArray['main'];
+    // delete GlobalArray.globalArray['main'];
     this.setCookie('localSecureId',"",-1);
     this.setCookie('user',"",-1);
     // this.setCookie('main',"",-1);

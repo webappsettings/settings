@@ -73,3 +73,12 @@ body {
   background-repeat: no-repeat;
   background-size: cover;
 }
+
+.dashboard-remove-btn {
+  position: absolute;
+  right: 25px;
+  top: 7px;
+  cursor: pointer;
+  color: grey;
+  font-size: 12px;
+}

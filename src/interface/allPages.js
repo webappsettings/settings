@@ -1,21 +1,20 @@
 import HashControls from 'components/hashControls';
 
 import _404 from "interface/_404"
-import Login from "interface/login"
-import Dashboard from "interface/dashboard"
-import Listing1 from "interface/listing1"
+import login from "interface/login"
+import dashboard from "interface/dashboard"
+import listing from "interface/listing"
 
 const pages = {
     _404,
-    Login,
-    Dashboard,
-    Listing1
+    login,
+    dashboard,
+    listing
 };
 
 class Allpages {
     constructor (className, opts) {
       return new pages[className](opts);
-        
     }
 }
 
