@@ -9,21 +9,17 @@ class Dashboard {
   constructor(id){
     this.id = id
     this.googleListingURL = new CodeComp().mainCode()
-    this.dashboardDatas = []
+    this.listDatas = []
   }
   render() {
     const tpl =  `
     <div class="container">
-      <div id="dashboard-view">
-        <div class="col-md-4">
-          <div class="panel panel-default">
-            <div class="panel-body">
-              <a href="#listing">Listing</a>
-            </div>
-          </div>
-        </div>
+      <div class="col-md-12">
+        <button class="btn btn-primary" type="button" id="create-new-dashboard">Create New</button>
       </div>
-      <button class="btn btn-primary" type="button" id="create-new-dashboard">Create New</button>
+      <div class="clearfix"></div>
+      <div class="m-t-2" id="dashboard-view">        
+      </div>
     </div>
     `
     return tpl
@@ -35,49 +31,39 @@ class Dashboard {
     let urlHash = new HashControls().getHash()
 
     let readmodulesParamURL = self.googleListingURL+'&pageid='+urlHash+'&action=readpagedatas'
-
+    $('.loader').fadeIn()
     $.getJSON(readmodulesParamURL, function(callback) {
       console.log('all=',callback)
-      $.each(callback.result, function(index, elm) {
-        // var obj = {}
-        createModules(elm)
-        // console.log(elm[2])
-      }); 
+      if(callback) {
+        self.listDatas.push(callback)
+      } else {
+        self.listDatas.push([])
+      }
+      pushData(self.listDatas[0])
+      $('.loader').fadeOut()
     })   
 
 
 
-    function createModules(elm) {
-      $('#dashboard-view').append(`
-          <div class="col-md-4">
-            <div class="panel panel-default">
-              <i class="ion-close dashboard-remove-btn" data-id="`+elm[1]+`"></i>
-              <div class="panel-body">
-                <a href="#`+elm[3]+'?id='+elm[1]+`" data-type="`+elm[3]+`">`+elm[2]+`</a>
-              </div>
-            </div>
-          </div>
-        `)
-      }
-
-    /*const dashboardView = (data) => {
-      var lists = ''
-    }*/
-
     $(document).on('click', '.dashboard-remove-btn', function(event) {
       var _this = $(this)
-      let getId = $(this).attr('data-id')
-      let paramURL = self.googleListingURL+'&moduleid='+getId+'&action=removemodule'
+      let id = $(this).attr('data-id')
+      let paramURL = self.googleListingURL+'&moduleid='+id+'&action=removemodule'
       $.getJSON(paramURL, function(callback) {
         let output = JSON.parse(callback.result)
         console.log(output)
         if(output.result) {
-          _this.closest('.col-md-4').remove();
+          // _this.closest('.col-md-4').remove();
+          self.listDatas[0].result = jQuery.grep(self.listDatas[0].result, function( elm, index ) {
+            return elm[1] != id         
+          })
+          pushData(self.listDatas[0])
         }
       }); 
     });
 
     $(document).on('click', '#create-new-dashboard', function(event) {
+      $('#dashboard-create-name').val('')
       $('#dashboard-create-modal').modal('show')
     });
 
@@ -90,17 +76,13 @@ class Dashboard {
       console.log(paramURL)
 
       $.getJSON(paramURL, function(callback) {
-        if(callback) {
-          let datas = JSON.parse(callback.result)
-          let elm = []
-          elm[0] = datas.currentTime
-          elm[1] = datas.id
-          elm[2] = moduleName
-          elm[3] = moduleType
-          createModules(elm)
-          $('#dashboard-create-name').val('')
+        var outputDatas = JSON.parse(callback.result)
+        if(outputDatas.result) {
+          console.log(outputDatas)
+          self.listDatas[0].result.unshift(outputDatas.result)
+          pushData(self.listDatas[0])
         } else {
-          alert('failed')
+          alert('Failed')
         }
         $('.loader').fadeOut()
       })
@@ -110,10 +92,24 @@ class Dashboard {
     });
 
 
-
-    
   }
 
+}
+
+const pushData = (data) => {
+  var lists = ''
+  $.each(data.result, function(index, elm) {
+    lists += `<div class="col-md-4">
+            <div class="panel panel-default">
+              <i class="ion-close dashboard-remove-btn" data-id="`+elm[1]+`"></i>
+              <div class="panel-body">
+                <a href="#`+elm[3]+`?id=`+elm[1]+`&name=`+elm[2]+`" data-type="`+elm[3]+`">`+elm[2]+`</a>
+              </div>
+            </div>
+          </div>`
+  })
+
+  $('#dashboard-view').html(lists)
 }
 
 export default Dashboard

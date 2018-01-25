@@ -18,10 +18,12 @@ class PageView {
         
         if(self.page.indexOf('?') > -1) {
           var getId = getUrlVars(self.page)["id"]
+          var getName = getUrlVars(self.page)["name"]
           
           GlobalArray.globalArray['paramid'] = getId
+          GlobalArray.globalArray['paramname'] = getName
 
-          // console.log(GlobalArray.globalArray)
+          console.log(GlobalArray.globalArray)
           self.page = self.page.split('?')[0]
         }
 
@@ -55,33 +57,26 @@ class PageView {
 
         $('.loader').fadeOut()
 
-        if(self.page == 'Login') {
+        if(self.page == 'login') {
           $('#navTop').addClass('hidden')
         } else {
           $('#navTop').removeClass('hidden')
         }
         $('.userName').text(decodeURIComponent(new CookieControls().getCookie('user')))
         
-        
+        var tpl =  new Allpages(self.page).render()
+        $('.section-view').html(tpl)
         new Allpages(self.page).clickHandler()
 
-        var tpl =  new Allpages(self.page).render()
 
       } else if(self.page != '') {
         var tpl =  new Allpages('_404').render()
         new HashControls('404').setHash()
+        $('.section-view').html(tpl)
       }
 
       
-
-
-
-      $('.section-view').html(tpl)
       
-
-      
-
-    
   }
 
 }

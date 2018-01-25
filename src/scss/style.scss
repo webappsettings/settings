@@ -60,9 +60,11 @@ body {
 }
 
 .sortable-row {
-  tr {
-    &:hover {
-      background-color: #d5dfe8;
+  tbody{
+    tr {
+      &:hover {
+        background-color: #d5dfe8;
+      }
     }
   }
 }
@@ -81,4 +83,8 @@ body {
   cursor: pointer;
   color: grey;
   font-size: 12px;
+}
+
+.m-t-2 {
+  margin-top: 2rem;
 }

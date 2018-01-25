@@ -106,12 +106,7 @@ class Listing1 {
         fileName = $(this).val().replace(/.*[\/\\]/, '')
 
         reader.onload = function(event) {
-          // console.log(event)
           imageURI = event.target.result
-
-          // self.imageURI.push(event.target.result)
-          // console.log(self.imageURI)
-
         };
         reader.onerror = function(event) {
             alert("ERROR: " + event.target.error.code);

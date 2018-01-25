@@ -1,0 +1,535 @@
+function doGet(e){
+
+ if(e.parameter){ 
+   var op = e.parameter.action;
+   secretCode = e.parameter.scode;
+    
+   var ss=SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1xyXHqS6bYeRFSExFV6RXYq8_ymLV12rjGMWJSSvm3aA/edit#gid=0");
+   
+   
+    
+   var sheet = ss.getSheetByName("Listing");
+    
+   var localCode = e.parameter.localcode;
+   var codeSheet= ss.getSheetByName("Code");
+   var codeCheck = codeSheet.getRange(1,1).getValue();
+   
+   if(op=="set") {
+     return set_value(e,ss,codeSheet);
+   }
+   
+   if(codeCheck == localCode) {
+ 
+     if(op=="createmodule") {
+       return createdashboard(e,ss)
+     }
+     
+     if(op=="removemodule") {
+      return removemodule(e,ss)
+     }
+     
+     if(op=="readpagedatas") {
+       return readpagedatas(e,ss)
+     }
+     
+     if(op=="deleterow") {        
+       return deletesinglerow(true,e,ss);
+     }     
+   }
+   
+ } else {
+    return false;
+ }
+    
+}
+
+
+
+
+function readpagedatas(e,ss){
+
+  var pageName = e.parameter.pageid
+  var data = [];
+      
+  var rows = getAllSheetDatas(ss, pageName);
+  if(rows) {
+    for (var r = 0, l = rows.length; r < l; r++) {
+      var row     = rows[r];
+      data.push(row)
+    }
+  }
+    
+  return message(data);
+
+}
+
+
+function getAllSheetDatas(ss, sheetname) {
+  var sh = ss.getSheetByName(sheetname);
+  if(sh.getLastRow()) {
+  var getRow = sh.getRange(1, 1, sh.getLastRow(), sh.getLastColumn()).getValues(); 
+    return getRow;
+  } else {
+    return false
+  }  
+}
+
+
+function removemodule(e,ss){
+  var getModuleName = e.parameter.moduleid
+  var sh = ss.getSheetByName(getModuleName);
+  
+  var lr = sh.getLastRow();
+  for(var i=1;i<=lr;i++){
+    var mediaId = sh.getRange(i, 5).getValue();
+    if(mediaId != ''){
+      deleteImage(mediaId)
+    }    
+  }
+  
+  ss.setActiveSheet(sh);
+  ss.deleteActiveSheet();
+  
+  result1 = deletesinglerow(false,e,ss,"dashboard",getModuleName);
+  
+  if(result1){
+    result = true
+  } else {
+    result = false
+  }
+  
+  result = JSON.stringify({
+    "result": result
+  });
+  
+  return message(result)  
+}
+
+function deletesinglerow(fromUrl,e,ss,sheetname,deleteVal) {
+  var mediaId = ''
+  if(fromUrl){
+    var sheetname = e.parameter.pageid;
+    var deleteVal = e.parameter.id;
+    mediaId = e.parameter.mediaid
+  }
+  var sh = ss.getSheetByName(sheetname);
+  var lc = sh.getLastColumn();
+  var lr = sh.getLastRow();
+  var result = false;
+  
+  for(var i=1;i<=lr;i++){
+    var rid = sh.getRange(i, 2).getValue();
+    if(rid==deleteVal){    
+      sh.deleteRow(i);
+      if(mediaId !='') {
+        deleteImage(mediaId)
+      }
+      result = true;
+    }
+  }
+  
+//  for(var i=1;i<=lr;i++){
+//    for(var c=1;c<=lc;c++){
+//      var rid = sh.getRange(i, c).getValue();
+//      if(rid==deleteVal){    
+//        sh.deleteRow(i);    
+//        result = true;
+//      }       
+//    }
+//  }
+  if(fromUrl) {  
+    result = JSON.stringify({
+      "result": true
+    });  
+    return message(result);
+  } else {
+    return result
+  }
+}
+
+
+
+
+function createdashboard(e,ss){
+  
+ var d = new Date();
+ var currentTime = d.toLocaleString();
+ var moduleName = e.parameter.modulename;
+ var moduleType = e.parameter.moduletype;
+ var moduleId = randomstring(12,'m_');
+
+ var sheet= ss.getSheetByName("dashboard");
+ rowData = [currentTime,moduleId,moduleName,moduleType]
+ prependRow(sheet, rowData)
+ 
+ var newSheet=ss.insertSheet(moduleId,2);
+  
+  result = JSON.stringify({
+    "result": rowData
+  });
+
+  return message(result)
+ 
+}
+
+
+
+
+
+function doPost(e) {
+
+  var ss=SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1xyXHqS6bYeRFSExFV6RXYq8_ymLV12rjGMWJSSvm3aA/edit#gid=0");
+  
+  var localCode = e.parameter.localcode;
+  var codeSheet= ss.getSheetByName("Code");
+  var codeCheck = codeSheet.getRange(1,1).getValue();
+   
+
+  if(codeCheck == localCode) {
+  
+    var result;
+  
+    var pageId = e.parameter.pageid
+    var sheet = ss.getSheetByName(pageId);
+  
+    var id = e.parameter.id;
+    var name = e.parameter.name;
+    var userId = e.parameter.userid;
+    
+    var action = e.parameters.action;
+    var fileChange = e.parameters.filechange
+    
+//    var fileGroup = e.parameter.group;
+    
+//    var flag=1;
+//    var lr= sheet.getLastRow();
+//    for(var i=1;i<=lr;i++){
+//      var id1 = sheet.getRange(i, 2).getValue();
+//      if(id1==id){
+//        flag=0;
+//         var result=false;
+//      } 
+//    }
+    //add new row with recieved parameter from client
+     
+     if(action == 'create') {
+     
+      var d = new Date();
+      var currentTime = d.toLocaleString();
+      
+      var mainFile = e.parameters.file;
+    
+      if(mainFile != ''){
+        var gFileName = randomstring(12,'f_')  
+        var filePath = pushFile(mainFile,gFileName,e.parameters.filetype,e.parameters.foldername)
+        var fileName = JSON.stringify(e.parameters.filename[0]).replace(/['"]+/g, '');
+        
+        var rowData = [currentTime,id,name,userId,gFileName,fileName,filePath];
+      } else {
+        var rowData = [currentTime,id,name,userId];
+      }
+      
+      
+//      if(fileGroup == 'secondary'){
+//      
+//        var fileSheet = ss.getSheetByName("Files");
+//      
+//        var rowData = sheet.appendRow([currentTime,id,name,userId]); 
+//        var rowFileData = fileSheet.appendRow([filePath,fileName,gFileName]);
+//        
+//      } else {
+//        var rowData = [currentTime,id,name,userId,filePath,fileName,gFileName];
+//        prependRow(sheet, rowData)
+//      }
+
+      
+      prependRow(sheet, rowData)
+      
+
+      result = JSON.stringify({ 
+        "result": rowData
+      });
+        
+     } else {
+     
+          
+     var lr= sheet.getLastRow();
+     for(var i=1;i<=lr;i++){
+       var rid = sheet.getRange(i, 2).getValue();
+       
+       if(rid==id){
+         sheet.getRange(i,3).setValue(name);
+         sheet.getRange(i,4).setValue(userId);
+         
+         currentTime = sheet.getRange(i, 1).getValue();
+         gFileName = sheet.getRange(i, 5).getValue();
+         if(fileChange){
+           deleteImage(gFileName);
+                      
+           if(gFileName == ''){
+             gFileName = randomstring(12,'f_')
+             sheet.getRange(i,5).setValue(gFileName);
+           }
+           
+           var mainFile = e.parameters.file;
+           var filePath = pushFile(mainFile,gFileName,e.parameters.filetype,e.parameters.foldername)
+           var fileName = JSON.stringify(e.parameters.filename[0]).replace(/['"]+/g, '');
+           
+           sheet.getRange(i,6).setValue(fileName);
+           sheet.getRange(i,7).setValue(filePath);
+           
+         } else {
+           
+           fileName = sheet.getRange(i, 6).getValue();
+           filePath = sheet.getRange(i, 7).getValue();
+         }
+         
+         
+       }
+     }
+     
+     if(fileChange){
+       var rowData = [currentTime,id,name,userId,gFileName,fileName,filePath];
+     } else {
+       var rowData = [currentTime,id,name,userId];
+     }
+          
+     result = JSON.stringify({ 
+        "result": rowData
+      });
+       
+       
+     }
+     
+     return message(result)
+     
+  } else {
+      result = JSON.stringify({     
+        "result": false
+      });
+    return message(result)
+  }
+ 
+}
+
+
+function prependRow(sheet, rowData) {
+  sheet.insertRowBefore(1).getRange(1, 1, 1, rowData.length).setValues([rowData]);
+}
+
+
+function message(msg) {
+  return ContentService.createTextOutput(JSON.stringify({result: msg})).setMimeType(ContentService.MimeType.JSON);
+}
+
+
+function randomstring(L,N){
+  var s= '';
+  var randomchar=function(){
+    var n= Math.floor(Math.random()*62);
+    if(n<10) return n;
+    if(n<36) return String.fromCharCode(n+55);
+    return String.fromCharCode(n+61);
+  }
+  while(s.length< L-1) s+= randomchar();
+  return N+s;
+}
+
+
+function pushFile(finalFile,fileName,fileType,folderName) {
+  
+  
+    var dropbox = "Received Files";
+    var folder, innerfolder, mainfolder, folders = DriveApp.getFoldersByName(dropbox);
+   
+    
+//    var finalFile = e.parameters.file;
+//    var fileName = e.parameters.filename;
+//    var fileType = e.parameters.filetype;
+//    var folderName = e.parameters.foldername;
+        
+    var bytes = Utilities.base64Decode(finalFile, Utilities.Charset.UTF_8);
+    var blob = Utilities.newBlob(bytes, fileType, fileName);
+  
+  
+    if (folders.hasNext()) {
+      folder = folders.next();
+    } else {
+      folder = DriveApp.createFolder(dropbox);
+    }    
+        innerfolder = folder.getFoldersByName(folderName)
+        if (innerfolder.hasNext()) {
+          mainfolder = innerfolder.next();
+        } else {
+          mainfolder = folder.createFolder(folderName);
+        }
+        
+        var file = mainfolder.createFile(blob);
+    
+        var getURL = file.getUrl().toString();
+            getURL = getURL.substring(getURL.lastIndexOf("d/")+2,getURL.lastIndexOf("/view"));
+            
+        var fileUrl = 'https://drive.google.com/uc?export=view&id='+getURL
+        
+
+      return fileUrl;
+
+  }
+
+
+
+
+function deleteImage(imageName) {
+  var files = DriveApp.getFilesByName(imageName);
+   while (files.hasNext()) {
+     files.next().setTrashed(true);
+   }
+  }
+
+
+
+//Recieve parameter and pass it to function to handle
+
+function set_value(request,ss,codeSheet){
+  var scode = request.parameter.scode;
+  var sheet = codeSheet;
+  sheet.getRange(1,1).setValue(scode);
+}
+
+
+
+//----end set-code section here----
+
+
+//function read_value(request,ss){
+//  var output  = ContentService.createTextOutput(),
+//      data    = {},
+//      sheet="Listing";
+//
+//  data = readData_(ss, sheet);
+//  
+//  if(data.length >= 1) {
+//    output.setContent(JSON.stringify(data));
+//  } else {
+//      output.setContent(JSON.stringify(false));
+//    }  
+//    output.setMimeType(ContentService.MimeType.JAVASCRIPT);
+//    return output;
+//}
+//
+//function readData_(ss, sheetname) {
+//  properties = getHeaderRow_(ss, sheetname);
+//  properties = properties.map(function(p) {return p.replace(/\s+/g, '_')});  
+//  
+//  var data = [];
+//      
+//  var rows = getDataRows_(ss, sheetname);
+//  if(rows) {
+//    for (var r = 0, l = rows.length; r < l; r++) {
+//      var row     = rows[r],
+//          record  = {};
+//      for (var p in properties) {
+//        record[properties[p]] = row[p];
+//      }  
+//      data.push(record);
+//    }
+//  }
+//    
+//  return data;
+//}
+//
+//function getDataRows_(ss, sheetname) {
+//  var sh = ss.getSheetByName(sheetname);
+//  if(sh.getLastRow() - 1) {
+//  var getRow = sh.getRange(2, 1, sh.getLastRow() - 1, sh.getLastColumn()).getValues();
+//  
+//    return getRow;
+//  } else {
+//    return false
+//  }  
+//}
+//
+//function getHeaderRow_(ss, sheetname) {
+//  var sh = ss.getSheetByName(sheetname);
+//  return sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0];  
+//}
+
+//----end read section here----
+
+//function delete_value(request,sheet){
+//  var output  = ContentService.createTextOutput(),
+//      id = request.parameter.id,
+//      flag=0,
+//      lr= sheet.getLastRow();
+//  
+//  for(var i=1;i<=lr;i++){
+//    var rid = sheet.getRange(i, 2).getValue();
+//    if(rid==id){
+//      var gfileName = sheet.getRange(i, 7).getValue();
+//      deleteImage(gfileName)      
+//      sheet.deleteRow(i);    
+//      var result=true;
+//      flag=1;
+//    } 
+//    
+//  }
+//
+//  if(flag==0) {
+//    var result=false;
+//  }
+//  
+//  result = JSON.stringify({
+//    "result": result
+//  });
+//
+//    
+//  return ContentService
+//  .createTextOutput(request.parameter.localcode + result)
+//  .setMimeType(ContentService.MimeType.JAVASCRIPT); 
+//}
+//
+////----end remove section here---- 
+//
+//
+////insert function
+//
+//function insert_value(request,sheet){
+//
+//// var imgData = request.parameter.image.split(' ').join('+');
+//
+//  var filepath = request.parameter.filepath;
+//     
+// }
+  
+
+//update function
+
+//function update_value(request,sheet){
+//
+//var output  = ContentService.createTextOutput();
+//   var id = request.parameter.id;
+//  var flag=0;
+//  var name = request.parameter.name;
+//  var userid = request.parameter.userid;
+//  var lr= sheet.getLastRow();
+//  for(var i=1;i<=lr;i++){
+//    var rid = sheet.getRange(i, 2).getValue();
+//    if(rid==id){
+//      sheet.getRange(i,3).setValue(name);
+//      sheet.getRange(i,4).setValue(userid);
+//      var result=true;
+//      flag=1;
+//    }
+//}
+//  if(flag==0)
+//    var result=false;
+//  
+//   result = JSON.stringify({
+//    "result": result
+//  });  
+//    
+//  return ContentService
+//  .createTextOutput(request.parameter.localcode + result )
+//  .setMimeType(ContentService.MimeType.JAVASCRIPT);   
+//    
+//}
