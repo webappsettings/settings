@@ -19,8 +19,12 @@ class CookieControls {
 
     let localSecureId = this.getCookie("localSecureId");
     let self = this
+
+
     if (localSecureId != "") {
       let paramURL = this.googleURL+"?cb&id="+localSecureId+"&action=vw"
+
+
 
       $.getJSON(paramURL, function(callback) {
 
@@ -84,6 +88,8 @@ class CookieControls {
 
 
   toCookie() {
+
+    
 
     $('.loader').fadeIn()
     let param = "?cb&name="+this.loginE+"&id="+this.loginP+"&action=chk";

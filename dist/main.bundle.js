@@ -9952,6 +9952,7 @@ var CookieControls = function () {
 
       var localSecureId = this.getCookie("localSecureId");
       var self = this;
+
       if (localSecureId != "") {
         var paramURL = this.googleURL + "?cb&id=" + localSecureId + "&action=vw";
 
@@ -10272,7 +10273,7 @@ var Login = function () {
   }, {
     key: "clickHandler",
     value: function clickHandler() {
-      $('#loginBtn').on("click", function (e) {
+      $('#loginBtn').off().on("click", function (e) {
 
         var loginE = encodeURIComponent($('#loginEmail').val());
         var loginP = $('#loginPassword').val();

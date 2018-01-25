@@ -12,6 +12,7 @@ class PageView {
   visible() {
     let self = this
     
+   
         // self.page = self.page.toLowerCase().replace(/\b[a-z]/g, function(letter) {
         //  return letter.toUpperCase();
         // });
