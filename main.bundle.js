@@ -9916,7 +9916,7 @@ var _allPages = __webpack_require__(4);
 
 var _allPages2 = _interopRequireDefault(_allPages);
 
-var _hashControls = __webpack_require__(2);
+var _hashControls = __webpack_require__(3);
 
 var _hashControls2 = _interopRequireDefault(_hashControls);
 
@@ -9928,7 +9928,7 @@ var _codeComp = __webpack_require__(5);
 
 var _codeComp2 = _interopRequireDefault(_codeComp);
 
-var _globalArray = __webpack_require__(3);
+var _globalArray = __webpack_require__(2);
 
 var _globalArray2 = _interopRequireDefault(_globalArray);
 
@@ -10084,6 +10084,27 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var GlobalArray = function GlobalArray() {
+  _classCallCheck(this, GlobalArray);
+
+  this.globalArray = [];
+};
+
+exports.default = new GlobalArray();
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -10113,27 +10134,6 @@ var HashControls = function () {
 exports.default = HashControls;
 
 /***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var GlobalArray = function GlobalArray() {
-  _classCallCheck(this, GlobalArray);
-
-  this.globalArray = [];
-};
-
-exports.default = new GlobalArray();
-
-/***/ }),
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10144,7 +10144,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _hashControls = __webpack_require__(2);
+var _hashControls = __webpack_require__(3);
 
 var _hashControls2 = _interopRequireDefault(_hashControls);
 
@@ -10200,7 +10200,7 @@ var _cookieControls = __webpack_require__(1);
 
 var _cookieControls2 = _interopRequireDefault(_cookieControls);
 
-var _globalArray = __webpack_require__(3);
+var _globalArray = __webpack_require__(2);
 
 var _globalArray2 = _interopRequireDefault(_globalArray);
 
@@ -10305,7 +10305,7 @@ var _cookieControls = __webpack_require__(1);
 
 var _cookieControls2 = _interopRequireDefault(_cookieControls);
 
-var _hashControls = __webpack_require__(2);
+var _hashControls = __webpack_require__(3);
 
 var _hashControls2 = _interopRequireDefault(_hashControls);
 
@@ -10313,7 +10313,7 @@ var _allPages = __webpack_require__(4);
 
 var _allPages2 = _interopRequireDefault(_allPages);
 
-var _globalArray = __webpack_require__(3);
+var _globalArray = __webpack_require__(2);
 
 var _globalArray2 = _interopRequireDefault(_globalArray);
 
@@ -10339,10 +10339,12 @@ var PageView = function () {
 
       if (self.page.indexOf('?') > -1) {
         var getId = getUrlVars(self.page)["id"];
+        var getName = getUrlVars(self.page)["name"];
 
         _globalArray2.default.globalArray['paramid'] = getId;
+        _globalArray2.default.globalArray['paramname'] = getName;
 
-        // console.log(GlobalArray.globalArray)
+        console.log(_globalArray2.default.globalArray);
         self.page = self.page.split('?')[0];
       }
 
@@ -10374,22 +10376,21 @@ var PageView = function () {
 
         $('.loader').fadeOut();
 
-        if (self.page == 'Login') {
+        if (self.page == 'login') {
           $('#navTop').addClass('hidden');
         } else {
           $('#navTop').removeClass('hidden');
         }
         $('.userName').text(decodeURIComponent(new _cookieControls2.default().getCookie('user')));
 
-        new _allPages2.default(self.page).clickHandler();
-
         var tpl = new _allPages2.default(self.page).render();
+        $('.section-view').html(tpl);
+        new _allPages2.default(self.page).clickHandler();
       } else if (self.page != '') {
         var tpl = new _allPages2.default('_404').render();
         new _hashControls2.default('404').setHash();
+        $('.section-view').html(tpl);
       }
-
-      $('.section-view').html(tpl);
     }
   }]);
 
@@ -10426,7 +10427,7 @@ var _cookieControls = __webpack_require__(1);
 
 var _cookieControls2 = _interopRequireDefault(_cookieControls);
 
-var _hashControls = __webpack_require__(2);
+var _hashControls = __webpack_require__(3);
 
 var _hashControls2 = _interopRequireDefault(_hashControls);
 
@@ -10434,7 +10435,7 @@ var _pageView = __webpack_require__(7);
 
 var _pageView2 = _interopRequireDefault(_pageView);
 
-var _globalArray = __webpack_require__(3);
+var _globalArray = __webpack_require__(2);
 
 var _globalArray2 = _interopRequireDefault(_globalArray);
 
@@ -18198,7 +18199,7 @@ exports.default = _404;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function($) {
+/* WEBPACK VAR INJECTION */(function($, jQuery) {
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -18214,11 +18215,11 @@ var _codeComp = __webpack_require__(5);
 
 var _codeComp2 = _interopRequireDefault(_codeComp);
 
-var _hashControls = __webpack_require__(2);
+var _hashControls = __webpack_require__(3);
 
 var _hashControls2 = _interopRequireDefault(_hashControls);
 
-var _globalArray = __webpack_require__(3);
+var _globalArray = __webpack_require__(2);
 
 var _globalArray2 = _interopRequireDefault(_globalArray);
 
@@ -18232,13 +18233,13 @@ var Dashboard = function () {
 
     this.id = id;
     this.googleListingURL = new _codeComp2.default().mainCode();
-    this.dashboardDatas = [];
+    this.listDatas = [];
   }
 
   _createClass(Dashboard, [{
     key: 'render',
     value: function render() {
-      var tpl = '\n    <div class="container">\n      <div id="dashboard-view">\n        <div class="col-md-4">\n          <div class="panel panel-default">\n            <div class="panel-body">\n              <a href="#listing">Listing</a>\n            </div>\n          </div>\n        </div>\n      </div>\n      <button class="btn btn-primary" type="button" id="create-new-dashboard">Create New</button>\n    </div>\n    ';
+      var tpl = '\n    <div class="container">\n      <div class="col-md-12">\n        <button class="btn btn-primary" type="button" id="create-new-dashboard">Create New</button>\n      </div>\n      <div class="clearfix"></div>\n      <div class="m-t-2" id="dashboard-view">        \n      </div>\n    </div>\n    ';
       return tpl;
     }
   }, {
@@ -18249,38 +18250,37 @@ var Dashboard = function () {
       var urlHash = new _hashControls2.default().getHash();
 
       var readmodulesParamURL = self.googleListingURL + '&pageid=' + urlHash + '&action=readpagedatas';
-
+      $('.loader').fadeIn();
       $.getJSON(readmodulesParamURL, function (callback) {
         console.log('all=', callback);
-        $.each(callback.result, function (index, elm) {
-          // var obj = {}
-          createModules(elm);
-          // console.log(elm[2])
-        });
+        if (callback) {
+          self.listDatas.push(callback);
+        } else {
+          self.listDatas.push([]);
+        }
+        pushData(self.listDatas[0]);
+        $('.loader').fadeOut();
       });
-
-      function createModules(elm) {
-        $('#dashboard-view').append('\n          <div class="col-md-4">\n            <div class="panel panel-default">\n              <i class="ion-close dashboard-remove-btn" data-id="' + elm[1] + '"></i>\n              <div class="panel-body">\n                <a href="#' + elm[3] + '?id=' + elm[1] + '" data-type="' + elm[3] + '">' + elm[2] + '</a>\n              </div>\n            </div>\n          </div>\n        ');
-      }
-
-      /*const dashboardView = (data) => {
-        var lists = ''
-      }*/
 
       $(document).on('click', '.dashboard-remove-btn', function (event) {
         var _this = $(this);
-        var getId = $(this).attr('data-id');
-        var paramURL = self.googleListingURL + '&moduleid=' + getId + '&action=removemodule';
+        var id = $(this).attr('data-id');
+        var paramURL = self.googleListingURL + '&moduleid=' + id + '&action=removemodule';
         $.getJSON(paramURL, function (callback) {
           var output = JSON.parse(callback.result);
           console.log(output);
           if (output.result) {
-            _this.closest('.col-md-4').remove();
+            // _this.closest('.col-md-4').remove();
+            self.listDatas[0].result = jQuery.grep(self.listDatas[0].result, function (elm, index) {
+              return elm[1] != id;
+            });
+            pushData(self.listDatas[0]);
           }
         });
       });
 
       $(document).on('click', '#create-new-dashboard', function (event) {
+        $('#dashboard-create-name').val('');
         $('#dashboard-create-modal').modal('show');
       });
 
@@ -18293,17 +18293,13 @@ var Dashboard = function () {
         console.log(paramURL);
 
         $.getJSON(paramURL, function (callback) {
-          if (callback) {
-            var datas = JSON.parse(callback.result);
-            var elm = [];
-            elm[0] = datas.currentTime;
-            elm[1] = datas.id;
-            elm[2] = moduleName;
-            elm[3] = moduleType;
-            createModules(elm);
-            $('#dashboard-create-name').val('');
+          var outputDatas = JSON.parse(callback.result);
+          if (outputDatas.result) {
+            console.log(outputDatas);
+            self.listDatas[0].result.unshift(outputDatas.result);
+            pushData(self.listDatas[0]);
           } else {
-            alert('failed');
+            alert('Failed');
           }
           $('.loader').fadeOut();
         });
@@ -18316,19 +18312,30 @@ var Dashboard = function () {
   return Dashboard;
 }();
 
+var pushData = function pushData(data) {
+  var lists = '';
+  $.each(data.result, function (index, elm) {
+    lists += '<div class="col-md-4">\n            <div class="panel panel-default">\n              <i class="ion-close dashboard-remove-btn" data-id="' + elm[1] + '"></i>\n              <div class="panel-body">\n                <a href="#' + elm[3] + '?id=' + elm[1] + '&name=' + elm[2] + '" data-type="' + elm[3] + '">' + elm[2] + '</a>\n              </div>\n            </div>\n          </div>';
+  });
+
+  $('#dashboard-view').html(lists);
+};
+
 exports.default = Dashboard;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(0)))
 
 /***/ }),
 /* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function($) {
+/* WEBPACK VAR INJECTION */(function($, jQuery) {
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -18340,7 +18347,7 @@ var _codeComp = __webpack_require__(5);
 
 var _codeComp2 = _interopRequireDefault(_codeComp);
 
-var _globalArray = __webpack_require__(3);
+var _globalArray = __webpack_require__(2);
 
 var _globalArray2 = _interopRequireDefault(_globalArray);
 
@@ -18360,15 +18367,20 @@ var Listing = function () {
   _createClass(Listing, [{
     key: "render",
     value: function render() {
-      var tpl = "\n    <div class=\"container\">\n      <div id=\"listing-view\">\n        Listing\n      </div>\n    </div> \n    ";
+      var tpl = "\n    <div class=\"container\">\n      <div class=\"section-top\">\n        <nav aria-label=\"breadcrumb\">\n          <ol class=\"breadcrumb\">\n            <li class=\"breadcrumb-item\"><a href=\"#dashboard\">Dashboard</a></li>\n            <li class=\"breadcrumb-item active\" aria-current=\"page\"></li>\n          </ol>\n        </nav>\n      </div>\n      <div id=\"listing-view\">\n        \n      </div>\n    </div> \n    ";
       return tpl;
     }
   }, {
     key: "clickHandler",
     value: function clickHandler() {
+      var imageURI,
+          fileName,
+          fileChange = false;
       var self = this;
       // let paramURL = self.googleListingURL+'&action=read'
       var paramId = _globalArray2.default.globalArray.paramid;
+      var paramName = _globalArray2.default.globalArray.paramname;
+      $('.breadcrumb-item.active').html('Listing: ' + paramName);
 
       var readlistParamURL = self.googleListingURL + '&pageid=' + paramId + '&action=readpagedatas';
 
@@ -18383,42 +18395,196 @@ var Listing = function () {
         pushData(self.listDatas[0]);
         $('.loader').fadeOut();
       });
+
+      function getObjects(obj, key, val) {
+        var objects = [];
+        for (var i in obj) {
+          if (!obj.hasOwnProperty(i)) continue;
+          if (_typeof(obj[i]) == 'object') {
+            objects = objects.concat(getObjects(obj[i], key, val));
+          } else if (i == key && obj[key] == val) {
+            objects.push(obj);
+          }
+        }
+        return objects;
+      }
+
+      $(document).off().on('click', '.list-controls', function (event) {
+        var getId = $(this).attr('data-id');
+        var mediaId = $(this).attr('data-mediaid');
+        var paramId = _globalArray2.default.globalArray.paramid;
+        // $('body').attr('selectedid', getId)
+
+        if ($(this).hasClass('list-remove')) {
+
+          removeThis(paramId, getId, mediaId);
+        }
+        if ($(this).hasClass('list-edit')) {
+          editThis(getId);
+        }
+      });
+
+      //Remove
+      function removeThis(paramId, id, mediaId) {
+        var deleteParamURL = self.googleListingURL + '&pageid=' + paramId + '&id=' + id + '&mediaid=' + mediaId + '&action=deleterow';
+        $.getJSON(deleteParamURL, function (callback) {
+          var output = JSON.parse(callback.result);
+          console.log('deleted=', output);
+          if (output.result) {
+            self.listDatas[0].result = jQuery.grep(self.listDatas[0].result, function (elm, index) {
+              return elm[1] != id;
+            });
+            pushData(self.listDatas[0]);
+          }
+        });
+      }
+
+      //Edit
+      function editThis(getId) {
+        var getListVal = getObjects(self.listDatas[0], 1, getId);
+
+        $('#listing-modal .modal-title').text('Edit');
+        $('#listing-modal #listing-name').val(getListVal[0][2]);
+        $('#listing-modal #listing-userid').val(getListVal[0][3]);
+        $('#listing-modal #listing-imageupload').val('');
+        imageURI = getListVal[0][6];
+        fileName = '';
+        $('#listing-okBtn').attr({ 'data-action': 'edit', 'data-rowid': getId });
+        $('#listing-modal').modal('show');
+      }
+
+      //Create New
+      $(document).on('click', '#listing-create-btn', function () {
+        $('#listing-modal .modal-title').text('Create New');
+        $('#listing-modal #listing-name').val('');
+        $('#listing-modal #listing-userid').val('');
+        $('#listing-modal #listing-imageupload').val('');
+        imageURI = undefined;
+        fileName = '';
+        $('#listing-okBtn').attr({ 'data-action': 'create', 'data-rowid': '' });
+        $('#listing-modal').modal('show');
+      });
+
+      $("#listing-imageupload").on('change', function (event) {
+        var inputFiles = this.files;
+        if (inputFiles == undefined || inputFiles.length == 0) return;
+        var inputFile = inputFiles[0];
+        var reader = new FileReader();
+        fileChange = true;
+        fileName = $(this).val().replace(/.*[\/\\]/, '');
+        reader.onload = function (event) {
+          imageURI = event.target.result;
+        };
+        reader.onerror = function (event) {
+          alert("ERROR: " + event.target.error.code);
+        };
+        reader.readAsDataURL(inputFile);
+      });
+
+      $(document).on('click', '#listing-okBtn', function () {
+        var paramId = _globalArray2.default.globalArray.paramid;
+        var getName = $('#listing-modal #listing-name').val();
+        var getUserId = $('#listing-modal #listing-userid').val();
+
+        var action = $(this).attr('data-action');
+
+        var formdata = new FormData();
+
+        if (action == 'create') {
+          var timestamp = new Date();
+          var rowId = timestamp.toISOString().replace(/\D/g, "").substr(0, 14);
+          formdata.append('action', 'create');
+        } else {
+          var rowId = $(this).attr('data-rowid');
+          formdata.append('action', 'edit');
+        }
+
+        formdata.append('pageid', paramId);
+        formdata.append('id', rowId);
+        formdata.append('name', getName);
+        formdata.append('userid', getUserId);
+
+        if (imageURI) {
+          var filetype = imageURI.substring(5, imageURI.indexOf(';'));
+          var img = imageURI.replace(/^.*,/, '');
+
+          formdata.append('filechange', fileChange);
+          formdata.append('file', img);
+          formdata.append('filename', fileName);
+          formdata.append('filetype', filetype);
+          formdata.append('foldername', 'listing');
+        } else {
+          formdata.append('file', '');
+        }
+
+        // formdata.append('group', 'secondary')
+
+        var dataAddURL = self.googleListingURL;
+
+        console.log('url=', dataAddURL);
+
+        $.ajax({
+          method: 'POST',
+          url: dataAddURL,
+          data: formdata,
+          dataType: 'json',
+          contentType: false,
+          processData: false,
+          beforeSend: function beforeSend() {
+            $('.loader').fadeIn();
+          }
+        }).done(function (callback) {
+          // console.log('created==',callback)
+          var outputDatas = JSON.parse(callback.result);
+          if (outputDatas.result) {
+            fileChange = false;
+            if (action == 'create') {
+              self.listDatas[0].result.unshift(outputDatas.result);
+            } else {
+
+              console.log('editOriginal=', outputDatas.result);
+
+              $.each(self.listDatas[0].result, function (index, elm) {
+                if (elm[1] == outputDatas.result[1]) {
+                  self.listDatas[0].result[index] = outputDatas.result;
+                }
+              });
+
+              console.log('editOut=', self.listDatas[0].result);
+            }
+            $('#listing-modal').modal('hide');
+            pushData(self.listDatas[0]);
+          }
+        }).fail(function (callback) {
+          console.clear();
+          console.log('Fail');
+        }).always(function () {
+          $('.loader').fadeOut();
+        });
+      });
     }
   }]);
 
   return Listing;
 }();
 
-$(document).off().on('click', '.list-controls', function (event) {
-  var getId = $(this).attr('data-id');
-  // $('body').attr('selectedid', getId)
-
-  if ($(this).hasClass('list-remove')) {
-    removeThis(getId);
-  }
-  // if($(this).hasClass('list-edit')) {
-  //   editThis(getId)
-  // }
-});
-
-//Remove
-function removeThis(id) {
-  alert(id);
-}
-
 var pushData = function pushData(data) {
 
   var lists = '';
   $.each(data.result, function (index, elm) {
-    console.log(elm);
-    lists += "<tr data-rowid=\"" + elm[1] + "\">\n          <td>" + (index + 1) + "</td>\n          <td>" + elm[0] + "</td>\n          <td>" + elm[2] + "</td>\n          <td>" + elm[3] + "</td>\n          <td><div class=\"img-thumb\" style=\"background-image:url(" + elm[4] + ")\"></div></td>\n          <td><a class=\"list-controls list-edit\" data-id=" + elm[1] + ">Edit</a></td>\n          <td><a class=\"list-controls list-remove\" data-id=" + elm[1] + ">Remove</a></td>\n        </tr>";
+    // console.log('med=',elm)
+    var bgImg = "style=\"background-image:url(images/placeholder.png)\"";
+    if (elm[6]) {
+      bgImg = "style=\"background-image:url(" + elm[6] + ")\"";
+    }
+    lists += "<tr data-rowid=\"" + elm[1] + "\">\n          <td>" + (index + 1) + "</td>\n          <td>" + elm[0] + "</td>\n          <td>" + elm[2] + "</td>\n          <td>" + elm[3] + "</td>\n          <td><div class=\"img-thumb\" " + bgImg + "></div></td>\n          <td><a class=\"list-controls list-edit\" data-id=" + elm[1] + ">Edit</a></td>\n          <td><a class=\"list-controls list-remove\" data-id=" + elm[1] + " data-mediaid=" + elm[4] + ">Remove</a></td>\n        </tr>";
   });
 
-  $('#listing-view').html("\n    <div class=\"pull-right\"><button type=\"button\" class=\"btn btn-primary\" id=\"listing-create-btn\">Create New</button></div>\n    <div class=\"clearfix\"></div>\n    <table class=\"table table-responsive sortable-row\">\n      <thead>\n        <tr>\n          <th>#</th>\n          <th>Time</th>\n          <th>Name</th>\n          <th>User ID</th>\n          <th>&nbsp;</th>\n          <th>&nbsp;</th>\n        </tr>\n      </thead>\n      <tbody>\n        " + lists + "            \n      </tbody>\n    </table>\n  ");
+  $('#listing-view').html("\n    <div class=\"pull-right\"><button type=\"button\" class=\"btn btn-primary\" id=\"listing-create-btn\">Create New</button></div>\n    <div class=\"clearfix\"></div>\n    <table class=\"table table-responsive sortable-row\">\n      <thead>\n        <tr>\n          <th>#</th>\n          <th>Time</th>\n          <th>Name</th>\n          <th>User ID</th>\n          <th>&nbsp;</th>\n          <th>&nbsp;</th>\n          <th>&nbsp;</th>\n        </tr>\n      </thead>\n      <tbody>\n        " + lists + "            \n      </tbody>\n    </table>\n  ");
 };
 
 exports.default = Listing;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(0)))
 
 /***/ }),
 /* 16 */

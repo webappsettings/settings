@@ -55,7 +55,7 @@ body {
 .list-edit, .list-remove {
   cursor: pointer; }
 
-.sortable-row tr:hover {
+.sortable-row tbody tr:hover {
   background-color: #d5dfe8; }
 
 .img-thumb {
@@ -71,5 +71,8 @@ body {
   cursor: pointer;
   color: grey;
   font-size: 12px; }
+
+.m-t-2 {
+  margin-top: 2rem; }
 
 /*# sourceMappingURL=style.css.map*/
