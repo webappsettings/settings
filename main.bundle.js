@@ -9953,6 +9953,8 @@ var CookieControls = function () {
       var localSecureId = this.getCookie("localSecureId");
       var self = this;
 
+      var opened = false;
+
       if (localSecureId != "") {
         var paramURL = this.googleURL + "?cb&id=" + localSecureId + "&action=vw";
 
@@ -9985,12 +9987,23 @@ var CookieControls = function () {
               }
 
               if (urlHash == '' || urlHash == 'login' || !urlHash) {
+
                 new _hashControls2.default('dashboard').setHash();
                 new _pageView2.default('dashboard').visible();
               } else {
                 if (!prevHistory) {
-                  new _pageView2.default(urlHash).visible();
+
+                  if (urlHash == '404') {
+                    new _hashControls2.default('dashboard').setHash();
+                    new _pageView2.default('dashboard').visible();
+                    opened = true;
+                  } else {
+                    new _pageView2.default(urlHash).visible();
+                    new _hashControls2.default(urlHash).setHash();
+                  }
                 }
+              }
+              if (!opened) {
                 new _hashControls2.default(urlHash).setHash();
               }
             }
@@ -10273,7 +10286,7 @@ var Login = function () {
   }, {
     key: "clickHandler",
     value: function clickHandler() {
-      $('#loginBtn').off().on("click", function (e) {
+      $('#loginBtn').on("click", function (e) {
 
         var loginE = encodeURIComponent($('#loginEmail').val());
         var loginP = $('#loginPassword').val();
@@ -10386,7 +10399,10 @@ var PageView = function () {
 
         var tpl = new _allPages2.default(self.page).render();
         $('.section-view').html(tpl);
-        new _allPages2.default(self.page).clickHandler();
+
+        if (self.page != 'login') {
+          new _allPages2.default(self.page).clickHandler();
+        }
       } else if (self.page != '') {
         var tpl = new _allPages2.default('_404').render();
         new _hashControls2.default('404').setHash();
@@ -18182,7 +18198,7 @@ var _404 = function () {
   _createClass(_404, [{
     key: "render",
     value: function render() {
-      var tpl = "\n    <div class=\"container\">\n      404\n    </div>\n    ";
+      var tpl = "\n    <div class=\"container\">\n      <div class=\"section-top\">\n        <a href=\"#dashboard\">Dashboard</a>\n      </div>\n      <div class=\"m-t-2 view\">\n        404\n      </div>\n    </div>\n    ";
       return tpl;
     }
   }, {
@@ -18266,7 +18282,7 @@ var Dashboard = function () {
       $(document).on('click', '.dashboard-remove-btn', function (event) {
         var _this = $(this);
         var id = $(this).attr('data-id');
-        var paramURL = self.googleListingURL + '&moduleid=' + id + '&action=removemodule';
+        var paramURL = new _codeComp2.default().mainCode() + '&moduleid=' + id + '&action=removemodule';
         $.getJSON(paramURL, function (callback) {
           var output = JSON.parse(callback.result);
           console.log(output);
@@ -18276,6 +18292,8 @@ var Dashboard = function () {
               return elm[1] != id;
             });
             pushData(self.listDatas[0]);
+          } else {
+            new _cookieControls2.default().deleteCookie(); //Logout
           }
         });
       });
@@ -18289,7 +18307,7 @@ var Dashboard = function () {
         var moduleName = $('#dashboard-create-name').val();
         var moduleType = $('#dashboard-create-type').val();
 
-        var paramURL = self.googleListingURL + '&modulename=' + moduleName + '&moduletype=' + moduleType + '&action=createmodule';
+        var paramURL = new _codeComp2.default().mainCode() + '&modulename=' + moduleName + '&moduletype=' + moduleType + '&action=createmodule';
 
         console.log(paramURL);
 
@@ -18300,7 +18318,7 @@ var Dashboard = function () {
             self.listDatas[0].result.unshift(outputDatas.result);
             pushData(self.listDatas[0]);
           } else {
-            alert('Failed');
+            new _cookieControls2.default().deleteCookie(); //Logout
           }
           $('.loader').fadeOut();
         });
@@ -18385,6 +18403,8 @@ var Listing = function () {
 
       var readlistParamURL = self.googleListingURL + '&pageid=' + paramId + '&action=readpagedatas';
 
+      console.log('listingURL=', readlistParamURL);
+
       $('.loader').fadeIn();
       $.getJSON(readlistParamURL, function (callback) {
         console.log('listAll', callback);
@@ -18427,7 +18447,8 @@ var Listing = function () {
 
       //Remove
       function removeThis(paramId, id, mediaId) {
-        var deleteParamURL = self.googleListingURL + '&pageid=' + paramId + '&id=' + id + '&mediaid=' + mediaId + '&action=deleterow';
+
+        var deleteParamURL = new _codeComp2.default().mainCode() + '&pageid=' + paramId + '&id=' + id + '&mediaid=' + mediaId + '&action=deleterow';
         $.getJSON(deleteParamURL, function (callback) {
           var output = JSON.parse(callback.result);
           console.log('deleted=', output);
@@ -18436,6 +18457,8 @@ var Listing = function () {
               return elm[1] != id;
             });
             pushData(self.listDatas[0]);
+          } else {
+            new _cookieControls2.default().deleteCookie(); //Logout
           }
         });
       }
@@ -18520,7 +18543,9 @@ var Listing = function () {
 
         // formdata.append('group', 'secondary')
 
-        var dataAddURL = self.googleListingURL;
+        // var dataAddURL = self.googleListingURL;
+
+        var dataAddURL = new _codeComp2.default().mainCode();
 
         console.log('url=', dataAddURL);
 
@@ -18550,17 +18575,19 @@ var Listing = function () {
                   self.listDatas[0].result[index] = outputDatas.result;
                 }
               });
-
               console.log('editOut=', self.listDatas[0].result);
             }
-            $('#listing-modal').modal('hide');
+
             pushData(self.listDatas[0]);
+          } else {
+            new _cookieControls2.default().deleteCookie(); //Logout
           }
         }).fail(function (callback) {
           console.clear();
           console.log('Fail');
         }).always(function () {
           $('.loader').fadeOut();
+          $('#listing-modal').modal('hide');
         });
       });
     }
