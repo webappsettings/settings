@@ -37,6 +37,9 @@ class Listing {
 
     let readlistParamURL = self.googleListingURL+'&pageid='+paramId+'&action=readpagedatas'
 
+
+    console.log('listingURL=', readlistParamURL)
+
     $('.loader').fadeIn()
     $.getJSON(readlistParamURL, function(callback) {
       console.log('listAll',callback)
@@ -82,7 +85,8 @@ class Listing {
 
     //Remove
     function removeThis(paramId, id, mediaId) {
-      let deleteParamURL = self.googleListingURL+'&pageid='+paramId+'&id='+id+'&mediaid='+mediaId+'&action=deleterow'
+
+      let deleteParamURL = new CodeComp().mainCode()+'&pageid='+paramId+'&id='+id+'&mediaid='+mediaId+'&action=deleterow'
       $.getJSON(deleteParamURL, function(callback) {
         let output = JSON.parse(callback.result)
         console.log('deleted=', output)
@@ -91,6 +95,8 @@ class Listing {
             return elm[1] != id         
           })
           pushData(self.listDatas[0])
+        } else {
+          new CookieControls().deleteCookie()//Logout
         }
       })
     }
@@ -183,7 +189,9 @@ class Listing {
 
       // formdata.append('group', 'secondary')
 
-      var dataAddURL = self.googleListingURL;
+      // var dataAddURL = self.googleListingURL;
+
+      var dataAddURL = new CodeComp().mainCode()
 
       console.log('url=',dataAddURL)
 
@@ -214,13 +222,12 @@ class Listing {
                   self.listDatas[0].result[index] = outputDatas.result
                 }
               });
-
-
               console.log('editOut=',self.listDatas[0].result)
-              
             }
-            $('#listing-modal').modal('hide')
+            
             pushData(self.listDatas[0])
+          } else {
+            new CookieControls().deleteCookie()//Logout
           }
         })
         .fail(function(callback) {
@@ -229,6 +236,7 @@ class Listing {
        })
        .always(function(){
          $('.loader').fadeOut()
+         $('#listing-modal').modal('hide')
        });
 
     });

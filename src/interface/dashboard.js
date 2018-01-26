@@ -48,7 +48,7 @@ class Dashboard {
     $(document).on('click', '.dashboard-remove-btn', function(event) {
       var _this = $(this)
       let id = $(this).attr('data-id')
-      let paramURL = self.googleListingURL+'&moduleid='+id+'&action=removemodule'
+      let paramURL = new CodeComp().mainCode()+'&moduleid='+id+'&action=removemodule'
       $.getJSON(paramURL, function(callback) {
         let output = JSON.parse(callback.result)
         console.log(output)
@@ -58,6 +58,8 @@ class Dashboard {
             return elm[1] != id         
           })
           pushData(self.listDatas[0])
+        } else {
+          new CookieControls().deleteCookie()//Logout
         }
       }); 
     });
@@ -71,7 +73,7 @@ class Dashboard {
       let moduleName = $('#dashboard-create-name').val()
       let moduleType = $('#dashboard-create-type').val()
 
-      let paramURL = self.googleListingURL+'&modulename='+moduleName+'&moduletype='+moduleType+'&action=createmodule'
+      let paramURL = new CodeComp().mainCode()+'&modulename='+moduleName+'&moduletype='+moduleType+'&action=createmodule'
       
       console.log(paramURL)
 
@@ -82,7 +84,7 @@ class Dashboard {
           self.listDatas[0].result.unshift(outputDatas.result)
           pushData(self.listDatas[0])
         } else {
-          alert('Failed')
+          new CookieControls().deleteCookie()//Logout
         }
         $('.loader').fadeOut()
       })

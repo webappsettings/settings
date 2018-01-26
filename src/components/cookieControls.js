@@ -20,6 +20,8 @@ class CookieControls {
     let localSecureId = this.getCookie("localSecureId");
     let self = this
 
+    var opened = false
+
 
     if (localSecureId != "") {
       let paramURL = this.googleURL+"?cb&id="+localSecureId+"&action=vw"
@@ -57,18 +59,28 @@ class CookieControls {
                   var urlHash = prevHistory
                 }
                 
-
                  if(urlHash == '' || urlHash == 'login' || !urlHash) {
+
                   new HashControls('dashboard').setHash()
                   new PageView('dashboard').visible()
                 } else {
                   if(! prevHistory) {
-                    new PageView(urlHash).visible()
+                    
+                    if(urlHash=='404'){
+                      new HashControls('dashboard').setHash()
+                      new PageView('dashboard').visible()
+                      opened = true
+                    } else {
+                      new PageView(urlHash).visible()
+                      new HashControls(urlHash).setHash()
+                    }
+                    
                   }
+                  
+                }
+                if(!opened) {
                   new HashControls(urlHash).setHash()
                 }
-
-                
               }
           
 

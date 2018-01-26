@@ -67,9 +67,11 @@ class PageView {
         
         var tpl =  new Allpages(self.page).render()
         $('.section-view').html(tpl)
-        new Allpages(self.page).clickHandler()
 
-
+        if(self.page != 'login') {
+          new Allpages(self.page).clickHandler()
+        }
+        
       } else if(self.page != '') {
         var tpl =  new Allpages('_404').render()
         new HashControls('404').setHash()

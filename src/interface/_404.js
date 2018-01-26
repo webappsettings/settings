@@ -6,7 +6,12 @@ class _404 {
   render() {
     const tpl =  `
     <div class="container">
-      404
+      <div class="section-top">
+        <a href="#dashboard">Dashboard</a>
+      </div>
+      <div class="m-t-2 view">
+        404
+      </div>
     </div>
     `
     return tpl

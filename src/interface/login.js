@@ -27,7 +27,7 @@ class Login {
   }
 
   clickHandler() {
-    $('#loginBtn').off().on("click", (e) => {
+    $('#loginBtn').on("click", (e) => {
 
        let loginE = encodeURIComponent($('#loginEmail').val())
        let loginP = $('#loginPassword').val()
