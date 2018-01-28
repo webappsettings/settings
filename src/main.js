@@ -54,6 +54,11 @@ const load = () => {
 
       if(loginOk) {
         if(toPage == 'login') {
+          var urlHash = new HashControls().getHash()
+
+          new HashControls('dashboard').setHash()
+          new PageView('dashboard').visible()
+          
           window.location.href;
           location.reload();         
         }

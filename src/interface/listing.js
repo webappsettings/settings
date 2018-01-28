@@ -1,6 +1,7 @@
 import CookieControls from "components/cookieControls"
 import CodeComp from 'components/codeComp';
 import GlobalArray from "components/globalArray";
+import HashControls from 'components/hashControls';
 
 class Listing {
   constructor(id){
@@ -35,20 +36,48 @@ class Listing {
     let paramName = GlobalArray.globalArray.paramname
     $('.breadcrumb-item.active').html('Listing: '+paramName)
 
-    let readlistParamURL = self.googleListingURL+'&pageid='+paramId+'&action=readpagedatas'
+    let readlistParamURL = new CodeComp().mainCode()+'&pageid='+paramId+'&action=readpagedatas'
 
 
     console.log('listingURL=', readlistParamURL)
 
     $('.loader').fadeIn()
     $.getJSON(readlistParamURL, function(callback) {
+
       console.log('listAll',callback)
-      if(callback) {
-        self.listDatas.push(callback)
+      // let output = JSON.parse(callback)
+      // var output = callback
+
+      // console.log(callback)
+      if(callback.result != '{"result":false}') {
+        if(callback.result[0] == 'pageremoved'){
+          alert('This page removed!')
+          new HashControls('dashboard').setHash()
+        } else {
+            self.listDatas.push(callback)
+            pushData(self.listDatas[0])
+        }
       } else {
-        self.listDatas.push([])
+          new CookieControls().deleteCookie()//Logout
       }
-      pushData(self.listDatas[0])
+      
+
+      // console.log('listAll',callback)
+
+      /*if(output.result[0]!=false) {
+        if(output.result[0] != 'pageremoved') {
+          self.listDatas.push(output.result)
+          pushData(self.listDatas[0])
+        } 
+        if(output.result[0] == 'pageremoved'){
+          alert('This page removed!')
+          new HashControls('dashboard').setHash()
+        } 
+      } else {
+          new HashControls('dashboard').setHash()
+      }*/
+
+      
       $('.loader').fadeOut()
     }) 
 
@@ -91,10 +120,15 @@ class Listing {
         let output = JSON.parse(callback.result)
         console.log('deleted=', output)
         if(output.result) {
-          self.listDatas[0].result = jQuery.grep(self.listDatas[0].result, function( elm, index ) {
-            return elm[1] != id         
-          })
-          pushData(self.listDatas[0])
+          if(output.result != 'pageremoved') {
+            self.listDatas[0].result = jQuery.grep(self.listDatas[0].result, function( elm, index ) {
+              return elm[1] != id         
+            })
+            pushData(self.listDatas[0])
+          } else {
+            alert('This page removed!')
+            new HashControls('dashboard').setHash()
+          }
         } else {
           new CookieControls().deleteCookie()//Logout
         }
@@ -232,7 +266,9 @@ class Listing {
         })
         .fail(function(callback) {
           console.clear()
-         console.log('Fail')
+          console.log('Fail')
+          alert('This page removed!')
+          new HashControls('dashboard').setHash()
        })
        .always(function(){
          $('.loader').fadeOut()

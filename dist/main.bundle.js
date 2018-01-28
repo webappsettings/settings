@@ -10072,10 +10072,11 @@ var CookieControls = function () {
   }, {
     key: 'deleteCookie',
     value: function deleteCookie() {
-      // delete GlobalArray.globalArray['main'];
+      if (typeof _globalArray2.default.globalArray['main'] !== 'undefined') {
+        $.getJSON(new _codeComp2.default().mainCode() + '&logincode=' + this.loginCode + '&localcode=' + this.getCookie("localSecureId") + '&user=' + this.getCookie('user') + '&action=logout');
+      }
       this.setCookie('localSecureId', "", -1);
       this.setCookie('user', "", -1);
-      // this.setCookie('main',"",-1);
       this.setCookie('history', "", -1);
       new _hashControls2.default('login').setHash();
     }
@@ -10499,6 +10500,11 @@ var load = function load() {
 
     if (loginOk) {
       if (toPage == 'login') {
+        var urlHash = new _hashControls2.default().getHash();
+
+        new _hashControls2.default('dashboard').setHash();
+        new _pageView2.default('dashboard').visible();
+
         window.location.href;
         location.reload();
       }
@@ -18266,10 +18272,11 @@ var Dashboard = function () {
 
       var urlHash = new _hashControls2.default().getHash();
 
-      var readmodulesParamURL = self.googleListingURL + '&pageid=' + urlHash + '&action=readpagedatas';
+      var readmodulesParamURL = new _codeComp2.default().mainCode() + '&pageid=' + urlHash + '&action=readpagedatas';
       $('.loader').fadeIn();
       $.getJSON(readmodulesParamURL, function (callback) {
         console.log('all=', callback);
+
         if (callback) {
           self.listDatas.push(callback);
         } else {
@@ -18370,6 +18377,10 @@ var _globalArray = __webpack_require__(2);
 
 var _globalArray2 = _interopRequireDefault(_globalArray);
 
+var _hashControls = __webpack_require__(3);
+
+var _hashControls2 = _interopRequireDefault(_hashControls);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -18401,19 +18412,45 @@ var Listing = function () {
       var paramName = _globalArray2.default.globalArray.paramname;
       $('.breadcrumb-item.active').html('Listing: ' + paramName);
 
-      var readlistParamURL = self.googleListingURL + '&pageid=' + paramId + '&action=readpagedatas';
+      var readlistParamURL = new _codeComp2.default().mainCode() + '&pageid=' + paramId + '&action=readpagedatas';
 
       console.log('listingURL=', readlistParamURL);
 
       $('.loader').fadeIn();
       $.getJSON(readlistParamURL, function (callback) {
+
         console.log('listAll', callback);
-        if (callback) {
-          self.listDatas.push(callback);
+        // let output = JSON.parse(callback)
+        // var output = callback
+
+        // console.log(callback)
+        if (callback.result != '{"result":false}') {
+          if (callback.result[0] == 'pageremoved') {
+            alert('This page removed!');
+            new _hashControls2.default('dashboard').setHash();
+          } else {
+            self.listDatas.push(callback);
+            pushData(self.listDatas[0]);
+          }
         } else {
-          self.listDatas.push([]);
+          new _cookieControls2.default().deleteCookie(); //Logout
         }
-        pushData(self.listDatas[0]);
+
+        // console.log('listAll',callback)
+
+        /*if(output.result[0]!=false) {
+          if(output.result[0] != 'pageremoved') {
+            self.listDatas.push(output.result)
+            pushData(self.listDatas[0])
+          } 
+          if(output.result[0] == 'pageremoved'){
+            alert('This page removed!')
+            new HashControls('dashboard').setHash()
+          } 
+        } else {
+            new HashControls('dashboard').setHash()
+        }*/
+
         $('.loader').fadeOut();
       });
 
@@ -18453,10 +18490,15 @@ var Listing = function () {
           var output = JSON.parse(callback.result);
           console.log('deleted=', output);
           if (output.result) {
-            self.listDatas[0].result = jQuery.grep(self.listDatas[0].result, function (elm, index) {
-              return elm[1] != id;
-            });
-            pushData(self.listDatas[0]);
+            if (output.result != 'pageremoved') {
+              self.listDatas[0].result = jQuery.grep(self.listDatas[0].result, function (elm, index) {
+                return elm[1] != id;
+              });
+              pushData(self.listDatas[0]);
+            } else {
+              alert('This page removed!');
+              new _hashControls2.default('dashboard').setHash();
+            }
           } else {
             new _cookieControls2.default().deleteCookie(); //Logout
           }
@@ -18585,6 +18627,8 @@ var Listing = function () {
         }).fail(function (callback) {
           console.clear();
           console.log('Fail');
+          alert('This page removed!');
+          new _hashControls2.default('dashboard').setHash();
         }).always(function () {
           $('.loader').fadeOut();
           $('#listing-modal').modal('hide');

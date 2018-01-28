@@ -27,7 +27,6 @@ class CookieControls {
       let paramURL = this.googleURL+"?cb&id="+localSecureId+"&action=vw"
 
 
-
       $.getJSON(paramURL, function(callback) {
 
 
@@ -104,7 +103,7 @@ class CookieControls {
     
 
     $('.loader').fadeIn()
-    let param = "?cb&name="+this.loginE+"&id="+this.loginP+"&action=chk";
+    let param = "?cb&name="+this.loginE+"&id="+this.loginP+"&action=chk"
     let paramURL = this.googleURL+param
     let self = this
 
@@ -156,13 +155,15 @@ class CookieControls {
   }               
 
   deleteCookie() {
-    // delete GlobalArray.globalArray['main'];
-    this.setCookie('localSecureId',"",-1);
-    this.setCookie('user',"",-1);
-    // this.setCookie('main',"",-1);
-    this.setCookie('history',"",-1);
-    new HashControls('login').setHash()
-  };
+    if(typeof GlobalArray.globalArray['main'] !== 'undefined') {
+      $.getJSON(new CodeComp().mainCode()+'&logincode='+this.loginCode+'&localcode='+this.getCookie("localSecureId")+'&user='+this.getCookie('user')+'&action=logout')
+    }
+    this.setCookie('localSecureId',"",-1)
+    this.setCookie('user',"",-1)
+    this.setCookie('history',"",-1)
+    new HashControls('login').setHash() 
+
+  }
 
 }
 

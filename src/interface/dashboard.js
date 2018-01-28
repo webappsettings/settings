@@ -30,10 +30,11 @@ class Dashboard {
 
     let urlHash = new HashControls().getHash()
 
-    let readmodulesParamURL = self.googleListingURL+'&pageid='+urlHash+'&action=readpagedatas'
+    let readmodulesParamURL = new CodeComp().mainCode()+'&pageid='+urlHash+'&action=readpagedatas'
     $('.loader').fadeIn()
     $.getJSON(readmodulesParamURL, function(callback) {
       console.log('all=',callback)
+
       if(callback) {
         self.listDatas.push(callback)
       } else {
@@ -41,6 +42,9 @@ class Dashboard {
       }
       pushData(self.listDatas[0])
       $('.loader').fadeOut()
+
+
+
     })   
 
 
