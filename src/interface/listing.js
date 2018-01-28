@@ -45,10 +45,8 @@ class Listing {
     $.getJSON(readlistParamURL, function(callback) {
 
       console.log('listAll',callback)
-      // let output = JSON.parse(callback)
-      // var output = callback
-
-      // console.log(callback)
+      
+      
       if(callback.result != '{"result":false}') {
         if(callback.result[0] == 'pageremoved'){
           alert('This page removed!')
@@ -58,25 +56,9 @@ class Listing {
             pushData(self.listDatas[0])
         }
       } else {
-          new CookieControls().deleteCookie()//Logout
+        new CookieControls().deleteCookie()//Logout
       }
       
-
-      // console.log('listAll',callback)
-
-      /*if(output.result[0]!=false) {
-        if(output.result[0] != 'pageremoved') {
-          self.listDatas.push(output.result)
-          pushData(self.listDatas[0])
-        } 
-        if(output.result[0] == 'pageremoved'){
-          alert('This page removed!')
-          new HashControls('dashboard').setHash()
-        } 
-      } else {
-          new HashControls('dashboard').setHash()
-      }*/
-
       
       $('.loader').fadeOut()
     }) 
@@ -117,6 +99,7 @@ class Listing {
 
       let deleteParamURL = new CodeComp().mainCode()+'&pageid='+paramId+'&id='+id+'&mediaid='+mediaId+'&action=deleterow'
       $.getJSON(deleteParamURL, function(callback) {
+
         let output = JSON.parse(callback.result)
         console.log('deleted=', output)
         if(output.result) {

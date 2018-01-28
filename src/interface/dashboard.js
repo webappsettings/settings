@@ -32,18 +32,26 @@ class Dashboard {
 
     let readmodulesParamURL = new CodeComp().mainCode()+'&pageid='+urlHash+'&action=readpagedatas'
     $('.loader').fadeIn()
+
     $.getJSON(readmodulesParamURL, function(callback) {
       console.log('all=',callback)
 
-      if(callback) {
+      /*if(callback) {
         self.listDatas.push(callback)
       } else {
         self.listDatas.push([])
       }
-      pushData(self.listDatas[0])
+      pushData(self.listDatas[0])*/
+
+      if(callback.result != '{"result":false}') {
+        self.listDatas.push(callback)
+        pushData(self.listDatas[0])
+      } else {
+        new CookieControls().deleteCookie()//Logout
+      }
+
+
       $('.loader').fadeOut()
-
-
 
     })   
 
