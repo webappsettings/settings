@@ -10019,8 +10019,14 @@ var CookieControls = function () {
     key: 'toCookie',
     value: function toCookie() {
 
+      console.log(bowser);
+
+      var browserDetect = bowser.name + "-" + bowser.version + "  " + bowser.osname + "-" + bowser.osversion;
+
+      console.log(browserDetect);
+
       $('.loader').fadeIn();
-      var param = "?cb&name=" + this.loginE + "&id=" + this.loginP + "&action=chk";
+      var param = "?cb&name=" + this.loginE + "&id=" + this.loginP + "&browserdetect=" + browserDetect + "&action=chk";
       var paramURL = this.googleURL + param;
       var self = this;
 
@@ -10467,10 +10473,6 @@ var _allPages2 = _interopRequireDefault(_allPages);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// window.addEventListener('load', function() {
-
-// });
-
 var load = function load() {
 
   (0, _jquery2.default)(window).bind('online', function (e) {
@@ -10480,46 +10482,6 @@ var load = function load() {
   (0, _jquery2.default)(window).bind('offline', function (e) {
     (0, _jquery2.default)('body').addClass('offline-mode');
   });
-
-  var isMobile = {
-    Android: function Android() {
-      return navigator.userAgent.match(/Android/i);
-    },
-    BlackBerry: function BlackBerry() {
-      return navigator.userAgent.match(/BlackBerry/i);
-    },
-    iOS: function iOS() {
-      return navigator.userAgent.match(/iPhone|iPad|iPod/i);
-    },
-    Opera: function Opera() {
-      return navigator.userAgent.match(/Opera Mini/i);
-    },
-    Windows: function Windows() {
-      return navigator.userAgent.match(/IEMobile/i);
-    },
-    any: function any() {
-      return isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows();
-    }
-  };
-
-  if (isMobile.any()) {
-    console.log('Device: ' + isMobile.any()[0]);
-  } else {
-    var OSName = "Unknown";
-    if (window.navigator.userAgent.indexOf("Windows NT 10.0") != -1) OSName = "Windows 10";
-    if (window.navigator.userAgent.indexOf("Windows NT 6.2") != -1) OSName = "Windows 8";
-    if (window.navigator.userAgent.indexOf("Windows NT 6.1") != -1) OSName = "Windows 7";
-    if (window.navigator.userAgent.indexOf("Windows NT 6.0") != -1) OSName = "Windows Vista";
-    if (window.navigator.userAgent.indexOf("Windows NT 5.1") != -1) OSName = "Windows XP";
-    if (window.navigator.userAgent.indexOf("Windows NT 5.0") != -1) OSName = "Windows 2000";
-    if (window.navigator.userAgent.indexOf("Mac") != -1) OSName = "Mac/iOS";
-    if (window.navigator.userAgent.indexOf("X11") != -1) OSName = "UNIX";
-    if (window.navigator.userAgent.indexOf("Linux") != -1) OSName = "Linux";
-    console.log('Device: ' + OSName);
-  }
-
-  // ----------
-
 
   var urlHash = new _hashControls2.default().getHash();
 

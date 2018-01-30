@@ -23,6 +23,7 @@ class CookieControls {
     var opened = false
 
 
+
     if (localSecureId != "") {
       let paramURL = this.googleURL+"?cb&id="+localSecureId+"&action=vw"
 
@@ -102,8 +103,14 @@ class CookieControls {
 
     
 
+    console.log(bowser);
+    
+    var browserDetect = bowser.name+"-"+bowser.version+"  "+bowser.osname+"-"+bowser.osversion
+
+    console.log(browserDetect);
+
     $('.loader').fadeIn()
-    let param = "?cb&name="+this.loginE+"&id="+this.loginP+"&action=chk"
+    let param = "?cb&name="+this.loginE+"&id="+this.loginP+"&browserdetect="+browserDetect+"&action=chk"
     let paramURL = this.googleURL+param
     let self = this
 
