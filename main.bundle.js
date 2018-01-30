@@ -9916,7 +9916,7 @@ var _allPages = __webpack_require__(4);
 
 var _allPages2 = _interopRequireDefault(_allPages);
 
-var _hashControls = __webpack_require__(3);
+var _hashControls = __webpack_require__(2);
 
 var _hashControls2 = _interopRequireDefault(_hashControls);
 
@@ -9928,7 +9928,7 @@ var _codeComp = __webpack_require__(5);
 
 var _codeComp2 = _interopRequireDefault(_codeComp);
 
-var _globalArray = __webpack_require__(2);
+var _globalArray = __webpack_require__(3);
 
 var _globalArray2 = _interopRequireDefault(_globalArray);
 
@@ -10099,27 +10099,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var GlobalArray = function GlobalArray() {
-  _classCallCheck(this, GlobalArray);
-
-  this.globalArray = [];
-};
-
-exports.default = new GlobalArray();
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -10149,6 +10128,27 @@ var HashControls = function () {
 exports.default = HashControls;
 
 /***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var GlobalArray = function GlobalArray() {
+  _classCallCheck(this, GlobalArray);
+
+  this.globalArray = [];
+};
+
+exports.default = new GlobalArray();
+
+/***/ }),
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10159,7 +10159,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _hashControls = __webpack_require__(3);
+var _hashControls = __webpack_require__(2);
 
 var _hashControls2 = _interopRequireDefault(_hashControls);
 
@@ -10215,7 +10215,7 @@ var _cookieControls = __webpack_require__(1);
 
 var _cookieControls2 = _interopRequireDefault(_cookieControls);
 
-var _globalArray = __webpack_require__(2);
+var _globalArray = __webpack_require__(3);
 
 var _globalArray2 = _interopRequireDefault(_globalArray);
 
@@ -10320,7 +10320,7 @@ var _cookieControls = __webpack_require__(1);
 
 var _cookieControls2 = _interopRequireDefault(_cookieControls);
 
-var _hashControls = __webpack_require__(3);
+var _hashControls = __webpack_require__(2);
 
 var _hashControls2 = _interopRequireDefault(_hashControls);
 
@@ -10328,7 +10328,7 @@ var _allPages = __webpack_require__(4);
 
 var _allPages2 = _interopRequireDefault(_allPages);
 
-var _globalArray = __webpack_require__(2);
+var _globalArray = __webpack_require__(3);
 
 var _globalArray2 = _interopRequireDefault(_globalArray);
 
@@ -10445,7 +10445,7 @@ var _cookieControls = __webpack_require__(1);
 
 var _cookieControls2 = _interopRequireDefault(_cookieControls);
 
-var _hashControls = __webpack_require__(3);
+var _hashControls = __webpack_require__(2);
 
 var _hashControls2 = _interopRequireDefault(_hashControls);
 
@@ -10453,7 +10453,7 @@ var _pageView = __webpack_require__(7);
 
 var _pageView2 = _interopRequireDefault(_pageView);
 
-var _globalArray = __webpack_require__(2);
+var _globalArray = __webpack_require__(3);
 
 var _globalArray2 = _interopRequireDefault(_globalArray);
 
@@ -10467,7 +10467,59 @@ var _allPages2 = _interopRequireDefault(_allPages);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+// window.addEventListener('load', function() {
+
+// });
+
 var load = function load() {
+
+  (0, _jquery2.default)(window).bind('online', function (e) {
+    (0, _jquery2.default)('body').removeClass('offline-mode');
+  });
+
+  (0, _jquery2.default)(window).bind('offline', function (e) {
+    (0, _jquery2.default)('body').addClass('offline-mode');
+  });
+
+  var isMobile = {
+    Android: function Android() {
+      return navigator.userAgent.match(/Android/i);
+    },
+    BlackBerry: function BlackBerry() {
+      return navigator.userAgent.match(/BlackBerry/i);
+    },
+    iOS: function iOS() {
+      return navigator.userAgent.match(/iPhone|iPad|iPod/i);
+    },
+    Opera: function Opera() {
+      return navigator.userAgent.match(/Opera Mini/i);
+    },
+    Windows: function Windows() {
+      return navigator.userAgent.match(/IEMobile/i);
+    },
+    any: function any() {
+      return isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows();
+    }
+  };
+
+  if (isMobile.any()) {
+    console.log('Device: ' + isMobile.any()[0]);
+  } else {
+    var OSName = "Unknown";
+    if (window.navigator.userAgent.indexOf("Windows NT 10.0") != -1) OSName = "Windows 10";
+    if (window.navigator.userAgent.indexOf("Windows NT 6.2") != -1) OSName = "Windows 8";
+    if (window.navigator.userAgent.indexOf("Windows NT 6.1") != -1) OSName = "Windows 7";
+    if (window.navigator.userAgent.indexOf("Windows NT 6.0") != -1) OSName = "Windows Vista";
+    if (window.navigator.userAgent.indexOf("Windows NT 5.1") != -1) OSName = "Windows XP";
+    if (window.navigator.userAgent.indexOf("Windows NT 5.0") != -1) OSName = "Windows 2000";
+    if (window.navigator.userAgent.indexOf("Mac") != -1) OSName = "Mac/iOS";
+    if (window.navigator.userAgent.indexOf("X11") != -1) OSName = "UNIX";
+    if (window.navigator.userAgent.indexOf("Linux") != -1) OSName = "Linux";
+    console.log('Device: ' + OSName);
+  }
+
+  // ----------
+
 
   var urlHash = new _hashControls2.default().getHash();
 
@@ -18238,11 +18290,11 @@ var _codeComp = __webpack_require__(5);
 
 var _codeComp2 = _interopRequireDefault(_codeComp);
 
-var _hashControls = __webpack_require__(3);
+var _hashControls = __webpack_require__(2);
 
 var _hashControls2 = _interopRequireDefault(_hashControls);
 
-var _globalArray = __webpack_require__(2);
+var _globalArray = __webpack_require__(3);
 
 var _globalArray2 = _interopRequireDefault(_globalArray);
 
@@ -18274,15 +18326,24 @@ var Dashboard = function () {
 
       var readmodulesParamURL = new _codeComp2.default().mainCode() + '&pageid=' + urlHash + '&action=readpagedatas';
       $('.loader').fadeIn();
+
       $.getJSON(readmodulesParamURL, function (callback) {
         console.log('all=', callback);
 
-        if (callback) {
-          self.listDatas.push(callback);
+        /*if(callback) {
+          self.listDatas.push(callback)
         } else {
-          self.listDatas.push([]);
+          self.listDatas.push([])
         }
-        pushData(self.listDatas[0]);
+        pushData(self.listDatas[0])*/
+
+        if (callback.result != '{"result":false}') {
+          self.listDatas.push(callback);
+          pushData(self.listDatas[0]);
+        } else {
+          new _cookieControls2.default().deleteCookie(); //Logout
+        }
+
         $('.loader').fadeOut();
       });
 
@@ -18373,11 +18434,11 @@ var _codeComp = __webpack_require__(5);
 
 var _codeComp2 = _interopRequireDefault(_codeComp);
 
-var _globalArray = __webpack_require__(2);
+var _globalArray = __webpack_require__(3);
 
 var _globalArray2 = _interopRequireDefault(_globalArray);
 
-var _hashControls = __webpack_require__(3);
+var _hashControls = __webpack_require__(2);
 
 var _hashControls2 = _interopRequireDefault(_hashControls);
 
@@ -18420,10 +18481,7 @@ var Listing = function () {
       $.getJSON(readlistParamURL, function (callback) {
 
         console.log('listAll', callback);
-        // let output = JSON.parse(callback)
-        // var output = callback
 
-        // console.log(callback)
         if (callback.result != '{"result":false}') {
           if (callback.result[0] == 'pageremoved') {
             alert('This page removed!');
@@ -18435,21 +18493,6 @@ var Listing = function () {
         } else {
           new _cookieControls2.default().deleteCookie(); //Logout
         }
-
-        // console.log('listAll',callback)
-
-        /*if(output.result[0]!=false) {
-          if(output.result[0] != 'pageremoved') {
-            self.listDatas.push(output.result)
-            pushData(self.listDatas[0])
-          } 
-          if(output.result[0] == 'pageremoved'){
-            alert('This page removed!')
-            new HashControls('dashboard').setHash()
-          } 
-        } else {
-            new HashControls('dashboard').setHash()
-        }*/
 
         $('.loader').fadeOut();
       });
@@ -18487,6 +18530,7 @@ var Listing = function () {
 
         var deleteParamURL = new _codeComp2.default().mainCode() + '&pageid=' + paramId + '&id=' + id + '&mediaid=' + mediaId + '&action=deleterow';
         $.getJSON(deleteParamURL, function (callback) {
+
           var output = JSON.parse(callback.result);
           console.log('deleted=', output);
           if (output.result) {
@@ -18645,11 +18689,14 @@ var pushData = function pushData(data) {
   var lists = '';
   $.each(data.result, function (index, elm) {
     // console.log('med=',elm)
-    var bgImg = "style=\"background-image:url(images/placeholder.png)\"";
+    var imgPath = "images/placeholder.png";
+    var bgImg = "style=\"background-image:url(" + imgPath + ")\"";
+
     if (elm[6]) {
+      imgPath = elm[6];
       bgImg = "style=\"background-image:url(" + elm[6] + ")\"";
     }
-    lists += "<tr data-rowid=\"" + elm[1] + "\">\n          <td>" + (index + 1) + "</td>\n          <td>" + elm[0] + "</td>\n          <td>" + elm[2] + "</td>\n          <td>" + elm[3] + "</td>\n          <td><div class=\"img-thumb\" " + bgImg + "></div></td>\n          <td><a class=\"list-controls list-edit\" data-id=" + elm[1] + ">Edit</a></td>\n          <td><a class=\"list-controls list-remove\" data-id=" + elm[1] + " data-mediaid=" + elm[4] + ">Remove</a></td>\n        </tr>";
+    lists += "<tr data-rowid=\"" + elm[1] + "\">\n          <td>" + (index + 1) + "</td>\n          <td>" + elm[0] + "</td>\n          <td>" + elm[2] + "</td>\n          <td>" + elm[3] + "</td>\n          <td><div class=\"img-thumb\" " + bgImg + "><img src=\"" + imgPath + "\" alt=\"\" /></div></td>\n          <td><a class=\"list-controls list-edit\" data-id=" + elm[1] + ">Edit</a></td>\n          <td><a class=\"list-controls list-remove\" data-id=" + elm[1] + " data-mediaid=" + elm[4] + ">Remove</a></td>\n        </tr>";
   });
 
   $('#listing-view').html("\n    <div class=\"pull-right\"><button type=\"button\" class=\"btn btn-primary\" id=\"listing-create-btn\">Create New</button></div>\n    <div class=\"clearfix\"></div>\n    <table class=\"table table-responsive sortable-row\">\n      <thead>\n        <tr>\n          <th>#</th>\n          <th>Time</th>\n          <th>Name</th>\n          <th>User ID</th>\n          <th>&nbsp;</th>\n          <th>&nbsp;</th>\n          <th>&nbsp;</th>\n        </tr>\n      </thead>\n      <tbody>\n        " + lists + "            \n      </tbody>\n    </table>\n  ");
