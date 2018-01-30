@@ -46,7 +46,7 @@ class Listing {
 
       console.log('listAll',callback)
       
-      
+
       if(callback.result != '{"result":false}') {
         if(callback.result[0] == 'pageremoved'){
           alert('This page removed!')
@@ -264,18 +264,16 @@ class Listing {
 }
 
 
-
-
-
-
-
 const pushData = (data) => {
   
   var lists = ''
   $.each(data.result, function(index, elm) {
     // console.log('med=',elm)
-    var bgImg = `style="background-image:url(images/placeholder.png)"`
+    var imgPath = `images/placeholder.png`
+    var bgImg = `style="background-image:url(`+imgPath+`)"`
+
     if(elm[6]) {
+      imgPath = elm[6]
       bgImg = `style="background-image:url(`+elm[6]+`)"`
     }
     lists += `<tr data-rowid="`+elm[1]+`">
@@ -283,7 +281,7 @@ const pushData = (data) => {
           <td>`+elm[0]+`</td>
           <td>`+elm[2]+`</td>
           <td>`+elm[3]+`</td>
-          <td><div class="img-thumb" `+bgImg+`></div></td>
+          <td><div class="img-thumb" `+bgImg+`><img src="`+imgPath+`" alt="" /></div></td>
           <td><a class="list-controls list-edit" data-id=`+elm[1]+`>Edit</a></td>
           <td><a class="list-controls list-remove" data-id=`+elm[1]+` data-mediaid=`+elm[4]+`>Remove</a></td>
         </tr>`
