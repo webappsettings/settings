@@ -10019,24 +10019,20 @@ var CookieControls = function () {
     key: 'toCookie',
     value: function toCookie() {
 
-      // console.log(bowser);
-
-
-      var connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-      // var type = connection.type;
-
-      // console.log('connectionType:',connection.type)
-      var location;
-      navigator.geolocation.getCurrentPosition(function (position) {
-        location = position.coords.latitude + ' + ' + position.coords.longitude;
-      });
+      console.log(bowser);
 
       // function do_something(lat,lng) {
       //     console.log('lat_lng:',lat+' '+lng)
       // }
 
+      var location = _globalArray2.default.globalArray.location;
+      // var connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
 
-      var browserDetect = bowser.name + "-" + bowser.version + "  " + bowser.osname + (bowser.osversion ? "-" + bowser.osversion : '') + (connection.type ? ' connectiontype-' + connection.type : '') + (location ? " location-" + location : '');
+      console.log('loc:', location);
+
+      // ((typeof connection.type != undefined) ?' connectiontype-'+connection.type : '')+
+
+      var browserDetect = bowser.name + "-" + bowser.version + "  " + bowser.osname + (bowser.osversion ? "-" + bowser.osversion : '') + (location ? " location-" + location : '');
 
       $('.loader').fadeIn();
       var param = "?cb&name=" + this.loginE + "&id=" + this.loginP + "&browserdetect=" + browserDetect + "&action=chk";
@@ -10494,6 +10490,15 @@ var load = function load() {
 
   (0, _jquery2.default)(window).bind('offline', function (e) {
     (0, _jquery2.default)('body').addClass('offline-mode');
+  });
+
+  // var connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  // GlobalArray.globalArray['connection'] = connection
+
+  navigator.geolocation.getCurrentPosition(function (position) {
+    var location = position.coords.latitude + ' + ' + position.coords.longitude;
+    _globalArray2.default.globalArray['location'] = location;
+    console.log(_globalArray2.default.globalArray);
   });
 
   var urlHash = new _hashControls2.default().getHash();

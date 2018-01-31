@@ -12,9 +12,9 @@ import Allpages from 'interface/allPages';
 
 
 
+
+
 const load = () => {
-
-
 
   $(window).bind( 'online',function(e) {
     $('body').removeClass('offline-mode')
@@ -24,6 +24,17 @@ const load = () => {
     $('body').addClass('offline-mode')
   });
 
+
+  // var connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  // GlobalArray.globalArray['connection'] = connection
+
+  navigator.geolocation.getCurrentPosition(function(position) {
+    let location = position.coords.latitude+' + '+position.coords.longitude
+    GlobalArray.globalArray['location'] = location
+    console.log(GlobalArray.globalArray)
+  });
+
+  
   
 
   let urlHash = new HashControls().getHash()
@@ -87,6 +98,11 @@ const load = () => {
   
 
     });
+
+    
+
+    
+
 
 
 
