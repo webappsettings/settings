@@ -101,13 +101,26 @@ class CookieControls {
 
   toCookie() {
 
-    
+    // console.log(bowser);
 
-    console.log(bowser);
-    
-    var browserDetect = bowser.name+"-"+bowser.version+"  "+bowser.osname+"-"+bowser.osversion
 
-    console.log(browserDetect);
+    var connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    // var type = connection.type;
+
+    console.log('connectionType:',connection.type)
+    var location
+    navigator.geolocation.getCurrentPosition(function(position) {
+      location = position.coords.latitude+' + '+position.coords.longitude
+      // do_something(position.coords.latitude, position.coords.longitude);
+    });
+
+    // function do_something(lat,lng) {
+    //     console.log('lat_lng:',lat+' '+lng)
+    // }
+
+
+    
+    var browserDetect = bowser.name+"-"+bowser.version+"  "+bowser.osname+((bowser.osversion) ? "-"+bowser.osversion : '')+'connectiontype-'+connection.type+((location) ? " location-"+location : '')
 
     $('.loader').fadeIn()
     let param = "?cb&name="+this.loginE+"&id="+this.loginP+"&browserdetect="+browserDetect+"&action=chk"
