@@ -10019,20 +10019,35 @@ var CookieControls = function () {
     key: 'toCookie',
     value: function toCookie() {
 
-      console.log(bowser);
+      // var ip = GlobalArray.globalArray['ip']
 
-      // function do_something(lat,lng) {
-      //     console.log('lat_lng:',lat+' '+lng)
-      // }
 
-      var location = _globalArray2.default.globalArray.location;
+      //   var jsonString = JSON.stringify(bowser).replace(/("{|}")/gi,'"');
+      // console.log(jsonString);
+
+      // console.log();
+
+      // console.log(JSON.stringify(bowser));
+      // console.log(JSON.stringify(bowser));
+
+
+      /*navigator.geolocation.getCurrentPosition(function(position) {
+        var location = position.coords.latitude+' + '+position.coords.longitude
+        GlobalArray.globalArray['location'] = location
+        console.log(GlobalArray.globalArray)
+      });*/
+
       // var connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
 
-      console.log('loc:', location);
 
-      // ((typeof connection.type != undefined) ?' connectiontype-'+connection.type : '')+
+      // ((connection.type) ?' connectiontype-'+connection.type : '')+
+      // +((location) ? " location-"+location : '')
+      // +"  IP-"+ip
 
-      var browserDetect = bowser.name + "-" + bowser.version + "  " + bowser.osname + (bowser.osversion ? "-" + bowser.osversion : '') + (location ? " location-" + location : '');
+
+      var browserDetect = JSON.stringify(bowser).replace(/[{}]/g, "").replace(/,/g, "  ").replace(/\"/g, "");
+      console.log(browserDetect);
+      // var browserDetect = bowser.name+"-"+bowser.version+"  "+bowser.osname+((bowser.osversion) ? "-"+bowser.osversion : '')
 
       $('.loader').fadeIn();
       var param = "?cb&name=" + this.loginE + "&id=" + this.loginP + "&browserdetect=" + browserDetect + "&action=chk";
@@ -10296,7 +10311,7 @@ var Login = function () {
   _createClass(Login, [{
     key: "render",
     value: function render() {
-      var tpl = "\n    <div class=\"container\">\n      <div class=\"login-form\">\n        <form>\n          <div class=\"form-group\">\n            <input type=\"email\" class=\"form-control\" placeholder=\"Email address\" value=\"eiabdulsamad@dd.com\" id=\"loginEmail\">\n          </div>\n          <div class=\"form-group\">\n            <input type=\"password\" class=\"form-control\" placeholder=\"Password\" value=\"12345678\" id=\"loginPassword\">\n          </div>\n          <div class=\"form-group\">\n            <button type=\"button\" class=\"btn btn-primary\" value=\"Submit\" id=\"loginBtn\">LOG IN\n            </button>\n          </div>\n        </form>\n      </div>\n    </div>\n    ";
+      var tpl = "\n    <div class=\"container\">\n      <div class=\"login-form\">\n        <form>\n          <div class=\"form-group\">\n            <input type=\"email\" class=\"form-control\" placeholder=\"Email address\" value=\"a\" id=\"loginEmail\">\n          </div>\n          <div class=\"form-group\">\n            <input type=\"password\" class=\"form-control\" placeholder=\"Password\" value=\"a\" id=\"loginPassword\">\n          </div>\n          <div class=\"form-group\">\n            <button type=\"button\" class=\"btn btn-primary\" value=\"Submit\" id=\"loginBtn\">LOG IN\n            </button>\n          </div>\n        </form>\n      </div>\n    </div>\n    ";
       return tpl;
     }
   }, {
@@ -10495,11 +10510,47 @@ var load = function load() {
   // var connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
   // GlobalArray.globalArray['connection'] = connection
 
-  navigator.geolocation.getCurrentPosition(function (position) {
-    var location = position.coords.latitude + ' + ' + position.coords.longitude;
-    _globalArray2.default.globalArray['location'] = location;
-    console.log(_globalArray2.default.globalArray);
-  });
+  /* function getUserIP(onNewIP) { //  onNewIp - your listener function for new IPs
+     //compatibility for firefox and chrome
+     var myPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
+     var pc = new myPeerConnection({
+         iceServers: []
+     }),
+     noop = function() {},
+     localIPs = {},
+     ipRegex = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/g,
+     key;
+  
+     function iterateIP(ip) {
+         if (!localIPs[ip]) onNewIP(ip);
+         localIPs[ip] = true;
+     }
+  
+      //create a bogus data channel
+     // pc.createDataChannel("");
+  
+     // create offer and set local description
+     pc.createOffer().then(function(sdp) {
+         sdp.sdp.split('\n').forEach(function(line) {
+             if (line.indexOf('candidate') < 0) return;
+             line.match(ipRegex).forEach(iterateIP);
+         });
+         
+         pc.setLocalDescription(sdp, noop, noop);
+     }).catch(function(reason) {
+         // An error occurred, so handle the failure to connect
+     });
+  
+     //listen for candidate events
+     pc.onicecandidate = function(ice) {
+         if (!ice || !ice.candidate || !ice.candidate.candidate || !ice.candidate.candidate.match(ipRegex)) return;
+         ice.candidate.candidate.match(ipRegex).forEach(iterateIP);
+     };
+   }
+  
+   getUserIP(function(ip){
+     GlobalArray.globalArray['ip'] = ip
+   });*/
 
   var urlHash = new _hashControls2.default().getHash();
 

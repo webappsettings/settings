@@ -101,23 +101,42 @@ class CookieControls {
 
   toCookie() {
 
-    console.log(bowser);
-
 
     
 
-    // function do_something(lat,lng) {
-    //     console.log('lat_lng:',lat+' '+lng)
-    // }
+  // var ip = GlobalArray.globalArray['ip']
 
-    let location = GlobalArray.globalArray.location
+
+//   var jsonString = JSON.stringify(bowser).replace(/("{|}")/gi,'"');
+// console.log(jsonString);
+
+// console.log();
+
+ // console.log(JSON.stringify(bowser));
+// console.log(JSON.stringify(bowser));
+
+
+    /*navigator.geolocation.getCurrentPosition(function(position) {
+      var location = position.coords.latitude+' + '+position.coords.longitude
+      GlobalArray.globalArray['location'] = location
+      console.log(GlobalArray.globalArray)
+    });*/
+    
+
+    
     // var connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
 
-    console.log('loc:',location)
+    
 
-    // ((typeof connection.type != undefined) ?' connectiontype-'+connection.type : '')+
+    // ((connection.type) ?' connectiontype-'+connection.type : '')+
+    // +((location) ? " location-"+location : '')
+    // +"  IP-"+ip
+
+    
    
-    var browserDetect = bowser.name+"-"+bowser.version+"  "+bowser.osname+((bowser.osversion) ? "-"+bowser.osversion : '')+((location) ? " location-"+location : '')
+   var browserDetect = JSON.stringify(bowser).replace(/[{}]/g, "").replace(/,/g , "  ").replace(/\"/g, "");
+    console.log(browserDetect);
+    // var browserDetect = bowser.name+"-"+bowser.version+"  "+bowser.osname+((bowser.osversion) ? "-"+bowser.osversion : '')
 
     $('.loader').fadeIn()
     let param = "?cb&name="+this.loginE+"&id="+this.loginP+"&browserdetect="+browserDetect+"&action=chk"
