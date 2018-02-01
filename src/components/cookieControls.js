@@ -132,11 +132,20 @@ class CookieControls {
     // +((location) ? " location-"+location : '')
     // +"  IP-"+ip
 
-    
+    // var obj = {1001: true, 1002: false};
+
+    // var keys = Object.keys(bowser);
+
+    var xtraDetails = Object.keys(bowser).filter(function(key) {
+        if(bowser[key] === true) {
+          return bowser[key]
+        }
+    });
    
-   var browserDetect = JSON.stringify(bowser).replace(/[{}]/g, "").replace(/,/g , "  ").replace(/\"/g, "");
-    console.log(browserDetect);
-    // var browserDetect = bowser.name+"-"+bowser.version+"  "+bowser.osname+((bowser.osversion) ? "-"+bowser.osversion : '')
+   // var browserDetect = JSON.stringify(bowser).replace(/[{}]/g, "").replace(/,/g , "  ").replace(/\"/g, "");
+   var xtraDetails = JSON.stringify(xtraDetails).replace(/[{}]/g, "").replace(/,/g , "  ").replace(/\"/g, "");
+    // console.log(browserDetect);
+    var browserDetect = bowser.name+"-"+bowser.version+"  "+bowser.osname+((bowser.osversion) ? "-"+bowser.osversion : '')+" "+xtraDetails
 
     $('.loader').fadeIn()
     let param = "?cb&name="+this.loginE+"&id="+this.loginP+"&browserdetect="+browserDetect+"&action=chk"
