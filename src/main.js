@@ -24,6 +24,8 @@ const load = () => {
     $('body').addClass('offline-mode')
   });
 
+  
+
 
   // var connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
   // GlobalArray.globalArray['connection'] = connection

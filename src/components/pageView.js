@@ -52,9 +52,9 @@ class PageView {
           }
           return vars;
         }
-      
 
-      if(self.page == 'login' || self.page == 'dashboard' || self.page == 'listing') {
+
+      if(self.page == 'login' || self.page == 'dashboard' || self.page == 'listing' || self.page == 'detail') {
 
         $('.loader').fadeOut()
 
@@ -77,8 +77,7 @@ class PageView {
         new HashControls('404').setHash()
         $('.section-view').html(tpl)
       }
-
-      
+    
       
   }
 

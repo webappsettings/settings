@@ -4,12 +4,14 @@ import _404 from "interface/_404"
 import login from "interface/login"
 import dashboard from "interface/dashboard"
 import listing from "interface/listing"
+import detail from "interface/detail"
 
 const pages = {
     _404,
     login,
     dashboard,
-    listing
+    listing,
+    detail
 };
 
 class Allpages {

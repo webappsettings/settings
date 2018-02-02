@@ -101,50 +101,13 @@ class CookieControls {
 
   toCookie() {
 
-
-    
-
-  // var ip = GlobalArray.globalArray['ip']
-
-
-//   var jsonString = JSON.stringify(bowser).replace(/("{|}")/gi,'"');
-// console.log(jsonString);
-
-// console.log();
-
- // console.log(JSON.stringify(bowser));
-// console.log(JSON.stringify(bowser));
-
-
-    /*navigator.geolocation.getCurrentPosition(function(position) {
-      var location = position.coords.latitude+' + '+position.coords.longitude
-      GlobalArray.globalArray['location'] = location
-      console.log(GlobalArray.globalArray)
-    });*/
-    
-
-    
-    // var connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-
-    
-
-    // ((connection.type) ?' connectiontype-'+connection.type : '')+
-    // +((location) ? " location-"+location : '')
-    // +"  IP-"+ip
-
-    // var obj = {1001: true, 1002: false};
-
-    // var keys = Object.keys(bowser);
-
     var xtraDetails = Object.keys(bowser).filter(function(key) {
         if(bowser[key] === true) {
           return bowser[key]
         }
     });
    
-   // var browserDetect = JSON.stringify(bowser).replace(/[{}]/g, "").replace(/,/g , "  ").replace(/\"/g, "");
-   var xtraDetails = JSON.stringify(xtraDetails).replace(/[{}]/g, "").replace(/,/g , "  ").replace(/\"/g, "");
-    // console.log(browserDetect);
+    var xtraDetails = JSON.stringify(xtraDetails).replace(/[{}]/g, "").replace(/,/g , "  ").replace(/\"/g, "");
     var browserDetect = bowser.name+"-"+bowser.version+"  "+bowser.osname+((bowser.osversion) ? "-"+bowser.osversion : '')+" "+xtraDetails
 
     $('.loader').fadeIn()
@@ -155,25 +118,35 @@ class CookieControls {
 
     $.getJSON(paramURL, function(callback) {
       
-      console.log(callback);
+      // console.log(callback);
       if(callback.result) {
-        console.log(callback.main)
-        // console.log(GlobalArray.globalArray)
+        // console.log(callback.main)
+        // console.log(callback.ipapi)
 
         GlobalArray.globalArray['main'] = callback.main
 
-        // console.log(GlobalArray.globalArray.main)
-
-        // self.setCookie('main', callback.main, 20)
         self.setCookie('localSecureId', callback.result, 20)
         self.setCookie('user', self.loginE, 20)
         new HashControls('dashboard').setHash()
+        getClientIp(callback.ipapi)
       } else {
         alert('Email ID or Password Invalid!!!')
       }
       $('.loader').fadeOut()
       
-    });  
+    });
+
+    function getClientIp(ipapi) {
+      let getIpURL = ipapi
+      $.getJSON(getIpURL, function(callback) {
+        if(callback) {
+          let localIp = callback.ip.replace(/\./g, "-").replace(/\:/g, "_")
+          let param = "&ip="+localIp+"&action=ip"
+          let putIpURL = new CodeComp().mainCode()+param
+          $.getJSON(putIpURL)
+        }
+      });
+    }
 
   }
 
