@@ -10019,44 +10019,13 @@ var CookieControls = function () {
     key: 'toCookie',
     value: function toCookie() {
 
-      // var ip = GlobalArray.globalArray['ip']
-
-
-      //   var jsonString = JSON.stringify(bowser).replace(/("{|}")/gi,'"');
-      // console.log(jsonString);
-
-      // console.log();
-
-      // console.log(JSON.stringify(bowser));
-      // console.log(JSON.stringify(bowser));
-
-
-      /*navigator.geolocation.getCurrentPosition(function(position) {
-        var location = position.coords.latitude+' + '+position.coords.longitude
-        GlobalArray.globalArray['location'] = location
-        console.log(GlobalArray.globalArray)
-      });*/
-
-      // var connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-
-
-      // ((connection.type) ?' connectiontype-'+connection.type : '')+
-      // +((location) ? " location-"+location : '')
-      // +"  IP-"+ip
-
-      // var obj = {1001: true, 1002: false};
-
-      // var keys = Object.keys(bowser);
-
       var xtraDetails = Object.keys(bowser).filter(function (key) {
         if (bowser[key] === true) {
           return bowser[key];
         }
       });
 
-      // var browserDetect = JSON.stringify(bowser).replace(/[{}]/g, "").replace(/,/g , "  ").replace(/\"/g, "");
       var xtraDetails = JSON.stringify(xtraDetails).replace(/[{}]/g, "").replace(/,/g, "  ").replace(/\"/g, "");
-      // console.log(browserDetect);
       var browserDetect = bowser.name + "-" + bowser.version + "  " + bowser.osname + (bowser.osversion ? "-" + bowser.osversion : '') + " " + xtraDetails;
 
       $('.loader').fadeIn();
@@ -10066,24 +10035,34 @@ var CookieControls = function () {
 
       $.getJSON(paramURL, function (callback) {
 
-        console.log(callback);
+        // console.log(callback);
         if (callback.result) {
-          console.log(callback.main);
-          // console.log(GlobalArray.globalArray)
+          // console.log(callback.main)
+          // console.log(callback.ipapi)
 
           _globalArray2.default.globalArray['main'] = callback.main;
 
-          // console.log(GlobalArray.globalArray.main)
-
-          // self.setCookie('main', callback.main, 20)
           self.setCookie('localSecureId', callback.result, 20);
           self.setCookie('user', self.loginE, 20);
           new _hashControls2.default('dashboard').setHash();
+          getClientIp(callback.ipapi);
         } else {
           alert('Email ID or Password Invalid!!!');
         }
         $('.loader').fadeOut();
       });
+
+      function getClientIp(ipapi) {
+        var getIpURL = ipapi;
+        $.getJSON(getIpURL, function (callback) {
+          if (callback) {
+            var localIp = callback.ip.replace(/\./g, "-").replace(/\:/g, "_");
+            var _param = "&ip=" + localIp + "&action=ip";
+            var putIpURL = new _codeComp2.default().mainCode() + _param;
+            $.getJSON(putIpURL);
+          }
+        });
+      }
     }
   }, {
     key: 'setCookie',
@@ -10219,6 +10198,10 @@ var _listing = __webpack_require__(15);
 
 var _listing2 = _interopRequireDefault(_listing);
 
+var _detail = __webpack_require__(22);
+
+var _detail2 = _interopRequireDefault(_detail);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -10227,7 +10210,8 @@ var pages = {
     _404: _2.default,
     login: _login2.default,
     dashboard: _dashboard2.default,
-    listing: _listing2.default
+    listing: _listing2.default,
+    detail: _detail2.default
 };
 
 var Allpages = function Allpages(className, opts) {
@@ -10427,7 +10411,7 @@ var PageView = function () {
         return vars;
       }
 
-      if (self.page == 'login' || self.page == 'dashboard' || self.page == 'listing') {
+      if (self.page == 'login' || self.page == 'dashboard' || self.page == 'listing' || self.page == 'detail') {
 
         $('.loader').fadeOut();
 
@@ -18751,6 +18735,84 @@ exports.default = Listing;
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 17 */,
+/* 18 */,
+/* 19 */,
+/* 20 */,
+/* 21 */,
+/* 22 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function($) {
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _cookieControls = __webpack_require__(1);
+
+var _cookieControls2 = _interopRequireDefault(_cookieControls);
+
+var _codeComp = __webpack_require__(5);
+
+var _codeComp2 = _interopRequireDefault(_codeComp);
+
+var _globalArray = __webpack_require__(3);
+
+var _globalArray2 = _interopRequireDefault(_globalArray);
+
+var _hashControls = __webpack_require__(2);
+
+var _hashControls2 = _interopRequireDefault(_hashControls);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Detail = function () {
+  function Detail(id) {
+    _classCallCheck(this, Detail);
+
+    this.id = id;
+    this.googleListingURL = new _codeComp2.default().mainCode();
+    this.listDatas = [];
+  }
+
+  _createClass(Detail, [{
+    key: "render",
+    value: function render() {
+      var tpl = "\n    <div class=\"container\">\n      <div class=\"section-top\">\n        <nav aria-label=\"breadcrumb\">\n          <ol class=\"breadcrumb\">\n            <li class=\"breadcrumb-item\"><a href=\"#dashboard\">Dashboard</a></li>\n            <li class=\"breadcrumb-item active\" aria-current=\"page\"></li>\n          </ol>\n        </nav>\n      </div>\n      <div id=\"listing-view\">\n        dfdfdfdf\n      </div>\n    </div> \n    ";
+      return tpl;
+    }
+  }, {
+    key: "clickHandler",
+    value: function clickHandler() {
+      var paramId = _globalArray2.default.globalArray.paramid;
+      var paramName = _globalArray2.default.globalArray.paramname;
+      $('.breadcrumb-item.active').html('Detail: ' + paramName);
+
+      var readdetailParamURL = new _codeComp2.default().mainCode() + '&pageid=' + paramId + '&action=readpagedatas';
+
+      console.log('detail=', readdetailParamURL);
+
+      $('.loader').fadeIn();
+      $.getJSON(readdetailParamURL, function (callback) {
+        console.log(callback);
+        $('.loader').fadeOut();
+      });
+    }
+  }]);
+
+  return Detail;
+}();
+
+exports.default = Detail;
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ })
 /******/ ]);
