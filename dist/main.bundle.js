@@ -10222,8 +10222,9 @@ var CodeComp = function () {
     value: function mainCode() {
       // let main = new CookieControls().getCookie('main')
       var main = _globalArray2.default.globalArray.main;
+      var systemCode = _globalArray2.default.globalArray.system;
       var localSecureId = new _cookieControls2.default().getCookie('localSecureId');
-      return 'https://script.google.com/macros/s/' + main + '/exec?localcode=' + localSecureId;
+      return 'https://script.google.com/macros/s/' + main + '/exec?localcode=' + localSecureId + '&systemcode=' + systemCode;
     }
   }]);
 
@@ -10514,31 +10515,33 @@ var load = function load() {
     (0, _jquery2.default)('body').addClass('offline-mode');
   });
 
-  var fp = new Fingerprint2();
-  fp.get(function (result, components) {
-    console.log(result);
-    _globalArray2.default.globalArray.system = result;
-    (0, _jquery2.default)('#loginBtn').prop('disabled', false);
-  });
-
   var urlHash = new _hashControls2.default().getHash();
 
   var prevHistory = new _cookieControls2.default().getCookie('history');
 
-  if (!urlHash) {
-    if (prevHistory) {
-      new _cookieControls2.default().checkCookie(prevHistory);
+  var getSystemCode = new Fingerprint2();
+  getSystemCode.get(function (result, components) {
+
+    console.log(result);
+    _globalArray2.default.globalArray.system = result;
+
+    if (!urlHash) {
+      if (prevHistory) {
+        new _cookieControls2.default().checkCookie(prevHistory);
+      } else {
+        new _cookieControls2.default().checkCookie();
+      }
     } else {
-      new _cookieControls2.default().checkCookie();
+      if (urlHash == 'login') {
+        new _pageView2.default('login').visible();
+        new _login2.default().clickHandler();
+      } else {
+        new _cookieControls2.default().checkCookie();
+      }
     }
-  } else {
-    if (urlHash == 'login') {
-      new _pageView2.default('login').visible();
-      new _login2.default().clickHandler();
-    } else {
-      new _cookieControls2.default().checkCookie();
-    }
-  }
+
+    (0, _jquery2.default)('#loginBtn').prop('disabled', false);
+  });
 
   (0, _jquery2.default)('#logoutBtn').on("click", function (e) {
     new _cookieControls2.default().deleteCookie();
@@ -18501,7 +18504,7 @@ var Listing = function () {
 
       var readlistParamURL = new _codeComp2.default().mainCode() + '&pageid=' + paramId + '&action=readpagedatas';
 
-      console.log('listingURL=', readlistParamURL);
+      console.log('listingURL=', JSON.stringify(readlistParamURL));
 
       $('.loader').fadeIn();
       $.getJSON(readlistParamURL, function (callback) {

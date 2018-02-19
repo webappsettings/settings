@@ -39,7 +39,7 @@ class Listing {
     let readlistParamURL = new CodeComp().mainCode()+'&pageid='+paramId+'&action=readpagedatas'
 
 
-    console.log('listingURL=', readlistParamURL)
+    console.log('listingURL=', JSON.stringify(readlistParamURL))
 
     $('.loader').fadeIn()
     $.getJSON(readlistParamURL, function(callback) {

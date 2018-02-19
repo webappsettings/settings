@@ -22,8 +22,6 @@ class CookieControls {
 
     var opened = false
 
-
-
     if (localSecureId != "") {
       let paramURL = this.googleURL+"?cb&id="+localSecureId+"&action=vw"
 

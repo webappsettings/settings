@@ -24,36 +24,41 @@ const load = () => {
     $('body').addClass('offline-mode')
   });
 
-
-  var fp = new Fingerprint2();
-  fp.get(function(result, components) {
-    console.log(result)
-    GlobalArray.globalArray.system = result
-    $('#loginBtn').prop('disabled', false)
-  });
-  
-
- 
-  
-
-  let urlHash = new HashControls().getHash()
+let urlHash = new HashControls().getHash()
 
   let prevHistory = new CookieControls().getCookie('history')
 
-  if(!urlHash) {
-    if(prevHistory) {
-      new CookieControls().checkCookie(prevHistory)
-    } else {
+  
+  var getSystemCode = new Fingerprint2();
+  getSystemCode.get(function(result, components) {
+
+    console.log(result)
+    GlobalArray.globalArray.system = result
+
+    if(!urlHash) {
+      if(prevHistory) {
+        new CookieControls().checkCookie(prevHistory)
+      } else {
         new CookieControls().checkCookie()
-    }
-  } else {
-    if(urlHash=='login') {
-      new PageView('login').visible()
-      new Login().clickHandler()
+      }
     } else {
-      new CookieControls().checkCookie()
+      if(urlHash=='login') {
+        new PageView('login').visible()
+        new Login().clickHandler()
+      } else {
+        new CookieControls().checkCookie()
+      }
     }
-  }
+
+    
+    $('#loginBtn').prop('disabled', false)
+  });
+  
+  
+
+  
+
+  
 
   
     
@@ -94,13 +99,7 @@ const load = () => {
         new Login().clickHandler()
       }
 
-  
-
     });
-
-    
-
-    
 
 
 
