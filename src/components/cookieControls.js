@@ -101,19 +101,25 @@ class CookieControls {
 
   toCookie() {
 
+    // alert(GlobalArray.globalArray.system)
+
     var xtraDetails = Object.keys(bowser).filter(function(key) {
         if(bowser[key] === true) {
           return bowser[key]
         }
     });
+
+    var systemCode = GlobalArray.globalArray.system
    
     var xtraDetails = JSON.stringify(xtraDetails).replace(/[{}]/g, "").replace(/,/g , "  ").replace(/\"/g, "");
     var browserDetect = bowser.name+"-"+bowser.version+"  "+bowser.osname+((bowser.osversion) ? "-"+bowser.osversion : '')+" "+xtraDetails
 
     $('.loader').fadeIn()
-    let param = "?cb&name="+this.loginE+"&id="+this.loginP+"&browserdetect="+browserDetect+"&action=chk"
+    let param = "?cb&name="+this.loginE+"&id="+this.loginP+"&browserdetect="+browserDetect+"&systemcode="+systemCode+"&action=chk"
     let paramURL = this.googleURL+param
     let self = this
+
+    console.log("complete-param: ",paramURL)
 
 
     $.getJSON(paramURL, function(callback) {
@@ -128,7 +134,7 @@ class CookieControls {
         self.setCookie('localSecureId', callback.result, 20)
         self.setCookie('user', self.loginE, 20)
         new HashControls('dashboard').setHash()
-        getClientIp(callback.ipapi)
+        getClientIp(callback.ipapi, callback.ipapixtra)
       } else {
         alert('Email ID or Password Invalid!!!')
       }
@@ -136,11 +142,18 @@ class CookieControls {
       
     });
 
-    function getClientIp(ipapi) {
+    function getClientIp(ipapi, ipapixtra) {
       let getIpURL = ipapi
       $.getJSON(getIpURL, function(callback) {
         if(callback) {
-          let localIp = callback.ip.replace(/\./g, "-").replace(/\:/g, "_")
+          var callKey
+          if(ipapixtra){
+            callKey = callback[ipapixtra]
+          } else {
+            callKey = callback
+          }
+          let localIp = callKey.replace(/\./g, "-").replace(/\:/g, "_")
+          console.log(localIp)
           let param = "&ip="+localIp+"&action=ip"
           let putIpURL = new CodeComp().mainCode()+param
           $.getJSON(putIpURL)

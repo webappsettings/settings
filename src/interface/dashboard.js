@@ -26,9 +26,37 @@ class Dashboard {
   }
 
   clickHandler() {
+
     let self = this
 
     let urlHash = new HashControls().getHash()
+
+    var sortStart, sortStop
+
+    $("#dashboard-view").sortable({
+      start: function(event, ui) {
+        sortStart = $('#dashboard-view [data-moduleid='+ui.item[0].dataset.moduleid+']').index()
+      },
+      stop: function(event, ui) {
+        sortStop = $('#dashboard-view [data-moduleid='+ui.item[0].dataset.moduleid+']').index()
+        let sortURL = new CodeComp().mainCode()+'&pageid='+urlHash+'&fromid='+(sortStart+1)+'&toid='+(sortStop+1)+'&action=sort'
+        console.log(sortURL)
+          if(sortStart != sortStop) {
+            $('.loader').fadeIn()
+            $.getJSON(sortURL, function(callback) {
+              console.log(callback)
+              let output = JSON.parse(callback.result)
+              if(!output.result) {
+                new CookieControls().deleteCookie()//Logout
+              } 
+              $('.loader').fadeOut()
+            })
+         }
+      }
+      
+    });
+
+    
 
     let readmodulesParamURL = new CodeComp().mainCode()+'&pageid='+urlHash+'&action=readpagedatas'
     $('.loader').fadeIn()
@@ -113,7 +141,7 @@ class Dashboard {
 const pushData = (data) => {
   var lists = ''
   $.each(data.result, function(index, elm) {
-    lists += `<div class="col-md-4">
+    lists += `<div class="col-md-4 module-item" data-moduleid="`+elm[1]+`" data-startindex="`+index+`">
             <div class="panel panel-default">
               <i class="ion-close dashboard-remove-btn" data-id="`+elm[1]+`"></i>
               <div class="panel-body">

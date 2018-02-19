@@ -16,7 +16,7 @@ class Login {
             <input type="password" class="form-control" placeholder="Password" value="a" id="loginPassword">
           </div>
           <div class="form-group">
-            <button type="button" class="btn btn-primary" value="Submit" id="loginBtn">LOG IN
+            <button type="button" class="btn btn-primary" value="Submit" id="loginBtn" disabled="disabled">LOG IN
             </button>
           </div>
         </form>

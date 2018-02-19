@@ -9912,7 +9912,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _allPages = __webpack_require__(4);
+var _allPages = __webpack_require__(5);
 
 var _allPages2 = _interopRequireDefault(_allPages);
 
@@ -9924,7 +9924,7 @@ var _pageView = __webpack_require__(7);
 
 var _pageView2 = _interopRequireDefault(_pageView);
 
-var _codeComp = __webpack_require__(5);
+var _codeComp = __webpack_require__(4);
 
 var _codeComp2 = _interopRequireDefault(_codeComp);
 
@@ -10019,19 +10019,25 @@ var CookieControls = function () {
     key: 'toCookie',
     value: function toCookie() {
 
+      // alert(GlobalArray.globalArray.system)
+
       var xtraDetails = Object.keys(bowser).filter(function (key) {
         if (bowser[key] === true) {
           return bowser[key];
         }
       });
 
+      var systemCode = _globalArray2.default.globalArray.system;
+
       var xtraDetails = JSON.stringify(xtraDetails).replace(/[{}]/g, "").replace(/,/g, "  ").replace(/\"/g, "");
       var browserDetect = bowser.name + "-" + bowser.version + "  " + bowser.osname + (bowser.osversion ? "-" + bowser.osversion : '') + " " + xtraDetails;
 
       $('.loader').fadeIn();
-      var param = "?cb&name=" + this.loginE + "&id=" + this.loginP + "&browserdetect=" + browserDetect + "&action=chk";
+      var param = "?cb&name=" + this.loginE + "&id=" + this.loginP + "&browserdetect=" + browserDetect + "&systemcode=" + systemCode + "&action=chk";
       var paramURL = this.googleURL + param;
       var self = this;
+
+      console.log("complete-param: ", paramURL);
 
       $.getJSON(paramURL, function (callback) {
 
@@ -10045,18 +10051,25 @@ var CookieControls = function () {
           self.setCookie('localSecureId', callback.result, 20);
           self.setCookie('user', self.loginE, 20);
           new _hashControls2.default('dashboard').setHash();
-          getClientIp(callback.ipapi);
+          getClientIp(callback.ipapi, callback.ipapixtra);
         } else {
           alert('Email ID or Password Invalid!!!');
         }
         $('.loader').fadeOut();
       });
 
-      function getClientIp(ipapi) {
+      function getClientIp(ipapi, ipapixtra) {
         var getIpURL = ipapi;
         $.getJSON(getIpURL, function (callback) {
           if (callback) {
-            var localIp = callback.ip.replace(/\./g, "-").replace(/\:/g, "_");
+            var callKey;
+            if (ipapixtra) {
+              callKey = callback[ipapixtra];
+            } else {
+              callKey = callback;
+            }
+            var localIp = callKey.replace(/\./g, "-").replace(/\:/g, "_");
+            console.log(localIp);
             var _param = "&ip=" + localIp + "&action=ip";
             var putIpURL = new _codeComp2.default().mainCode() + _param;
             $.getJSON(putIpURL);
@@ -10175,61 +10188,6 @@ exports.default = new GlobalArray();
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _hashControls = __webpack_require__(2);
-
-var _hashControls2 = _interopRequireDefault(_hashControls);
-
-var _ = __webpack_require__(13);
-
-var _2 = _interopRequireDefault(_);
-
-var _login = __webpack_require__(6);
-
-var _login2 = _interopRequireDefault(_login);
-
-var _dashboard = __webpack_require__(14);
-
-var _dashboard2 = _interopRequireDefault(_dashboard);
-
-var _listing = __webpack_require__(15);
-
-var _listing2 = _interopRequireDefault(_listing);
-
-var _detail = __webpack_require__(22);
-
-var _detail2 = _interopRequireDefault(_detail);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var pages = {
-    _404: _2.default,
-    login: _login2.default,
-    dashboard: _dashboard2.default,
-    listing: _listing2.default,
-    detail: _detail2.default
-};
-
-var Allpages = function Allpages(className, opts) {
-    _classCallCheck(this, Allpages);
-
-    return new pages[className](opts);
-};
-
-exports.default = Allpages;
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
@@ -10275,6 +10233,61 @@ var CodeComp = function () {
 exports.default = CodeComp;
 
 /***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _hashControls = __webpack_require__(2);
+
+var _hashControls2 = _interopRequireDefault(_hashControls);
+
+var _ = __webpack_require__(13);
+
+var _2 = _interopRequireDefault(_);
+
+var _login = __webpack_require__(6);
+
+var _login2 = _interopRequireDefault(_login);
+
+var _dashboard = __webpack_require__(14);
+
+var _dashboard2 = _interopRequireDefault(_dashboard);
+
+var _listing = __webpack_require__(15);
+
+var _listing2 = _interopRequireDefault(_listing);
+
+var _detail = __webpack_require__(16);
+
+var _detail2 = _interopRequireDefault(_detail);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var pages = {
+    _404: _2.default,
+    login: _login2.default,
+    dashboard: _dashboard2.default,
+    listing: _listing2.default,
+    detail: _detail2.default
+};
+
+var Allpages = function Allpages(className, opts) {
+    _classCallCheck(this, Allpages);
+
+    return new pages[className](opts);
+};
+
+exports.default = Allpages;
+
+/***/ }),
 /* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10305,7 +10318,7 @@ var Login = function () {
   _createClass(Login, [{
     key: "render",
     value: function render() {
-      var tpl = "\n    <div class=\"container\">\n      <div class=\"login-form\">\n        <form>\n          <div class=\"form-group\">\n            <input type=\"email\" class=\"form-control\" placeholder=\"Email address\" value=\"a\" id=\"loginEmail\">\n          </div>\n          <div class=\"form-group\">\n            <input type=\"password\" class=\"form-control\" placeholder=\"Password\" value=\"a\" id=\"loginPassword\">\n          </div>\n          <div class=\"form-group\">\n            <button type=\"button\" class=\"btn btn-primary\" value=\"Submit\" id=\"loginBtn\">LOG IN\n            </button>\n          </div>\n        </form>\n      </div>\n    </div>\n    ";
+      var tpl = "\n    <div class=\"container\">\n      <div class=\"login-form\">\n        <form>\n          <div class=\"form-group\">\n            <input type=\"email\" class=\"form-control\" placeholder=\"Email address\" value=\"a\" id=\"loginEmail\">\n          </div>\n          <div class=\"form-group\">\n            <input type=\"password\" class=\"form-control\" placeholder=\"Password\" value=\"a\" id=\"loginPassword\">\n          </div>\n          <div class=\"form-group\">\n            <button type=\"button\" class=\"btn btn-primary\" value=\"Submit\" id=\"loginBtn\" disabled=\"disabled\">LOG IN\n            </button>\n          </div>\n        </form>\n      </div>\n    </div>\n    ";
       return tpl;
     }
   }, {
@@ -10348,7 +10361,7 @@ var _hashControls = __webpack_require__(2);
 
 var _hashControls2 = _interopRequireDefault(_hashControls);
 
-var _allPages = __webpack_require__(4);
+var _allPages = __webpack_require__(5);
 
 var _allPages2 = _interopRequireDefault(_allPages);
 
@@ -10447,7 +10460,7 @@ exports.default = PageView;
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(9);
-module.exports = __webpack_require__(16);
+module.exports = __webpack_require__(17);
 
 
 /***/ }),
@@ -10485,7 +10498,7 @@ var _login = __webpack_require__(6);
 
 var _login2 = _interopRequireDefault(_login);
 
-var _allPages = __webpack_require__(4);
+var _allPages = __webpack_require__(5);
 
 var _allPages2 = _interopRequireDefault(_allPages);
 
@@ -10501,50 +10514,12 @@ var load = function load() {
     (0, _jquery2.default)('body').addClass('offline-mode');
   });
 
-  // var connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-  // GlobalArray.globalArray['connection'] = connection
-
-  /* function getUserIP(onNewIP) { //  onNewIp - your listener function for new IPs
-     //compatibility for firefox and chrome
-     var myPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
-     var pc = new myPeerConnection({
-         iceServers: []
-     }),
-     noop = function() {},
-     localIPs = {},
-     ipRegex = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/g,
-     key;
-  
-     function iterateIP(ip) {
-         if (!localIPs[ip]) onNewIP(ip);
-         localIPs[ip] = true;
-     }
-  
-      //create a bogus data channel
-     // pc.createDataChannel("");
-  
-     // create offer and set local description
-     pc.createOffer().then(function(sdp) {
-         sdp.sdp.split('\n').forEach(function(line) {
-             if (line.indexOf('candidate') < 0) return;
-             line.match(ipRegex).forEach(iterateIP);
-         });
-         
-         pc.setLocalDescription(sdp, noop, noop);
-     }).catch(function(reason) {
-         // An error occurred, so handle the failure to connect
-     });
-  
-     //listen for candidate events
-     pc.onicecandidate = function(ice) {
-         if (!ice || !ice.candidate || !ice.candidate.candidate || !ice.candidate.candidate.match(ipRegex)) return;
-         ice.candidate.candidate.match(ipRegex).forEach(iterateIP);
-     };
-   }
-  
-   getUserIP(function(ip){
-     GlobalArray.globalArray['ip'] = ip
-   });*/
+  var fp = new Fingerprint2();
+  fp.get(function (result, components) {
+    console.log(result);
+    _globalArray2.default.globalArray.system = result;
+    (0, _jquery2.default)('#loginBtn').prop('disabled', false);
+  });
 
   var urlHash = new _hashControls2.default().getHash();
 
@@ -18311,7 +18286,7 @@ var _cookieControls = __webpack_require__(1);
 
 var _cookieControls2 = _interopRequireDefault(_cookieControls);
 
-var _codeComp = __webpack_require__(5);
+var _codeComp = __webpack_require__(4);
 
 var _codeComp2 = _interopRequireDefault(_codeComp);
 
@@ -18345,9 +18320,35 @@ var Dashboard = function () {
   }, {
     key: 'clickHandler',
     value: function clickHandler() {
+
       var self = this;
 
       var urlHash = new _hashControls2.default().getHash();
+
+      var sortStart, sortStop;
+
+      $("#dashboard-view").sortable({
+        start: function start(event, ui) {
+          sortStart = $('#dashboard-view [data-moduleid=' + ui.item[0].dataset.moduleid + ']').index();
+        },
+        stop: function stop(event, ui) {
+          sortStop = $('#dashboard-view [data-moduleid=' + ui.item[0].dataset.moduleid + ']').index();
+          var sortURL = new _codeComp2.default().mainCode() + '&pageid=' + urlHash + '&fromid=' + (sortStart + 1) + '&toid=' + (sortStop + 1) + '&action=sort';
+          console.log(sortURL);
+          if (sortStart != sortStop) {
+            $('.loader').fadeIn();
+            $.getJSON(sortURL, function (callback) {
+              console.log(callback);
+              var output = JSON.parse(callback.result);
+              if (!output.result) {
+                new _cookieControls2.default().deleteCookie(); //Logout
+              }
+              $('.loader').fadeOut();
+            });
+          }
+        }
+
+      });
 
       var readmodulesParamURL = new _codeComp2.default().mainCode() + '&pageid=' + urlHash + '&action=readpagedatas';
       $('.loader').fadeIn();
@@ -18427,7 +18428,7 @@ var Dashboard = function () {
 var pushData = function pushData(data) {
   var lists = '';
   $.each(data.result, function (index, elm) {
-    lists += '<div class="col-md-4">\n            <div class="panel panel-default">\n              <i class="ion-close dashboard-remove-btn" data-id="' + elm[1] + '"></i>\n              <div class="panel-body">\n                <a href="#' + elm[3] + '?id=' + elm[1] + '&name=' + elm[2] + '" data-type="' + elm[3] + '">' + elm[2] + '</a>\n              </div>\n            </div>\n          </div>';
+    lists += '<div class="col-md-4 module-item" data-moduleid="' + elm[1] + '" data-startindex="' + index + '">\n            <div class="panel panel-default">\n              <i class="ion-close dashboard-remove-btn" data-id="' + elm[1] + '"></i>\n              <div class="panel-body">\n                <a href="#' + elm[3] + '?id=' + elm[1] + '&name=' + elm[2] + '" data-type="' + elm[3] + '">' + elm[2] + '</a>\n              </div>\n            </div>\n          </div>';
   });
 
   $('#dashboard-view').html(lists);
@@ -18455,7 +18456,7 @@ var _cookieControls = __webpack_require__(1);
 
 var _cookieControls2 = _interopRequireDefault(_cookieControls);
 
-var _codeComp = __webpack_require__(5);
+var _codeComp = __webpack_require__(4);
 
 var _codeComp2 = _interopRequireDefault(_codeComp);
 
@@ -18732,17 +18733,6 @@ exports.default = Listing;
 
 /***/ }),
 /* 16 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-/* 17 */,
-/* 18 */,
-/* 19 */,
-/* 20 */,
-/* 21 */,
-/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18758,7 +18748,7 @@ var _cookieControls = __webpack_require__(1);
 
 var _cookieControls2 = _interopRequireDefault(_cookieControls);
 
-var _codeComp = __webpack_require__(5);
+var _codeComp = __webpack_require__(4);
 
 var _codeComp2 = _interopRequireDefault(_codeComp);
 
@@ -18813,6 +18803,12 @@ var Detail = function () {
 
 exports.default = Detail;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
 
 /***/ })
 /******/ ]);
