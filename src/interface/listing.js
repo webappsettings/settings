@@ -127,6 +127,7 @@ class Listing {
       $('#listing-modal #listing-userid').val(getListVal[0][3])
       $('#listing-modal #listing-imageupload').val('')
       imageURI = getListVal[0][6]
+      // imageURI = undefined
       fileName = ''
       $('#listing-okBtn').attr({'data-action':'edit', 'data-rowid':getId})
       $('#listing-modal').modal('show')
@@ -190,7 +191,7 @@ class Listing {
       formdata.append('name', getName)
       formdata.append('userid', getUserId)
 
-      if(imageURI){
+      if(imageURI && fileChange){
         let filetype = imageURI.substring(5,imageURI.indexOf(';'))
         let img = imageURI.replace(/^.*,/, '')
 
@@ -210,7 +211,11 @@ class Listing {
 
       var dataAddURL = new CodeComp().mainCode()
 
-      console.log('url=',dataAddURL)
+      // console.log('formdata=',formdata)
+
+      for (var pair of formdata.entries()) {
+        console.log(pair[0]+ ', ' + pair[1]); 
+      }
 
       $.ajax({
          method: 'POST',
@@ -226,6 +231,7 @@ class Listing {
         .done(function(callback){
           // console.log('created==',callback)
           var outputDatas = JSON.parse(callback.result)
+          console.log(outputDatas.result)
           if(outputDatas.result) {
             fileChange = false
             if(action == 'create') {
@@ -237,6 +243,7 @@ class Listing {
               $.each(self.listDatas[0].result, function(index, elm) {
                 if(elm[1] == outputDatas.result[1]) {
                   self.listDatas[0].result[index] = outputDatas.result
+                  // console.log()
                 }
               });
               console.log('editOut=',self.listDatas[0].result)
@@ -248,10 +255,10 @@ class Listing {
           }
         })
         .fail(function(callback) {
-          console.clear()
-          console.log('Fail')
+          // console.clear()
+          console.log('Fail',callback)
           alert('This page removed!')
-          new HashControls('dashboard').setHash()
+          // new HashControls('dashboard').setHash()
        })
        .always(function(){
          $('.loader').fadeOut()
