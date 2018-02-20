@@ -10021,6 +10021,7 @@ var CookieControls = function () {
 
       // alert(GlobalArray.globalArray.system)
 
+
       var xtraDetails = Object.keys(bowser).filter(function (key) {
         if (bowser[key] === true) {
           return bowser[key];
@@ -10043,12 +10044,22 @@ var CookieControls = function () {
 
         // console.log(callback);
         if (callback.result) {
+
+          window.addEventListener('storage', function (event) {
+            if (event.key == 'logout-user') {
+              location.reload();
+            }
+          });
+
           // console.log(callback.main)
           // console.log(callback.ipapi)
 
           _globalArray2.default.globalArray['main'] = callback.main;
 
           self.setCookie('localSecureId', callback.result, 20);
+
+          localStorage.setItem('logout-user', 'logout' + self.loginE);
+
           self.setCookie('user', self.loginE, 20);
           new _hashControls2.default('dashboard').setHash();
           getClientIp(callback.ipapi, callback.ipapixtra);
@@ -10107,6 +10118,8 @@ var CookieControls = function () {
       if (typeof _globalArray2.default.globalArray['main'] !== 'undefined') {
         $.getJSON(new _codeComp2.default().mainCode() + '&logincode=' + this.loginCode + '&localcode=' + this.getCookie("localSecureId") + '&user=' + this.getCookie('user') + '&action=logout');
       }
+
+      localStorage.setItem('logout-user', 'logout' + Math.random());
       this.setCookie('localSecureId', "", -1);
       this.setCookie('user', "", -1);
       this.setCookie('history', "", -1);
