@@ -10,10 +10,10 @@ class Login {
       <div class="login-form">
         <form>
           <div class="form-group">
-            <input type="email" class="form-control" placeholder="Email address" value="a" id="loginEmail">
+            <input type="email" class="form-control" placeholder="Email address" value="" id="loginEmail">
           </div>
           <div class="form-group">
-            <input type="password" class="form-control" placeholder="Password" value="a" id="loginPassword">
+            <input type="password" class="form-control" placeholder="Password" value="" id="loginPassword">
           </div>
           <div class="form-group">
             <button type="button" class="btn btn-primary" value="Submit" id="loginBtn" disabled="disabled">LOG IN

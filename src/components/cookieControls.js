@@ -127,11 +127,7 @@ class CookieControls {
       // console.log(callback);
       if(callback.result) {
 
-        window.addEventListener('storage', function(event){
-          if (event.key == 'logout-user') { 
-              location.reload()
-          }
-        });
+        
 
         // console.log(callback.main)
         // console.log(callback.ipapi)

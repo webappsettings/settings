@@ -25,10 +25,13 @@ const load = () => {
   });
 
   
+  window.addEventListener('storage', function(event){
+    if (event.key == 'logout-user') { 
+      location.reload()
+    }
+  });
 
-  
-
-  let urlHash = new HashControls().getHash()
+let urlHash = new HashControls().getHash()
 
   let prevHistory = new CookieControls().getCookie('history')
 
@@ -60,6 +63,12 @@ const load = () => {
   
   
 
+  
+
+  
+
+  
+    
   
 
     $('#logoutBtn').on("click", (e) => {

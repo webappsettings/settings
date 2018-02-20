@@ -10045,12 +10045,6 @@ var CookieControls = function () {
         // console.log(callback);
         if (callback.result) {
 
-          window.addEventListener('storage', function (event) {
-            if (event.key == 'logout-user') {
-              location.reload();
-            }
-          });
-
           // console.log(callback.main)
           // console.log(callback.ipapi)
 
@@ -10332,7 +10326,7 @@ var Login = function () {
   _createClass(Login, [{
     key: "render",
     value: function render() {
-      var tpl = "\n    <div class=\"container\">\n      <div class=\"login-form\">\n        <form>\n          <div class=\"form-group\">\n            <input type=\"email\" class=\"form-control\" placeholder=\"Email address\" value=\"a\" id=\"loginEmail\">\n          </div>\n          <div class=\"form-group\">\n            <input type=\"password\" class=\"form-control\" placeholder=\"Password\" value=\"a\" id=\"loginPassword\">\n          </div>\n          <div class=\"form-group\">\n            <button type=\"button\" class=\"btn btn-primary\" value=\"Submit\" id=\"loginBtn\" disabled=\"disabled\">LOG IN\n            </button>\n          </div>\n        </form>\n      </div>\n    </div>\n    ";
+      var tpl = "\n    <div class=\"container\">\n      <div class=\"login-form\">\n        <form>\n          <div class=\"form-group\">\n            <input type=\"email\" class=\"form-control\" placeholder=\"Email address\" value=\"\" id=\"loginEmail\">\n          </div>\n          <div class=\"form-group\">\n            <input type=\"password\" class=\"form-control\" placeholder=\"Password\" value=\"\" id=\"loginPassword\">\n          </div>\n          <div class=\"form-group\">\n            <button type=\"button\" class=\"btn btn-primary\" value=\"Submit\" id=\"loginBtn\" disabled=\"disabled\">LOG IN\n            </button>\n          </div>\n        </form>\n      </div>\n    </div>\n    ";
       return tpl;
     }
   }, {
@@ -10526,6 +10520,12 @@ var load = function load() {
 
   (0, _jquery2.default)(window).bind('offline', function (e) {
     (0, _jquery2.default)('body').addClass('offline-mode');
+  });
+
+  window.addEventListener('storage', function (event) {
+    if (event.key == 'logout-user') {
+      location.reload();
+    }
   });
 
   var urlHash = new _hashControls2.default().getHash();
