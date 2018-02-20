@@ -24,7 +24,11 @@ const load = () => {
     $('body').addClass('offline-mode')
   });
 
-let urlHash = new HashControls().getHash()
+  
+
+  
+
+  let urlHash = new HashControls().getHash()
 
   let prevHistory = new CookieControls().getCookie('history')
 
@@ -56,12 +60,6 @@ let urlHash = new HashControls().getHash()
   
   
 
-  
-
-  
-
-  
-    
   
 
     $('#logoutBtn').on("click", (e) => {

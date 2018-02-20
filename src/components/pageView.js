@@ -30,6 +30,8 @@ class PageView {
 
        console.log(self.page)
 
+       
+
         
         //get url parameter
         function getUrlVars(myString) {

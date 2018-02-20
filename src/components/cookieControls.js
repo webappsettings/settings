@@ -101,6 +101,8 @@ class CookieControls {
 
     // alert(GlobalArray.globalArray.system)
 
+
+
     var xtraDetails = Object.keys(bowser).filter(function(key) {
         if(bowser[key] === true) {
           return bowser[key]
@@ -124,12 +126,22 @@ class CookieControls {
       
       // console.log(callback);
       if(callback.result) {
+
+        window.addEventListener('storage', function(event){
+          if (event.key == 'logout-user') { 
+              location.reload()
+          }
+        });
+
         // console.log(callback.main)
         // console.log(callback.ipapi)
 
         GlobalArray.globalArray['main'] = callback.main
 
         self.setCookie('localSecureId', callback.result, 20)
+
+        localStorage.setItem('logout-user', 'logout' + self.loginE);
+
         self.setCookie('user', self.loginE, 20)
         new HashControls('dashboard').setHash()
         getClientIp(callback.ipapi, callback.ipapixtra)
@@ -187,10 +199,12 @@ class CookieControls {
     if(typeof GlobalArray.globalArray['main'] !== 'undefined') {
       $.getJSON(new CodeComp().mainCode()+'&logincode='+this.loginCode+'&localcode='+this.getCookie("localSecureId")+'&user='+this.getCookie('user')+'&action=logout')
     }
+
+    localStorage.setItem('logout-user', 'logout' + Math.random());
     this.setCookie('localSecureId',"",-1)
     this.setCookie('user',"",-1)
     this.setCookie('history',"",-1)
-    new HashControls('login').setHash() 
+    new HashControls('login').setHash()
 
   }
 
