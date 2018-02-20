@@ -10326,12 +10326,23 @@ var Login = function () {
   _createClass(Login, [{
     key: "render",
     value: function render() {
-      var tpl = "\n    <div class=\"container\">\n      <div class=\"login-form\">\n        <form>\n          <div class=\"form-group\">\n            <input type=\"email\" class=\"form-control\" placeholder=\"Email address\" value=\"\" id=\"loginEmail\">\n          </div>\n          <div class=\"form-group\">\n            <input type=\"password\" class=\"form-control\" placeholder=\"Password\" value=\"\" id=\"loginPassword\">\n          </div>\n          <div class=\"form-group\">\n            <button type=\"button\" class=\"btn btn-primary\" value=\"Submit\" id=\"loginBtn\" disabled=\"disabled\">LOG IN\n            </button>\n          </div>\n        </form>\n      </div>\n    </div>\n    ";
+      var tpl = "\n    <div class=\"container\">\n      <div class=\"login-form\">\n        <form>\n          <div class=\"form-group\">\n            <input type=\"email\" class=\"form-control\" placeholder=\"Email address\" value=\"\" id=\"loginEmail\">\n          </div>\n          <div class=\"form-group\">\n            <input type=\"password\" class=\"form-control\" placeholder=\"Password\" value=\"\" id=\"loginPassword\">\n          </div>\n          <div class=\"form-group\">\n            <button type=\"submit\" class=\"btn btn-primary\" value=\"Submit\" id=\"loginBtn\" disabled=\"disabled\">LOG IN\n            </button>\n          </div>\n        </form>\n      </div>\n    </div>\n    ";
       return tpl;
     }
   }, {
     key: "clickHandler",
     value: function clickHandler() {
+
+      // $(document).on('click', '#listing-create-btn', function() {
+
+      $('#loginEmail,#loginPassword').on("keyup", function (e) {
+        if ($('#loginEmail').val() != '' && $('#loginPassword').val() != '') {
+          $('#loginBtn').prop('disabled', false);
+        } else {
+          $('#loginBtn').prop('disabled', true);
+        }
+      });
+
       $('#loginBtn').on("click", function (e) {
 
         var loginE = encodeURIComponent($('#loginEmail').val());
@@ -10552,8 +10563,6 @@ var load = function load() {
         new _cookieControls2.default().checkCookie();
       }
     }
-
-    (0, _jquery2.default)('#loginBtn').prop('disabled', false);
   });
 
   (0, _jquery2.default)('#logoutBtn').on("click", function (e) {
@@ -18675,33 +18684,6 @@ var Listing = function () {
         // var dataAddURL = self.googleListingURL;
 
         var dataAddURL = new _codeComp2.default().mainCode();
-
-        // console.log('formdata=',formdata)
-
-        var _iteratorNormalCompletion = true;
-        var _didIteratorError = false;
-        var _iteratorError = undefined;
-
-        try {
-          for (var _iterator = formdata.entries()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var pair = _step.value;
-
-            console.log(pair[0] + ', ' + pair[1]);
-          }
-        } catch (err) {
-          _didIteratorError = true;
-          _iteratorError = err;
-        } finally {
-          try {
-            if (!_iteratorNormalCompletion && _iterator.return) {
-              _iterator.return();
-            }
-          } finally {
-            if (_didIteratorError) {
-              throw _iteratorError;
-            }
-          }
-        }
 
         $.ajax({
           method: 'POST',

@@ -211,11 +211,7 @@ class Listing {
 
       var dataAddURL = new CodeComp().mainCode()
 
-      // console.log('formdata=',formdata)
-
-      for (var pair of formdata.entries()) {
-        console.log(pair[0]+ ', ' + pair[1]); 
-      }
+      
 
       $.ajax({
          method: 'POST',

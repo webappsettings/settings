@@ -16,7 +16,7 @@ class Login {
             <input type="password" class="form-control" placeholder="Password" value="" id="loginPassword">
           </div>
           <div class="form-group">
-            <button type="button" class="btn btn-primary" value="Submit" id="loginBtn" disabled="disabled">LOG IN
+            <button type="submit" class="btn btn-primary" value="Submit" id="loginBtn" disabled="disabled">LOG IN
             </button>
           </div>
         </form>
@@ -27,6 +27,19 @@ class Login {
   }
 
   clickHandler() {
+
+    // $(document).on('click', '#listing-create-btn', function() {
+
+      $('#loginEmail,#loginPassword').on("keyup", (e) => {
+        if(($('#loginEmail').val()!='') && ($('#loginPassword').val()!='')) {
+          $('#loginBtn').prop('disabled',false)
+        } else {
+            $('#loginBtn').prop('disabled',true)
+        }
+        
+      });
+
+
     $('#loginBtn').on("click", (e) => {
 
        let loginE = encodeURIComponent($('#loginEmail').val())

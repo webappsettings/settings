@@ -56,9 +56,7 @@ let urlHash = new HashControls().getHash()
         new CookieControls().checkCookie()
       }
     }
-
     
-    $('#loginBtn').prop('disabled', false)
   });
   
   
