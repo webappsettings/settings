@@ -18587,6 +18587,7 @@ var Listing = function () {
         $('#listing-modal #listing-userid').val(getListVal[0][3]);
         $('#listing-modal #listing-imageupload').val('');
         imageURI = getListVal[0][6];
+        // imageURI = undefined
         fileName = '';
         $('#listing-okBtn').attr({ 'data-action': 'edit', 'data-rowid': getId });
         $('#listing-modal').modal('show');
@@ -18643,7 +18644,7 @@ var Listing = function () {
         formdata.append('name', getName);
         formdata.append('userid', getUserId);
 
-        if (imageURI) {
+        if (imageURI && fileChange) {
           var filetype = imageURI.substring(5, imageURI.indexOf(';'));
           var img = imageURI.replace(/^.*,/, '');
 
@@ -18662,7 +18663,32 @@ var Listing = function () {
 
         var dataAddURL = new _codeComp2.default().mainCode();
 
-        console.log('url=', dataAddURL);
+        // console.log('formdata=',formdata)
+
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
+
+        try {
+          for (var _iterator = formdata.entries()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var pair = _step.value;
+
+            console.log(pair[0] + ', ' + pair[1]);
+          }
+        } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion && _iterator.return) {
+              _iterator.return();
+            }
+          } finally {
+            if (_didIteratorError) {
+              throw _iteratorError;
+            }
+          }
+        }
 
         $.ajax({
           method: 'POST',
@@ -18677,6 +18703,7 @@ var Listing = function () {
         }).done(function (callback) {
           // console.log('created==',callback)
           var outputDatas = JSON.parse(callback.result);
+          console.log(outputDatas.result);
           if (outputDatas.result) {
             fileChange = false;
             if (action == 'create') {
@@ -18688,6 +18715,7 @@ var Listing = function () {
               $.each(self.listDatas[0].result, function (index, elm) {
                 if (elm[1] == outputDatas.result[1]) {
                   self.listDatas[0].result[index] = outputDatas.result;
+                  // console.log()
                 }
               });
               console.log('editOut=', self.listDatas[0].result);
@@ -18698,10 +18726,10 @@ var Listing = function () {
             new _cookieControls2.default().deleteCookie(); //Logout
           }
         }).fail(function (callback) {
-          console.clear();
-          console.log('Fail');
+          // console.clear()
+          console.log('Fail', callback);
           alert('This page removed!');
-          new _hashControls2.default('dashboard').setHash();
+          // new HashControls('dashboard').setHash()
         }).always(function () {
           $('.loader').fadeOut();
           $('#listing-modal').modal('hide');
