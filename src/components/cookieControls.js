@@ -38,9 +38,11 @@ class CookieControls {
 
         } else {
 
-            GlobalArray.globalArray['main'] = callback.main
 
-            // alert(callback.main)
+            GlobalArray.globalArray['main'] = callback.main
+            GlobalArray.globalArray['access'] = callback.access
+
+            console.log(GlobalArray.globalArray)
 
             // callback.main != self.getCookie('main') ||
 
@@ -124,19 +126,19 @@ class CookieControls {
 
     $.getJSON(paramURL, function(callback) {
       
-      // console.log(callback);
+      // console.log('allMainCallback=',callback);
       if(callback.result) {
-
         
 
         // console.log(callback.main)
         // console.log(callback.ipapi)
 
         GlobalArray.globalArray['main'] = callback.main
+        GlobalArray.globalArray['access'] = callback.access
 
         self.setCookie('localSecureId', callback.result, 20)
 
-        localStorage.setItem('logout-user', 'logout' + self.loginE);
+        localStorage.setItem('logout-user', 'logout' + self.loginE)
 
         self.setCookie('user', self.loginE, 20)
         new HashControls('dashboard').setHash()
