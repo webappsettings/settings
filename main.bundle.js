@@ -18336,6 +18336,7 @@ var Dashboard = function () {
     this.id = id;
     this.googleListingURL = new _codeComp2.default().mainCode();
     this.listDatas = [];
+    this.access = _globalArray2.default.globalArray['access'];
   }
 
   _createClass(Dashboard, [{
@@ -18354,28 +18355,29 @@ var Dashboard = function () {
 
       var sortStart, sortStop;
 
-      $("#dashboard-view").sortable({
-        start: function start(event, ui) {
-          sortStart = $('#dashboard-view [data-moduleid=' + ui.item[0].dataset.moduleid + ']').index();
-        },
-        stop: function stop(event, ui) {
-          sortStop = $('#dashboard-view [data-moduleid=' + ui.item[0].dataset.moduleid + ']').index();
-          var sortURL = new _codeComp2.default().mainCode() + '&pageid=' + urlHash + '&fromid=' + (sortStart + 1) + '&toid=' + (sortStop + 1) + '&action=sort';
-          console.log(sortURL);
-          if (sortStart != sortStop) {
-            $('.loader').fadeIn();
-            $.getJSON(sortURL, function (callback) {
-              console.log(callback);
-              var output = JSON.parse(callback.result);
-              if (!output.result) {
-                new _cookieControls2.default().deleteCookie(); //Logout
-              }
-              $('.loader').fadeOut();
-            });
+      if (self.access == 'full') {
+        $("#dashboard-view").sortable({
+          start: function start(event, ui) {
+            sortStart = $('#dashboard-view [data-moduleid=' + ui.item[0].dataset.moduleid + ']').index();
+          },
+          stop: function stop(event, ui) {
+            sortStop = $('#dashboard-view [data-moduleid=' + ui.item[0].dataset.moduleid + ']').index();
+            var sortURL = new _codeComp2.default().mainCode() + '&pageid=' + urlHash + '&fromid=' + (sortStart + 1) + '&toid=' + (sortStop + 1) + '&action=sort';
+            console.log(sortURL);
+            if (sortStart != sortStop) {
+              $('.loader').fadeIn();
+              $.getJSON(sortURL, function (callback) {
+                console.log(callback);
+                var output = JSON.parse(callback.result);
+                if (!output.result) {
+                  new _cookieControls2.default().deleteCookie(); //Logout
+                }
+                $('.loader').fadeOut();
+              });
+            }
           }
-        }
-
-      });
+        });
+      }
 
       var readmodulesParamURL = new _codeComp2.default().mainCode() + '&pageid=' + urlHash + '&action=readpagedatas';
       $('.loader').fadeIn();
@@ -18450,8 +18452,8 @@ var Dashboard = function () {
       });
 
       $(document).on('change', '#dashboard-create-type', function (event) {
-        var access = _globalArray2.default.globalArray['access'];
-        if (access == 'full') {
+        // let access = GlobalArray.globalArray['access']
+        if (self.access == 'full') {
           if ($(this).val() == 'listing') {
             $('.field-box-detail').hide();
             $('.field-box-listing').show();
@@ -18478,8 +18480,8 @@ var Dashboard = function () {
 
       function dashboardBtnActive() {
         if ($('#dashboard-create-name').val() != '' && $('#dashboard-create-type').val() != '') {
-          var access = _globalArray2.default.globalArray['access'];
-          if (access == 'full') {
+          // let access = GlobalArray.globalArray['access']
+          if (self.access == 'full') {
             if ($('.field-box:visible .field-new').length != $('.field-box:visible .field-new.filled-field').length) {
               $('#dashboard-create-okBtn').prop('disabled', true);
             } else {
