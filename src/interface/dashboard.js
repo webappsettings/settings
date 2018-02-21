@@ -2,7 +2,6 @@ import CookieControls from "components/cookieControls"
 import CodeComp from 'components/codeComp';
 import HashControls from 'components/hashControls';
 
-
 import GlobalArray from "components/globalArray";
 
 class Dashboard {
@@ -10,6 +9,7 @@ class Dashboard {
     this.id = id
     this.googleListingURL = new CodeComp().mainCode()
     this.listDatas = []
+    this.access = GlobalArray.globalArray['access']
   }
   render() {
     const tpl =  `
@@ -33,28 +33,30 @@ class Dashboard {
 
     var sortStart, sortStop
 
-    $("#dashboard-view").sortable({
-      start: function(event, ui) {
-        sortStart = $('#dashboard-view [data-moduleid='+ui.item[0].dataset.moduleid+']').index()
-      },
-      stop: function(event, ui) {
-        sortStop = $('#dashboard-view [data-moduleid='+ui.item[0].dataset.moduleid+']').index()
-        let sortURL = new CodeComp().mainCode()+'&pageid='+urlHash+'&fromid='+(sortStart+1)+'&toid='+(sortStop+1)+'&action=sort'
-        console.log(sortURL)
-          if(sortStart != sortStop) {
-            $('.loader').fadeIn()
-            $.getJSON(sortURL, function(callback) {
-              console.log(callback)
-              let output = JSON.parse(callback.result)
-              if(!output.result) {
-                new CookieControls().deleteCookie()//Logout
-              } 
-              $('.loader').fadeOut()
-            })
-         }
-      }
-      
-    });
+
+    if(self.access == 'full') {
+      $("#dashboard-view").sortable({
+        start: function(event, ui) {
+          sortStart = $('#dashboard-view [data-moduleid='+ui.item[0].dataset.moduleid+']').index()
+        },
+        stop: function(event, ui) {
+          sortStop = $('#dashboard-view [data-moduleid='+ui.item[0].dataset.moduleid+']').index()
+          let sortURL = new CodeComp().mainCode()+'&pageid='+urlHash+'&fromid='+(sortStart+1)+'&toid='+(sortStop+1)+'&action=sort'
+          console.log(sortURL)
+            if(sortStart != sortStop) {
+              $('.loader').fadeIn()
+              $.getJSON(sortURL, function(callback) {
+                console.log(callback)
+                let output = JSON.parse(callback.result)
+                if(!output.result) {
+                  new CookieControls().deleteCookie()//Logout
+                } 
+                $('.loader').fadeOut()
+              })
+           }
+        }
+      });
+    }
 
     
 
@@ -136,8 +138,8 @@ class Dashboard {
     });
 
     $(document).on('change', '#dashboard-create-type', function(event) {
-      let access = GlobalArray.globalArray['access']
-        if(access == 'full') {
+        // let access = GlobalArray.globalArray['access']
+        if(self.access == 'full') {
           if($(this).val()=='listing') {
             $('.field-box-detail').hide()
             $('.field-box-listing').show()
@@ -165,8 +167,8 @@ class Dashboard {
 
     function dashboardBtnActive() {
       if(($('#dashboard-create-name').val() != '') && ($('#dashboard-create-type').val() != '')) {
-        let access = GlobalArray.globalArray['access']
-        if(access == 'full') {
+        // let access = GlobalArray.globalArray['access']
+        if(self.access == 'full') {
           if($('.field-box:visible .field-new').length != $('.field-box:visible .field-new.filled-field').length) {
             $('#dashboard-create-okBtn').prop('disabled', true)
           } else {
