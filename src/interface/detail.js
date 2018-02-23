@@ -33,7 +33,7 @@ class Detail {
     let paramName = GlobalArray.globalArray.paramname
     $('.breadcrumb-item.active').html('Detail: '+paramName)
 
-    let readdetailParamURL = new CodeComp().mainCode()+'&pageid='+paramId+'&action=readpagedatas'
+    let readdetailParamURL = new CodeComp().mainCode()+'&pagetype=detail&pageid='+paramId+'&action=readpagedatas'
 
     console.log('detail=',readdetailParamURL)
 

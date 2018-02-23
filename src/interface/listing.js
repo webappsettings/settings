@@ -29,6 +29,8 @@ class Listing {
   }
 
   clickHandler() {
+
+
     var imageURI, fileName, fileChange = false
     let self = this
     // let paramURL = self.googleListingURL+'&action=read'
@@ -36,7 +38,7 @@ class Listing {
     let paramName = GlobalArray.globalArray.paramname
     $('.breadcrumb-item.active').html('Listing: '+paramName)
 
-    let readlistParamURL = new CodeComp().mainCode()+'&pageid='+paramId+'&action=readpagedatas'
+    let readlistParamURL = new CodeComp().mainCode()+'&pagetype=listing&pageid='+paramId+'&action=readpagedatas'
 
 
     console.log('listingURL=', JSON.stringify(readlistParamURL))
@@ -268,27 +270,45 @@ class Listing {
 
 
 const pushData = (data) => {
-  
-  var lists = ''
+  var tableHeading = ``
+  var lists = ``
   $.each(data.result, function(index, elm) {
     // console.log('med=',elm)
-    var imgPath = `images/placeholder.png`
-    var bgImg = `style="background-image:url(`+imgPath+`)"`
+    if(index == 0) {
+      generateHeading(elm)
+    } else {
+      var imgPath = `images/placeholder.png`
+      var bgImg = `style="background-image:url(`+imgPath+`)"`
 
-    if(elm[6]) {
-      imgPath = elm[6]
-      bgImg = `style="background-image:url(`+elm[6]+`)"`
-    }
-    lists += `<tr data-rowid="`+elm[1]+`">
-          <td>`+(index+1)+`</td>
-          <td>`+elm[0]+`</td>
-          <td>`+elm[2]+`</td>
-          <td>`+elm[3]+`</td>
-          <td><div class="img-thumb" `+bgImg+`><img src="`+imgPath+`" alt="" /></div></td>
-          <td><a class="list-controls list-edit" data-id=`+elm[1]+`>Edit</a></td>
-          <td><a class="list-controls list-remove" data-id=`+elm[1]+` data-mediaid=`+elm[4]+`>Remove</a></td>
-        </tr>`
+      if(elm[6]) {
+        imgPath = elm[6]
+        bgImg = `style="background-image:url(`+elm[6]+`)"`
+      }
+      lists += `<tr data-rowid="`+elm[1]+`">
+            <td>`+(index)+`</td>
+            <td>`+elm[0]+`</td>
+            <td>`+elm[2]+`</td>
+            <td>`+elm[3]+`</td>
+            <td><div class="img-thumb" `+bgImg+`><img src="`+imgPath+`" alt="" /></div></td>
+            <td><a class="list-controls list-edit" data-id=`+elm[1]+`>Edit</a></td>
+            <td><a class="list-controls list-remove" data-id=`+elm[1]+` data-mediaid=`+elm[4]+`>Remove</a></td>
+          </tr>`
+      }
   });
+
+  function generateHeading(headingVal) {
+    $.each(headingVal, function(index, elm) {
+      if(index != 0) {
+        var tElm,func = ``
+        if(elm.indexOf("(") >= 0){
+          tElm = elm.split("(")
+          elm = tElm[0]
+          func = tElm[1].slice(0, -1);
+        }
+        tableHeading += `<th data-func=`+func+`>`+elm+`</th>`
+      }
+    })
+  }
 
   $('#listing-view').html(`
     <div class="pull-right"><button type="button" class="btn btn-primary" id="listing-create-btn">Create New</button></div>
@@ -296,13 +316,7 @@ const pushData = (data) => {
     <table class="table table-responsive sortable-row">
       <thead>
         <tr>
-          <th>#</th>
-          <th>Time</th>
-          <th>Name</th>
-          <th>User ID</th>
-          <th>&nbsp;</th>
-          <th>&nbsp;</th>
-          <th>&nbsp;</th>
+          `+tableHeading+`
         </tr>
       </thead>
       <tbody>
