@@ -18565,6 +18565,7 @@ var Listing = function () {
   }, {
     key: "clickHandler",
     value: function clickHandler() {
+
       var imageURI,
           fileName,
           fileChange = false;
@@ -18574,7 +18575,7 @@ var Listing = function () {
       var paramName = _globalArray2.default.globalArray.paramname;
       $('.breadcrumb-item.active').html('Listing: ' + paramName);
 
-      var readlistParamURL = new _codeComp2.default().mainCode() + '&pageid=' + paramId + '&action=readpagedatas';
+      var readlistParamURL = new _codeComp2.default().mainCode() + '&pagetype=listing&pageid=' + paramId + '&action=readpagedatas';
 
       console.log('listingURL=', JSON.stringify(readlistParamURL));
 
@@ -18787,21 +18788,40 @@ var Listing = function () {
 }();
 
 var pushData = function pushData(data) {
-
-  var lists = '';
+  var tableHeading = "";
+  var lists = "";
   $.each(data.result, function (index, elm) {
     // console.log('med=',elm)
-    var imgPath = "images/placeholder.png";
-    var bgImg = "style=\"background-image:url(" + imgPath + ")\"";
+    if (index == 0) {
+      generateHeading(elm);
+    } else {
+      var imgPath = "images/placeholder.png";
+      var bgImg = "style=\"background-image:url(" + imgPath + ")\"";
 
-    if (elm[6]) {
-      imgPath = elm[6];
-      bgImg = "style=\"background-image:url(" + elm[6] + ")\"";
+      if (elm[6]) {
+        imgPath = elm[6];
+        bgImg = "style=\"background-image:url(" + elm[6] + ")\"";
+      }
+      lists += "<tr data-rowid=\"" + elm[1] + "\">\n            <td>" + index + "</td>\n            <td>" + elm[0] + "</td>\n            <td>" + elm[2] + "</td>\n            <td>" + elm[3] + "</td>\n            <td><div class=\"img-thumb\" " + bgImg + "><img src=\"" + imgPath + "\" alt=\"\" /></div></td>\n            <td><a class=\"list-controls list-edit\" data-id=" + elm[1] + ">Edit</a></td>\n            <td><a class=\"list-controls list-remove\" data-id=" + elm[1] + " data-mediaid=" + elm[4] + ">Remove</a></td>\n          </tr>";
     }
-    lists += "<tr data-rowid=\"" + elm[1] + "\">\n          <td>" + (index + 1) + "</td>\n          <td>" + elm[0] + "</td>\n          <td>" + elm[2] + "</td>\n          <td>" + elm[3] + "</td>\n          <td><div class=\"img-thumb\" " + bgImg + "><img src=\"" + imgPath + "\" alt=\"\" /></div></td>\n          <td><a class=\"list-controls list-edit\" data-id=" + elm[1] + ">Edit</a></td>\n          <td><a class=\"list-controls list-remove\" data-id=" + elm[1] + " data-mediaid=" + elm[4] + ">Remove</a></td>\n        </tr>";
   });
 
-  $('#listing-view').html("\n    <div class=\"pull-right\"><button type=\"button\" class=\"btn btn-primary\" id=\"listing-create-btn\">Create New</button></div>\n    <div class=\"clearfix\"></div>\n    <table class=\"table table-responsive sortable-row\">\n      <thead>\n        <tr>\n          <th>#</th>\n          <th>Time</th>\n          <th>Name</th>\n          <th>User ID</th>\n          <th>&nbsp;</th>\n          <th>&nbsp;</th>\n          <th>&nbsp;</th>\n        </tr>\n      </thead>\n      <tbody>\n        " + lists + "            \n      </tbody>\n    </table>\n  ");
+  function generateHeading(headingVal) {
+    $.each(headingVal, function (index, elm) {
+      if (index != 0) {
+        var tElm,
+            func = "";
+        if (elm.indexOf("(") >= 0) {
+          tElm = elm.split("(");
+          elm = tElm[0];
+          func = tElm[1].slice(0, -1);
+        }
+        tableHeading += "<th data-func=" + func + ">" + elm + "</th>";
+      }
+    });
+  }
+
+  $('#listing-view').html("\n    <div class=\"pull-right\"><button type=\"button\" class=\"btn btn-primary\" id=\"listing-create-btn\">Create New</button></div>\n    <div class=\"clearfix\"></div>\n    <table class=\"table table-responsive sortable-row\">\n      <thead>\n        <tr>\n          " + tableHeading + "\n        </tr>\n      </thead>\n      <tbody>\n        " + lists + "            \n      </tbody>\n    </table>\n  ");
 };
 
 exports.default = Listing;
@@ -18862,7 +18882,7 @@ var Detail = function () {
       var paramName = _globalArray2.default.globalArray.paramname;
       $('.breadcrumb-item.active').html('Detail: ' + paramName);
 
-      var readdetailParamURL = new _codeComp2.default().mainCode() + '&pageid=' + paramId + '&action=readpagedatas';
+      var readdetailParamURL = new _codeComp2.default().mainCode() + '&pagetype=detail&pageid=' + paramId + '&action=readpagedatas';
 
       console.log('detail=', readdetailParamURL);
 
