@@ -18402,17 +18402,19 @@ var Dashboard = function () {
         $('.loader').fadeOut();
       });
 
-      $(document).on('click', '.dashboard-remove-btn', function (event) {
+      $(document).off().on('click', '.dashboard-remove-btn', function (event) {
         var _this = $(this);
         var id = $(this).attr('data-id');
         var paramURL = new _codeComp2.default().mainCode() + '&moduleid=' + id + '&action=removemodule';
+
+        console.log(self.listDatas[0].result);
         $.getJSON(paramURL, function (callback) {
           var output = JSON.parse(callback.result);
           console.log(output);
           if (output.result) {
             // _this.closest('.col-md-4').remove();
             self.listDatas[0].result = jQuery.grep(self.listDatas[0].result, function (elm, index) {
-              return elm[1] != id;
+              return elm[0] != id;
             });
             pushData(self.listDatas[0]);
           } else {
@@ -18503,7 +18505,7 @@ var Dashboard = function () {
 var pushData = function pushData(data) {
   var lists = '';
   $.each(data.result, function (index, elm) {
-    lists += '<div class="col-md-4 module-item" data-moduleid="' + elm[1] + '" data-startindex="' + index + '">\n            <div class="panel panel-default">\n              <i class="ion-close dashboard-remove-btn" data-id="' + elm[1] + '"></i>\n              <div class="panel-body">\n                <a href="#' + elm[3] + '?id=' + elm[1] + '&name=' + elm[2] + '" data-type="' + elm[3] + '">' + elm[2] + '</a>\n              </div>\n            </div>\n          </div>';
+    lists += '<div class="col-md-4 module-item" data-moduleid="' + elm[0] + '" data-startindex="' + index + '">\n            <div class="panel panel-default">\n              <i class="ion-close dashboard-remove-btn" data-id="' + elm[0] + '"></i>\n              <div class="panel-body">\n                <a href="#' + elm[3] + '?id=' + elm[0] + '&name=' + elm[2] + '" data-type="' + elm[3] + '">' + elm[2] + '</a>\n              </div>\n            </div>\n          </div>';
   });
 
   $('#dashboard-view').html(lists);
@@ -18568,7 +18570,8 @@ var Listing = function () {
 
       var imageURI,
           fileName,
-          fileChange = false;
+          fileChange = false,
+          headings;
       var self = this;
       // let paramURL = self.googleListingURL+'&action=read'
       var paramId = _globalArray2.default.globalArray.paramid;
@@ -18580,6 +18583,7 @@ var Listing = function () {
       console.log('listingURL=', JSON.stringify(readlistParamURL));
 
       $('.loader').fadeIn();
+      var tm1 = new Date();
       $.getJSON(readlistParamURL, function (callback) {
 
         console.log('listAll', callback);
@@ -18589,8 +18593,20 @@ var Listing = function () {
             alert('This page removed!');
             new _hashControls2.default('dashboard').setHash();
           } else {
+
+            headings = callback.result[0];
+            console.log('callbackHeading===', headings);
+
+            /*callback.result = jQuery.grep(callback.result, function( elm, index ) {
+              if(index != 0) {return elm}
+            })*/
+
+            console.log('callbackDatas===', callback);
+
             self.listDatas.push(callback);
             pushData(self.listDatas[0]);
+            var tm2 = new Date();
+            console.log('totalTime: ', tm2 - tm1);
           }
         } else {
           new _cookieControls2.default().deleteCookie(); //Logout
@@ -18612,33 +18628,43 @@ var Listing = function () {
         return objects;
       }
 
-      $(document).off().on('click', '.list-controls', function (event) {
+      $(document).on('click', '.list-controls', function (event) {
+
         var getId = $(this).attr('data-id');
-        var mediaId = $(this).attr('data-mediaid');
         var paramId = _globalArray2.default.globalArray.paramid;
+        var getRowIndex = $(this).attr('data-rowindex');
         // $('body').attr('selectedid', getId)
 
         if ($(this).hasClass('list-remove')) {
 
-          removeThis(paramId, getId, mediaId);
+          removeThis(paramId, getId, getRowIndex);
         }
         if ($(this).hasClass('list-edit')) {
-          editThis(getId);
+
+          // editThis(getId)
+
+          $('#listing-okBtn').attr({ 'data-rowindex': getRowIndex });
+
+          elmentPushToModal('edit', getId);
         }
+        // $( ".list-controls").unbind( "click" );
       });
 
       //Remove
-      function removeThis(paramId, id, mediaId) {
+      function removeThis(paramId, id, rowIndex) {
 
-        var deleteParamURL = new _codeComp2.default().mainCode() + '&pageid=' + paramId + '&id=' + id + '&mediaid=' + mediaId + '&action=deleterow';
+        var deleteParamURL = new _codeComp2.default().mainCode() + '&pageid=' + paramId + '&id=' + id + '&rowindex=' + rowIndex + '&action=deleterow';
+
         $.getJSON(deleteParamURL, function (callback) {
+
+          // console.log(callback.result)
 
           var output = JSON.parse(callback.result);
           console.log('deleted=', output);
           if (output.result) {
             if (output.result != 'pageremoved') {
               self.listDatas[0].result = jQuery.grep(self.listDatas[0].result, function (elm, index) {
-                return elm[1] != id;
+                return elm[0] != id;
               });
               pushData(self.listDatas[0]);
             } else {
@@ -18651,34 +18677,62 @@ var Listing = function () {
         });
       }
 
-      //Edit
-      function editThis(getId) {
-        var getListVal = getObjects(self.listDatas[0], 1, getId);
+      //Create New
+      $(document).on('click', '#listing-create-btn', function () {
+        elmentPushToModal('create');
+      });
 
-        $('#listing-modal .modal-title').text('Edit');
-        $('#listing-modal #listing-name').val(getListVal[0][2]);
-        $('#listing-modal #listing-userid').val(getListVal[0][3]);
-        $('#listing-modal #listing-imageupload').val('');
-        imageURI = getListVal[0][6];
-        // imageURI = undefined
-        fileName = '';
-        $('#listing-okBtn').attr({ 'data-action': 'edit', 'data-rowid': getId });
+      function elmentPushToModal(action, rowId) {
+
+        if (action == 'create') {
+          $('#listing-modal .modal-title').text('Create New');
+          imageURI = undefined;
+          fileName = '';
+          $('#listing-okBtn').attr({ 'data-action': 'create', 'data-rowid': '' });
+        } else {
+          $('#listing-modal .modal-title').text('Edit');
+          $('#listing-okBtn').attr({ 'data-action': 'edit', 'data-rowid': rowId });
+        }
+
+        $('#listing-modal form').html('');
+
+        var getListVal;
+        if (action == 'edit') {
+          var getListVal = getObjects(self.listDatas[0], 0, rowId);
+          console.log(getListVal);
+        }
+
+        $.each(headings, function (index, elm) {
+
+          var colIndex = index + 1;
+
+          var tElm,
+              func = "";
+          if (elm.charAt(0) == '_') {
+            elm = '_';
+          } else if (elm.indexOf("(") >= 0) {
+            tElm = elm.split("(");
+            elm = tElm[0];
+            func = tElm[1].slice(0, -1);
+          }
+
+          var insertVal = '';
+
+          if (getListVal) {
+            insertVal = getListVal[0][index];
+          }
+
+          if (elm != '_' && func != 'count' && func != 'time' && func != 'file' && func != 'edit' && func != 'remove') {
+            $('#listing-modal form').append("\n            <div class=\"col-md-6\">\n                  <div class=\"form-group\">\n                    <label>" + elm + "</label>\n                    <input type=\"text\" class=\"form-control dynamicElem\" placeholder=\"" + elm + "\" value=\"" + insertVal + "\" data-filedname=\"" + func + "\" data-colindex=\"" + colIndex + "\">\n                  </div>\n                </div>\n            ");
+          }
+          if (func == 'file') {
+            $('#listing-modal form').append("\n            <div class=\"col-md-12\">\n              <div class=\"form-group\">\n                <label>Upload Image</label>\n                <input type=\"file\" class=\"dynamicElem elm-" + func + "\" id=\"fileupload\" data-filedname=\"" + func + "\" data-colindex=\"" + colIndex + "\">\n              </div>\n            </div>\n          ");
+          }
+        });
         $('#listing-modal').modal('show');
       }
 
-      //Create New
-      $(document).on('click', '#listing-create-btn', function () {
-        $('#listing-modal .modal-title').text('Create New');
-        $('#listing-modal #listing-name').val('');
-        $('#listing-modal #listing-userid').val('');
-        $('#listing-modal #listing-imageupload').val('');
-        imageURI = undefined;
-        fileName = '';
-        $('#listing-okBtn').attr({ 'data-action': 'create', 'data-rowid': '' });
-        $('#listing-modal').modal('show');
-      });
-
-      $("#listing-imageupload").on('change', function (event) {
+      $(document).on('change', '#fileupload', function (event) {
         var inputFiles = this.files;
         if (inputFiles == undefined || inputFiles.length == 0) return;
         var inputFile = inputFiles[0];
@@ -18694,14 +18748,17 @@ var Listing = function () {
         reader.readAsDataURL(inputFile);
       });
 
-      $(document).on('click', '#listing-okBtn', function () {
-        var paramId = _globalArray2.default.globalArray.paramid;
-        var getName = $('#listing-modal #listing-name').val();
-        var getUserId = $('#listing-modal #listing-userid').val();
+      $('#listing-okBtn').off().on('click', function () {
 
-        var action = $(this).attr('data-action');
+        $('#listing-okBtn').attr('disabled', true);
 
         var formdata = new FormData();
+
+        var paramId = _globalArray2.default.globalArray.paramid;
+        formdata.append('pageid', paramId);
+
+        var action = $(this).attr('data-action');
+        var rowIndex = parseInt($(this).attr('data-rowindex'));
 
         if (action == 'create') {
           var timestamp = new Date();
@@ -18709,16 +18766,27 @@ var Listing = function () {
           formdata.append('action', 'create');
         } else {
           var rowId = $(this).attr('data-rowid');
+
           formdata.append('action', 'edit');
+          formdata.append('rowindex', rowIndex);
         }
 
-        formdata.append('pageid', paramId);
-        formdata.append('id', rowId);
-        formdata.append('name', getName);
-        formdata.append('userid', getUserId);
+        var dataRow = [];
+        var obj = {};
+        dataRow.push(obj);
+        obj[1] = rowId;
+
+        $('.modal.in:visible form .dynamicElem:not(#fileupload)').each(function (index, el) {
+          var colindex = $(this).attr('data-colindex');
+          var values = $(this).val();
+          obj[colindex] = values;
+          // formdata.append('coldatas', {colindex:values})
+          // dataRow.push({colindex,values})
+        });
 
         if (imageURI && fileChange) {
           var filetype = imageURI.substring(5, imageURI.indexOf(';'));
+
           var img = imageURI.replace(/^.*,/, '');
 
           formdata.append('filechange', fileChange);
@@ -18730,9 +18798,15 @@ var Listing = function () {
           formdata.append('file', '');
         }
 
-        // formdata.append('group', 'secondary')
+        console.log(dataRow);
 
-        // var dataAddURL = self.googleListingURL;
+        // for (var pair of formdata.entries()) {
+        //     console.log(pair[0]+ ', ' + pair[1]); 
+        // }
+
+        dataRow = JSON.stringify(dataRow);
+
+        formdata.append('coldatas', dataRow);
 
         var dataAddURL = new _codeComp2.default().mainCode();
 
@@ -18746,31 +18820,23 @@ var Listing = function () {
           beforeSend: function beforeSend() {
             $('.loader').fadeIn();
           }
-        }).done(function (callback) {
-          // console.log('created==',callback)
-          var outputDatas = JSON.parse(callback.result);
-          console.log(outputDatas.result);
-          if (outputDatas.result) {
-            fileChange = false;
-            if (action == 'create') {
-              self.listDatas[0].result.unshift(outputDatas.result);
-            } else {
+        }).done(function (outputDatas) {
 
-              console.log('editOriginal=', outputDatas.result);
+          outputDatas = JSON.parse(outputDatas.result);
+          console.log('created==', outputDatas);
+          // outputDatas = JSON.parse(outputDatas)
 
-              $.each(self.listDatas[0].result, function (index, elm) {
-                if (elm[1] == outputDatas.result[1]) {
-                  self.listDatas[0].result[index] = outputDatas.result;
-                  // console.log()
-                }
-              });
-              console.log('editOut=', self.listDatas[0].result);
-            }
-
-            pushData(self.listDatas[0]);
+          if (action == 'create') {
+            self.listDatas[0].result.splice(1, 0, outputDatas.result);
           } else {
-            new _cookieControls2.default().deleteCookie(); //Logout
+            self.listDatas[0].result[rowIndex - 1] = outputDatas.result;
           }
+
+          // self.listDatas[0].result.unshift(outputDatas.result[0])
+
+          console.log(self.listDatas[0].result);
+
+          pushData(self.listDatas[0]);
         }).fail(function (callback) {
           // console.clear()
           console.log('Fail', callback);
@@ -18778,8 +18844,86 @@ var Listing = function () {
           // new HashControls('dashboard').setHash()
         }).always(function () {
           $('.loader').fadeOut();
+          $('#listing-okBtn').attr('disabled', false);
           $('#listing-modal').modal('hide');
         });
+
+        /*let getName = $('#listing-modal #listing-name').val()
+        let getUserId = $('#listing-modal #listing-userid').val()
+          
+        
+        if(action == 'create') {
+          var timestamp = new Date()
+          var rowId = timestamp.toISOString().replace(/\D/g,"").substr(0,14)
+          formdata.append('action', 'create')
+        } else {
+          var rowId = $(this).attr('data-rowid')
+          formdata.append('action', 'edit')
+        }
+        
+          
+        formdata.append('id', rowId)
+        formdata.append('name', getName)
+        
+          if(imageURI && fileChange){
+          let filetype = imageURI.substring(5,imageURI.indexOf(';'))
+          let img = imageURI.replace(/^.*,/, '')
+              formdata.append('filechange', fileChange)
+          formdata.append('file', img)
+          formdata.append('filename', fileName)
+          formdata.append('filetype', filetype)
+          formdata.append('foldername', 'listing')
+        } else {
+          formdata.append('file', '')
+        }
+            var dataAddURL = new CodeComp().mainCode()
+          
+          $.ajax({
+           method: 'POST',
+           url: dataAddURL,
+           data: formdata,
+           dataType: 'json',
+           contentType: false,
+           processData: false,
+           beforeSend: function(){
+              $('.loader').fadeIn()
+            }
+          })
+          .done(function(callback){
+            // console.log('created==',callback)
+            var outputDatas = JSON.parse(callback.result)
+            console.log(outputDatas.result)
+            if(outputDatas.result) {
+              fileChange = false
+              if(action == 'create') {
+                self.listDatas[0].result.unshift(outputDatas.result)
+              } else {
+                
+                console.log('editOriginal=',outputDatas.result)
+                  $.each(self.listDatas[0].result, function(index, elm) {
+                  if(elm[1] == outputDatas.result[1]) {
+                    self.listDatas[0].result[index] = outputDatas.result
+                    // console.log()
+                  }
+                });
+                console.log('editOut=',self.listDatas[0].result)
+              }
+              
+              pushData(self.listDatas[0])
+            } else {
+              new CookieControls().deleteCookie()//Logout
+            }
+          })
+          .fail(function(callback) {
+            // console.clear()
+            console.log('Fail',callback)
+            alert('This page removed!')
+            // new HashControls('dashboard').setHash()
+         })
+         .always(function(){
+           $('.loader').fadeOut()
+           $('#listing-modal').modal('hide')
+         });*/
       });
     }
   }]);
@@ -18790,32 +18934,77 @@ var Listing = function () {
 var pushData = function pushData(data) {
   var tableHeading = "";
   var lists = "";
+
+  var headerValues;
   $.each(data.result, function (index, elm) {
     // console.log('med=',elm)
     if (index == 0) {
-      generateHeading(elm);
-    } else {
-      var imgPath = "images/placeholder.png";
-      var bgImg = "style=\"background-image:url(" + imgPath + ")\"";
 
-      if (elm[6]) {
-        imgPath = elm[6];
-        bgImg = "style=\"background-image:url(" + elm[6] + ")\"";
-      }
-      lists += "<tr data-rowid=\"" + elm[1] + "\">\n            <td>" + index + "</td>\n            <td>" + elm[0] + "</td>\n            <td>" + elm[2] + "</td>\n            <td>" + elm[3] + "</td>\n            <td><div class=\"img-thumb\" " + bgImg + "><img src=\"" + imgPath + "\" alt=\"\" /></div></td>\n            <td><a class=\"list-controls list-edit\" data-id=" + elm[1] + ">Edit</a></td>\n            <td><a class=\"list-controls list-remove\" data-id=" + elm[1] + " data-mediaid=" + elm[4] + ">Remove</a></td>\n          </tr>";
+      headerValues = elm;
+    } else {
+
+      var listsInner = "";
+
+      $.each(elm, function (index1, elm1) {
+        var imgPath = "images/placeholder.png";
+        var bgImg = "style=\"background-image:url(" + imgPath + ")\"";
+
+        var func = headerValues[index1];
+        if (func.charAt(0) == '_') {
+          func = '_';
+        } else if (func.indexOf("(") >= 0) {
+          func = func.split("(")[1].slice(0, -1);
+        }
+        // console.log(func)
+        if (func == 'count') {
+          elm1 = index;
+        }
+        if (func == 'edit') {
+          elm1 = "<a class=\"list-controls list-edit\" data-rowindex=\"" + (index + 1) + "\" data-id=\"" + elm[0] + "\">Edit</a>";
+        }
+        if (func == 'remove') {
+          elm1 = "<a class=\"list-controls list-remove\" data-rowindex=\"" + (index + 1) + "\" data-id=\"" + elm[0] + "\">Remove</a>";
+        }
+        if (func == 'file') {
+          if (elm1 != '') {
+            imgPath = elm1;
+            bgImg = "style=\"background-image:url(" + imgPath + ")\"";
+          }
+          elm1 = "<div class=\"img-thumb\" " + bgImg + "><img src=\"" + imgPath + "\" alt=\"\" /></div>";
+        }
+
+        if (func != '_') {
+          listsInner += "<td>" + elm1 + "</td>";
+        }
+
+        /*listsInner = `<td>`+(index)+`</td>
+            <td>`+elm[0]+`</td>
+            <td>`+elm[2]+`</td>
+            <td>`+elm[3]+`</td>
+            <td><div class="img-thumb" `+bgImg+`><img src="`+imgPath+`" alt="" /></div></td>
+            <td><a class="list-controls list-edit" data-id=`+elm[1]+`>Edit</a></td>
+            <td><a class="list-controls list-remove" data-id=`+elm[1]+` data-mediaid=`+elm[4]+`>Remove</a></td>`*/
+      });
+
+      lists += "<tr data-rowid=\"" + elm[0] + "\">\n           " + listsInner + " \n          </tr>";
     }
   });
 
+  generateHeading(headerValues);
+
   function generateHeading(headingVal) {
     $.each(headingVal, function (index, elm) {
-      if (index != 0) {
-        var tElm,
-            func = "";
-        if (elm.indexOf("(") >= 0) {
-          tElm = elm.split("(");
-          elm = tElm[0];
-          func = tElm[1].slice(0, -1);
-        }
+      // if(index != 0) {
+      var tElm,
+          func = "";
+      if (elm.charAt(0) == '_') {
+        elm = '_';
+      } else if (elm.indexOf("(") >= 0) {
+        tElm = elm.split("(");
+        elm = tElm[0];
+        func = tElm[1].slice(0, -1);
+      }
+      if (elm != '_') {
         tableHeading += "<th data-func=" + func + ">" + elm + "</th>";
       }
     });
