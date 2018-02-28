@@ -87,17 +87,19 @@ class Dashboard {
 
 
 
-    $(document).on('click', '.dashboard-remove-btn', function(event) {
+    $(document).off().on('click', '.dashboard-remove-btn', function(event) {
       var _this = $(this)
       let id = $(this).attr('data-id')
       let paramURL = new CodeComp().mainCode()+'&moduleid='+id+'&action=removemodule'
+      
+      console.log(self.listDatas[0].result)
       $.getJSON(paramURL, function(callback) {
         let output = JSON.parse(callback.result)
         console.log(output)
         if(output.result) {
           // _this.closest('.col-md-4').remove();
           self.listDatas[0].result = jQuery.grep(self.listDatas[0].result, function( elm, index ) {
-            return elm[1] != id         
+            return elm[0] != id         
           })
           pushData(self.listDatas[0])
         } else {
@@ -190,11 +192,11 @@ class Dashboard {
 const pushData = (data) => {
   var lists = ''
   $.each(data.result, function(index, elm) {
-    lists += `<div class="col-md-4 module-item" data-moduleid="`+elm[1]+`" data-startindex="`+index+`">
+    lists += `<div class="col-md-4 module-item" data-moduleid="`+elm[0]+`" data-startindex="`+index+`">
             <div class="panel panel-default">
-              <i class="ion-close dashboard-remove-btn" data-id="`+elm[1]+`"></i>
+              <i class="ion-close dashboard-remove-btn" data-id="`+elm[0]+`"></i>
               <div class="panel-body">
-                <a href="#`+elm[3]+`?id=`+elm[1]+`&name=`+elm[2]+`" data-type="`+elm[3]+`">`+elm[2]+`</a>
+                <a href="#`+elm[3]+`?id=`+elm[0]+`&name=`+elm[2]+`" data-type="`+elm[3]+`">`+elm[2]+`</a>
               </div>
             </div>
           </div>`

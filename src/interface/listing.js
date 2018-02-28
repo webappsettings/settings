@@ -31,12 +31,14 @@ class Listing {
   clickHandler() {
 
 
-    var imageURI, fileName, fileChange = false
+    var imageURI, fileName, fileChange = false, headings
     let self = this
     // let paramURL = self.googleListingURL+'&action=read'
     let paramId = GlobalArray.globalArray.paramid
     let paramName = GlobalArray.globalArray.paramname
     $('.breadcrumb-item.active').html('Listing: '+paramName)
+
+
 
     let readlistParamURL = new CodeComp().mainCode()+'&pagetype=listing&pageid='+paramId+'&action=readpagedatas'
 
@@ -44,6 +46,7 @@ class Listing {
     console.log('listingURL=', JSON.stringify(readlistParamURL))
 
     $('.loader').fadeIn()
+    var tm1 = new Date()
     $.getJSON(readlistParamURL, function(callback) {
 
       console.log('listAll',callback)
@@ -54,8 +57,20 @@ class Listing {
           alert('This page removed!')
           new HashControls('dashboard').setHash()
         } else {
+          
+            headings = callback.result[0];
+            console.log('callbackHeading===',headings)
+
+            /*callback.result = jQuery.grep(callback.result, function( elm, index ) {
+              if(index != 0) {return elm}
+            })*/
+
+            console.log('callbackDatas===',callback)
+
             self.listDatas.push(callback)
             pushData(self.listDatas[0])
+            var tm2 = new Date()
+            console.log('totalTime: ',tm2-tm1)
         }
       } else {
         new CookieControls().deleteCookie()//Logout
@@ -80,34 +95,47 @@ class Listing {
     }
   
 
-    $(document).off().on('click', '.list-controls', function(event) {
+    $(document).on('click', '.list-controls', function(event) {
+     
       let getId = $(this).attr('data-id')
-      let mediaId = $(this).attr('data-mediaid')
       let paramId = GlobalArray.globalArray.paramid
+      let getRowIndex = $(this).attr('data-rowindex')
       // $('body').attr('selectedid', getId)
 
       if($(this).hasClass('list-remove')) {
 
-        removeThis(paramId, getId, mediaId)
+        removeThis(paramId, getId, getRowIndex)
       }
       if($(this).hasClass('list-edit')) {
-        editThis(getId)
+
+        // editThis(getId)
+        
+        $('#listing-okBtn').attr({'data-rowindex':getRowIndex})
+
+        elmentPushToModal('edit', getId)
+        
       }
+      // $( ".list-controls").unbind( "click" );
     });
 
 
     //Remove
-    function removeThis(paramId, id, mediaId) {
+    function removeThis(paramId, id, rowIndex) {
 
-      let deleteParamURL = new CodeComp().mainCode()+'&pageid='+paramId+'&id='+id+'&mediaid='+mediaId+'&action=deleterow'
+      
+      let deleteParamURL = new CodeComp().mainCode()+'&pageid='+paramId+'&id='+id+'&rowindex='+rowIndex+'&action=deleterow'
+
+      
       $.getJSON(deleteParamURL, function(callback) {
+
+        // console.log(callback.result)
 
         let output = JSON.parse(callback.result)
         console.log('deleted=', output)
         if(output.result) {
           if(output.result != 'pageremoved') {
             self.listDatas[0].result = jQuery.grep(self.listDatas[0].result, function( elm, index ) {
-              return elm[1] != id         
+              return elm[0] != id
             })
             pushData(self.listDatas[0])
           } else {
@@ -120,37 +148,83 @@ class Listing {
       })
     }
 
-    //Edit
-    function editThis(getId) {
-      let getListVal = getObjects(self.listDatas[0], 1, getId)
-
-      $('#listing-modal .modal-title').text('Edit')
-      $('#listing-modal #listing-name').val(getListVal[0][2])
-      $('#listing-modal #listing-userid').val(getListVal[0][3])
-      $('#listing-modal #listing-imageupload').val('')
-      imageURI = getListVal[0][6]
-      // imageURI = undefined
-      fileName = ''
-      $('#listing-okBtn').attr({'data-action':'edit', 'data-rowid':getId})
-      $('#listing-modal').modal('show')
-    }
-
+    
 
     //Create New
     $(document).on('click', '#listing-create-btn', function() {
-      $('#listing-modal .modal-title').text('Create New')
-      $('#listing-modal #listing-name').val('')
-      $('#listing-modal #listing-userid').val('')
-      $('#listing-modal #listing-imageupload').val('')
-      imageURI = undefined
-      fileName = ''
-      $('#listing-okBtn').attr({'data-action':'create', 'data-rowid':''})
-      $('#listing-modal').modal('show')
+      elmentPushToModal('create')
     });
 
 
 
-    $("#listing-imageupload").on('change', function(event) {
+    function elmentPushToModal(action, rowId) {
+
+      if(action == 'create') {
+        $('#listing-modal .modal-title').text('Create New')
+        imageURI = undefined
+        fileName = ''
+        $('#listing-okBtn').attr({'data-action':'create', 'data-rowid':''})
+      } else {
+        $('#listing-modal .modal-title').text('Edit')
+        $('#listing-okBtn').attr({'data-action':'edit', 'data-rowid':rowId})
+      }
+  
+      $('#listing-modal form').html('')
+
+      var getListVal
+      if(action=='edit') {
+          var getListVal = getObjects(self.listDatas[0], 0, rowId)
+          console.log(getListVal)
+        }
+
+
+      $.each(headings, function(index, elm) {
+
+        var colIndex = index+1
+        
+        var tElm,func = ``
+        if(elm.charAt(0) == '_') {
+          elm='_'
+        }
+        else if(elm.indexOf("(") >= 0){
+          tElm = elm.split("(")
+          elm = tElm[0]
+          func = tElm[1].slice(0, -1);
+        }
+
+        var insertVal = ''
+
+        if(getListVal) {
+          insertVal = getListVal[0][index]
+        }
+
+        if((elm!='_') && (func!='count') && (func!='time') && (func!='file') && (func!='edit') && (func!='remove')) {
+          $('#listing-modal form').append(`
+            <div class="col-md-6">
+                  <div class="form-group">
+                    <label>`+elm+`</label>
+                    <input type="text" class="form-control dynamicElem" placeholder="`+elm+`" value="`+insertVal+`" data-filedname="`+func+`" data-colindex="`+colIndex+`">
+                  </div>
+                </div>
+            `)
+          }
+        if(func=='file') {
+          $('#listing-modal form').append(`
+            <div class="col-md-12">
+              <div class="form-group">
+                <label>Upload Image</label>
+                <input type="file" class="dynamicElem elm-`+func+`" id="fileupload" data-filedname="`+func+`" data-colindex="`+colIndex+`">
+              </div>
+            </div>
+          `)
+        }
+      })
+      $('#listing-modal').modal('show')
+    }
+
+
+
+    $(document).on('change', '#fileupload', function(event) {
       var inputFiles = this.files;
       if(inputFiles == undefined || inputFiles.length == 0) return;
       var inputFile = inputFiles[0];
@@ -169,14 +243,147 @@ class Listing {
 
 
 
-    $(document).on('click', '#listing-okBtn', function() {
-      let paramId = GlobalArray.globalArray.paramid
-      let getName = $('#listing-modal #listing-name').val()
-      let getUserId = $('#listing-modal #listing-userid').val()
+    $('#listing-okBtn').off().on('click', function() {
 
-      let action = $(this).attr('data-action')
+      $('#listing-okBtn').attr('disabled',true)
 
       var formdata = new FormData()
+
+      let paramId = GlobalArray.globalArray.paramid
+      formdata.append('pageid', paramId)
+
+      let action = $(this).attr('data-action')
+      var rowIndex = parseInt($(this).attr('data-rowindex'))
+
+      if(action == 'create') {
+        var timestamp = new Date()
+        var rowId = timestamp.toISOString().replace(/\D/g,"").substr(0,14)
+        formdata.append('action', 'create')
+      } else {
+        var rowId = $(this).attr('data-rowid')
+        
+        formdata.append('action', 'edit')
+        formdata.append('rowindex', rowIndex)
+      }
+
+      var dataRow = []
+      var obj = {}
+      dataRow.push(obj)
+        obj[1]=rowId
+      
+      $('.modal.in:visible form .dynamicElem:not(#fileupload)').each(function(index, el) {
+        var colindex = $(this).attr('data-colindex')
+        var values = $(this).val()
+        obj[colindex]=values
+        // formdata.append('coldatas', {colindex:values})
+        // dataRow.push({colindex,values})
+      });
+
+
+      if(imageURI && fileChange){
+        let filetype = imageURI.substring(5,imageURI.indexOf(';'))
+
+        let img = imageURI.replace(/^.*,/, '')
+
+        formdata.append('filechange', fileChange)
+        formdata.append('file', img)
+        formdata.append('filename', fileName)
+        formdata.append('filetype', filetype)
+        formdata.append('foldername', 'listing')
+
+      } else {
+        formdata.append('file', '')
+      }
+
+
+
+console.log(dataRow)
+
+      // for (var pair of formdata.entries()) {
+      //     console.log(pair[0]+ ', ' + pair[1]); 
+      // }
+
+dataRow = JSON.stringify(dataRow)
+
+formdata.append('coldatas', dataRow)
+
+
+
+
+        var dataAddURL = new CodeComp().mainCode()
+
+      
+
+
+  $.ajax({
+         method: 'POST',
+         url: dataAddURL,
+         data: formdata,
+         dataType: 'json',
+         contentType: false,
+         processData: false,
+         beforeSend: function(){
+            $('.loader').fadeIn()
+          }
+        })
+        .done(function(outputDatas){
+
+          outputDatas = JSON.parse(outputDatas.result)
+          console.log('created==',outputDatas)
+          // outputDatas = JSON.parse(outputDatas)
+
+          if(action == 'create') {
+            self.listDatas[0].result.splice(1, 0, outputDatas.result);
+          } else {
+            self.listDatas[0].result[rowIndex-1] = outputDatas.result
+          }
+
+          // self.listDatas[0].result.unshift(outputDatas.result[0])
+          
+          console.log(self.listDatas[0].result)
+
+          pushData(self.listDatas[0])
+         
+        })
+        .fail(function(callback) {
+          // console.clear()
+          console.log('Fail',callback)
+          alert('This page removed!')
+          // new HashControls('dashboard').setHash()
+       })
+       .always(function(){
+         $('.loader').fadeOut()
+         $('#listing-okBtn').attr('disabled',false)
+         $('#listing-modal').modal('hide')
+       });
+
+
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      /*let getName = $('#listing-modal #listing-name').val()
+      let getUserId = $('#listing-modal #listing-userid').val()
+
+      
       
       if(action == 'create') {
         var timestamp = new Date()
@@ -188,10 +395,10 @@ class Listing {
       }
      
 
-      formdata.append('pageid', paramId)
+      
       formdata.append('id', rowId)
       formdata.append('name', getName)
-      formdata.append('userid', getUserId)
+      
 
       if(imageURI && fileChange){
         let filetype = imageURI.substring(5,imageURI.indexOf(';'))
@@ -207,9 +414,6 @@ class Listing {
         formdata.append('file', '')
       }
 
-      // formdata.append('group', 'secondary')
-
-      // var dataAddURL = self.googleListingURL;
 
       var dataAddURL = new CodeComp().mainCode()
 
@@ -261,7 +465,7 @@ class Listing {
        .always(function(){
          $('.loader').fadeOut()
          $('#listing-modal').modal('hide')
-       });
+       });*/
 
     });
 
@@ -272,41 +476,89 @@ class Listing {
 const pushData = (data) => {
   var tableHeading = ``
   var lists = ``
+  
+  var headerValues
   $.each(data.result, function(index, elm) {
     // console.log('med=',elm)
     if(index == 0) {
-      generateHeading(elm)
-    } else {
-      var imgPath = `images/placeholder.png`
-      var bgImg = `style="background-image:url(`+imgPath+`)"`
 
-      if(elm[6]) {
-        imgPath = elm[6]
-        bgImg = `style="background-image:url(`+elm[6]+`)"`
-      }
-      lists += `<tr data-rowid="`+elm[1]+`">
-            <td>`+(index)+`</td>
+      headerValues = elm
+    } else {
+      
+
+      var listsInner = ``
+
+      $.each(elm, function(index1, elm1) {
+        var imgPath = `images/placeholder.png`
+        var bgImg = `style="background-image:url(`+imgPath+`)"`
+
+        var func = headerValues[index1]
+        if(func.charAt(0) == '_') {
+          func='_'
+        } else if(func.indexOf("(") >= 0) {
+          func = func.split("(")[1].slice(0, -1)
+        }
+        // console.log(func)
+        if(func=='count') {
+          elm1 = index
+        } 
+        if(func=='edit') {
+          elm1 = `<a class="list-controls list-edit" data-rowindex="`+(index+1)+`" data-id="`+elm[0]+`">Edit</a>`
+        }
+        if(func=='remove') {
+          elm1 = `<a class="list-controls list-remove" data-rowindex="`+(index+1)+`" data-id="`+elm[0]+`">Remove</a>`
+        }
+        if(func=='file') {
+          if(elm1 != '') {
+            imgPath = elm1
+            bgImg = `style="background-image:url(`+imgPath+`)"`
+          }
+          elm1 = `<div class="img-thumb" `+bgImg+`><img src="`+imgPath+`" alt="" /></div>`
+        }
+
+
+        if(func != '_') {
+          listsInner += `<td>`+elm1+`</td>`
+        }
+
+        /*listsInner = `<td>`+(index)+`</td>
             <td>`+elm[0]+`</td>
             <td>`+elm[2]+`</td>
             <td>`+elm[3]+`</td>
             <td><div class="img-thumb" `+bgImg+`><img src="`+imgPath+`" alt="" /></div></td>
             <td><a class="list-controls list-edit" data-id=`+elm[1]+`>Edit</a></td>
-            <td><a class="list-controls list-remove" data-id=`+elm[1]+` data-mediaid=`+elm[4]+`>Remove</a></td>
+            <td><a class="list-controls list-remove" data-id=`+elm[1]+` data-mediaid=`+elm[4]+`>Remove</a></td>`*/
+
+      });
+
+      lists += `<tr data-rowid="`+elm[0]+`">
+           `+listsInner+` 
           </tr>`
+
+      
       }
+      
   });
+
+
+
+  generateHeading(headerValues)
 
   function generateHeading(headingVal) {
     $.each(headingVal, function(index, elm) {
-      if(index != 0) {
+      // if(index != 0) {
         var tElm,func = ``
-        if(elm.indexOf("(") >= 0){
+        if(elm.charAt(0) == '_') {
+          elm='_'
+        } else if(elm.indexOf("(") >= 0){
           tElm = elm.split("(")
           elm = tElm[0]
           func = tElm[1].slice(0, -1);
         }
-        tableHeading += `<th data-func=`+func+`>`+elm+`</th>`
-      }
+        if(elm != '_') {
+          tableHeading += `<th data-func=`+func+`>`+elm+`</th>`
+        }
+      
     })
   }
 
