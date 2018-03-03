@@ -142,15 +142,29 @@ class Dashboard {
     $(document).on('change', '#dashboard-create-type', function(event) {
         // let access = GlobalArray.globalArray['access']
         if(self.access == 'full') {
-          if($(this).val()=='listing') {
+          if($(this).val()!='') {
+            $('.default-fields-box').removeClass('hidden').find('input[type="checkbox"]').prop('checked',true);
+            $('.field-box-listing,.field-box-detail').hide()
+          } else {
+            $('.default-fields-box').addClass('hidden');
+          }
+          
+        }
+        dashboardBtnActive()
+    });
+
+    $('.default-fields-box input[type="checkbox"]').on('change', function(event) {
+      if(!$(this).is(':checked')) {
+        if($('#dashboard-create-type').val()=='listing') {
             $('.field-box-detail').hide()
             $('.field-box-listing').show()
-          } else if($(this).val()=='detail') {
+          } else if($('#dashboard-create-type').val()=='detail') {
             $('.field-box-listing').hide()
             $('.field-box-detail').show()
           } 
+        } else {
+          $('.field-box-listing,.field-box-detail').hide()
         }
-        dashboardBtnActive()
     });
  
     $(document).on('keyup', '#dashboard-create-name', function(event) {
