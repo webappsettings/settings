@@ -13,9 +13,10 @@ class CodeComp {
   mainCode() {
     // let main = new CookieControls().getCookie('main')
     let main = GlobalArray.globalArray.main
+    let access = GlobalArray.globalArray.access
     let systemCode = GlobalArray.globalArray.system
     let localSecureId = new CookieControls().getCookie('localSecureId')
-    return 'https://script.google.com/macros/s/'+main+'/exec?localcode='+localSecureId+'&systemcode='+systemCode
+    return 'https://script.google.com/macros/s/'+main+'/exec?localcode='+localSecureId+'&access='+access+'&systemcode='+systemCode
   }
 
 }

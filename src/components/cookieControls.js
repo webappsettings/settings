@@ -23,10 +23,93 @@ class CookieControls {
     var opened = false
 
     if (localSecureId != "") {
-      let paramURL = this.googleURL+"?cb&id="+localSecureId+"&action=vw"
+      // let paramURL = this.googleURL+"?cb&id="+localSecureId+"&action=vw"
+      let formdata = new FormData()
+      formdata.append('action', 'vw')
+      formdata.append('id', localSecureId)
+
+      $.ajax({
+         method: 'POST',
+         url: self.googleURL,
+         data: formdata,
+         dataType: 'json',
+         contentType: false,
+         processData: false,
+         beforeSend: function(){
+            $('.loader').fadeIn()
+          }
+        })
+        .done(function(callback){
+          callback = JSON.parse(callback.result)
+
+          if(!callback.result) {
+          
+          self.deleteCookie()
+          
+          new HashControls('login').setHash()
+
+        } else {
+
+          // console.log(callback)
+
+            GlobalArray.globalArray['main'] = callback.main
+            GlobalArray.globalArray['access'] = callback.access
+
+            self.getClientIp(callback.ipapi, callback.ipapixtra)
+
+            console.log(GlobalArray.globalArray)
+
+            // callback.main != self.getCookie('main') ||
+
+              if(callback.result != decodeURIComponent(self.getCookie('user'))) {
+                self.deleteCookie()
+                
+                new HashControls('login').setHash()
+              } else {
+                // alert(prevHistory);
+                //yes all ok
+                if(! prevHistory) {
+                  var urlHash = new HashControls().getHash()
+                } else {
+                  var urlHash = prevHistory
+                }
+                
+                 if(urlHash == '' || urlHash == 'login' || !urlHash) {
+
+                  new HashControls('dashboard').setHash()
+                  new PageView('dashboard').visible()
+                } else {
+                  if(! prevHistory) {
+                    
+                    if(urlHash=='404'){
+                      new HashControls('dashboard').setHash()
+                      new PageView('dashboard').visible()
+                      opened = true
+                    } else {
+                      new PageView(urlHash).visible()
+                      new HashControls(urlHash).setHash()
+                    }
+                    
+                  }
+                  
+                }
+                if(!opened) {
+                  new HashControls(urlHash).setHash()
+                }
+              }
+
+        }
+          
+           
+        })
+        .fail(function(callback) {
+        })
+       .always(function(){
+          $('.loader').fadeOut()
+        });
 
 
-      $.getJSON(paramURL, function(callback) {
+      /*$.getJSON(paramURL, function(callback) {
 
 
        
@@ -82,10 +165,9 @@ class CookieControls {
                   new HashControls(urlHash).setHash()
                 }
               }
-          
 
         }
-      });
+      });*/
       
     } else {
       this.deleteCookie()
@@ -97,13 +179,40 @@ class CookieControls {
   }
 
 
+  getClientIp(ipapi, ipapixtra) {
+
+      $.getJSON(ipapi, function(callback) {
+        if(callback) {
+          var callKey
+          if(ipapixtra){
+            callKey = callback[ipapixtra]
+          } else {
+            callKey = callback
+          }
+          let localIp = callKey.replace(/\./g, "-").replace(/\:/g, "_")
+          console.log(localIp)
+
+          let formdata = new FormData()
+
+          formdata.append('action', 'ip')
+          formdata.append('ip', localIp)
+
+          $.ajax({
+           method: 'POST',
+           url: new CodeComp().mainCode(),
+           data: formdata,
+           dataType: 'json',
+           contentType: false,
+           processData: false
+          });
+        }
+      });
+    }
 
 
   toCookie() {
 
-    // alert(GlobalArray.globalArray.system)
-
-
+    
 
     var xtraDetails = Object.keys(bowser).filter(function(key) {
         if(bowser[key] === true) {
@@ -111,27 +220,73 @@ class CookieControls {
         }
     });
 
-    var systemCode = GlobalArray.globalArray.system
+    
    
     var xtraDetails = JSON.stringify(xtraDetails).replace(/[{}]/g, "").replace(/,/g , "  ").replace(/\"/g, "");
     var browserDetect = bowser.name+"-"+bowser.version+"  "+bowser.osname+((bowser.osversion) ? "-"+bowser.osversion : '')+" "+xtraDetails
+    console.log('browserDetect=',browserDetect)
 
     $('.loader').fadeIn()
-    let param = "?cb&name="+this.loginE+"&id="+this.loginP+"&browserdetect="+browserDetect+"&systemcode="+systemCode+"&action=chk"
-    let paramURL = this.googleURL+param
+    // let param = "?cb&name="+this.loginE+"&id="+this.loginP+"&browserdetect="+browserDetect+"&systemcode="+systemCode+"&action=chk"
+    
     let self = this
+    // let paramURL = self.googleURL
 
-    console.log("complete-param: ",paramURL)
+    // console.log("complete-param: ",paramURL)
+
+    var systemCode = GlobalArray.globalArray.system
 
 
-    $.getJSON(paramURL, function(callback) {
+    let formdata = new FormData()
+    formdata.append('action', 'chk')
+    formdata.append('name', self.loginE)
+    formdata.append('id', self.loginP)
+    formdata.append('browserdetect', browserDetect)
+    formdata.append('systemcode', systemCode)
+    
+
+    $.ajax({
+         method: 'POST',
+         url: self.googleURL,
+         data: formdata,
+         dataType: 'json',
+         contentType: false,
+         processData: false,
+         beforeSend: function(){
+            $('.loader').fadeIn()
+          }
+        })
+        .done(function(callback){
+          callback = JSON.parse(callback.result)
+          
+           if(callback.result) {
+
+            GlobalArray.globalArray['main'] = callback.main
+            GlobalArray.globalArray['access'] = callback.access
+
+            self.setCookie('localSecureId', callback.result, 20)
+
+            localStorage.setItem('logout-user', 'logout' + self.loginE)
+
+            self.setCookie('user', self.loginE, 20)
+            new HashControls('dashboard').setHash()
+            // getClientIp(callback.ipapi, callback.ipapixtra)
+            self.getClientIp(callback.ipapi, callback.ipapixtra)
+          } else {
+            alert('Email ID or Password Invalid!!!')
+          }
+        })
+        .fail(function(callback) {
+        })
+       .always(function(){
+          $('.loader').fadeOut()
+        });
+
+
+/*    $.getJSON(paramURL, function(callback) {
       
-      // console.log('allMainCallback=',callback);
       if(callback.result) {
         
-
-        // console.log(callback.main)
-        // console.log(callback.ipapi)
 
         GlobalArray.globalArray['main'] = callback.main
         GlobalArray.globalArray['access'] = callback.access
@@ -148,26 +303,9 @@ class CookieControls {
       }
       $('.loader').fadeOut()
       
-    });
+    });*/
 
-    function getClientIp(ipapi, ipapixtra) {
-      let getIpURL = ipapi
-      $.getJSON(getIpURL, function(callback) {
-        if(callback) {
-          var callKey
-          if(ipapixtra){
-            callKey = callback[ipapixtra]
-          } else {
-            callKey = callback
-          }
-          let localIp = callKey.replace(/\./g, "-").replace(/\:/g, "_")
-          console.log(localIp)
-          let param = "&ip="+localIp+"&action=ip"
-          let putIpURL = new CodeComp().mainCode()+param
-          $.getJSON(putIpURL)
-        }
-      });
-    }
+    
 
   }
 
@@ -195,7 +333,7 @@ class CookieControls {
 
   deleteCookie() {
     if(typeof GlobalArray.globalArray['main'] !== 'undefined') {
-      $.getJSON(new CodeComp().mainCode()+'&logincode='+this.loginCode+'&localcode='+this.getCookie("localSecureId")+'&user='+this.getCookie('user')+'&action=logout')
+      $.getJSON(new CodeComp().mainCode()+'&localcode='+this.getCookie("localSecureId")+'&user='+this.getCookie('user')+'&action=logout')
     }
 
     localStorage.setItem('logout-user', 'logout' + Math.random());

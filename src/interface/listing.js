@@ -33,14 +33,16 @@ class Listing {
 
     var imageURI, fileName, fileChange = false, headings
     let self = this
+    let urlHash = new HashControls().getHash().split('?')[0]
+
+    
     // let paramURL = self.googleListingURL+'&action=read'
     let paramId = GlobalArray.globalArray.paramid
     let paramName = GlobalArray.globalArray.paramname
     $('.breadcrumb-item.active').html('Listing: '+paramName)
 
 
-
-    let readlistParamURL = new CodeComp().mainCode()+'&pagetype=listing&pageid='+paramId+'&action=readpagedatas'
+    let readlistParamURL = new CodeComp().mainCode()+'&pageid='+paramId+'&action=readpagedatas'
 
 
     console.log('listingURL=', JSON.stringify(readlistParamURL))
@@ -60,10 +62,6 @@ class Listing {
           
             headings = callback.result[0];
             console.log('callbackHeading===',headings)
-
-            /*callback.result = jQuery.grep(callback.result, function( elm, index ) {
-              if(index != 0) {return elm}
-            })*/
 
             console.log('callbackDatas===',callback)
 
@@ -122,13 +120,52 @@ class Listing {
     //Remove
     function removeThis(paramId, id, rowIndex) {
 
-      
-      let deleteParamURL = new CodeComp().mainCode()+'&pageid='+paramId+'&id='+id+'&rowindex='+rowIndex+'&action=deleterow'
+
+      let formdata = new FormData()
+      formdata.append('pageid', paramId)
+      formdata.append('action', 'deleterow')
+      formdata.append('id', id)
+      formdata.append('rowindex', rowIndex)
+
+      $.ajax({
+         method: 'POST',
+         url: new CodeComp().mainCode(),
+         data: formdata,
+         dataType: 'json',
+         contentType: false,
+         processData: false,
+         beforeSend: function(){
+            $('.loader').fadeIn()
+          }
+        })
+        .done(function(callback){
+          let output = JSON.parse(callback.result)
+          console.log('deleted=', output)
+          if(output.result) {
+            if(output.result != 'pageremoved') {
+              self.listDatas[0].result = jQuery.grep(self.listDatas[0].result, function( elm, index ) {
+                return elm[0] != id
+              })
+              pushData(self.listDatas[0])
+            } else {
+              alert('This page removed!')
+              new HashControls('dashboard').setHash()
+            }
+          } else {
+            new CookieControls().deleteCookie()//Logout
+          } 
+        })
+        .fail(function(callback) {
+          alert('This action not completed! Please try again')
+        })
+       .always(function(){
+          $('.loader').fadeOut()
+        });
 
       
+      /*let deleteParamURL = new CodeComp().mainCode()+'&pageid='+paramId+'&id='+id+'&rowindex='+rowIndex+'&action=deleterow'
+
       $.getJSON(deleteParamURL, function(callback) {
-
-        // console.log(callback.result)
 
         let output = JSON.parse(callback.result)
         console.log('deleted=', output)
@@ -145,7 +182,8 @@ class Listing {
         } else {
           new CookieControls().deleteCookie()//Logout
         }
-      })
+      })*/
+
     }
 
     
@@ -249,6 +287,8 @@ class Listing {
 
       var formdata = new FormData()
 
+      formdata.append('pagename', urlHash)
+
       let paramId = GlobalArray.globalArray.paramid
       formdata.append('pageid', paramId)
 
@@ -269,14 +309,12 @@ class Listing {
       var dataRow = []
       var obj = {}
       dataRow.push(obj)
-        obj[1]=rowId
+      obj[1]=rowId
       
       $('.modal.in:visible form .dynamicElem:not(#fileupload)').each(function(index, el) {
         var colindex = $(this).attr('data-colindex')
         var values = $(this).val()
         obj[colindex]=values
-        // formdata.append('coldatas', {colindex:values})
-        // dataRow.push({colindex,values})
       });
 
 
@@ -297,131 +335,20 @@ class Listing {
 
 
 
-console.log(dataRow)
+      console.log(dataRow)
 
       // for (var pair of formdata.entries()) {
       //     console.log(pair[0]+ ', ' + pair[1]); 
       // }
 
-dataRow = JSON.stringify(dataRow)
+  dataRow = JSON.stringify(dataRow)
 
-formdata.append('coldatas', dataRow)
+  formdata.append('coldatas', dataRow)
 
-
-
-
-        var dataAddURL = new CodeComp().mainCode()
-
-      
-
-
-  $.ajax({
-         method: 'POST',
-         url: dataAddURL,
-         data: formdata,
-         dataType: 'json',
-         contentType: false,
-         processData: false,
-         beforeSend: function(){
-            $('.loader').fadeIn()
-          }
-        })
-        .done(function(outputDatas){
-
-          outputDatas = JSON.parse(outputDatas.result)
-          console.log('created==',outputDatas)
-          // outputDatas = JSON.parse(outputDatas)
-
-          if(action == 'create') {
-            self.listDatas[0].result.splice(1, 0, outputDatas.result);
-          } else {
-            self.listDatas[0].result[rowIndex-1] = outputDatas.result
-          }
-
-          // self.listDatas[0].result.unshift(outputDatas.result[0])
-          
-          console.log(self.listDatas[0].result)
-
-          pushData(self.listDatas[0])
-         
-        })
-        .fail(function(callback) {
-          // console.clear()
-          console.log('Fail',callback)
-          alert('This page removed!')
-          // new HashControls('dashboard').setHash()
-       })
-       .always(function(){
-         $('.loader').fadeOut()
-         $('#listing-okBtn').attr('disabled',false)
-         $('#listing-modal').modal('hide')
-       });
-
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      /*let getName = $('#listing-modal #listing-name').val()
-      let getUserId = $('#listing-modal #listing-userid').val()
-
-      
-      
-      if(action == 'create') {
-        var timestamp = new Date()
-        var rowId = timestamp.toISOString().replace(/\D/g,"").substr(0,14)
-        formdata.append('action', 'create')
-      } else {
-        var rowId = $(this).attr('data-rowid')
-        formdata.append('action', 'edit')
-      }
-     
-
-      
-      formdata.append('id', rowId)
-      formdata.append('name', getName)
-      
-
-      if(imageURI && fileChange){
-        let filetype = imageURI.substring(5,imageURI.indexOf(';'))
-        let img = imageURI.replace(/^.*,/, '')
-
-
-        formdata.append('filechange', fileChange)
-        formdata.append('file', img)
-        formdata.append('filename', fileName)
-        formdata.append('filetype', filetype)
-        formdata.append('foldername', 'listing')
-      } else {
-        formdata.append('file', '')
-      }
-
-
-      var dataAddURL = new CodeComp().mainCode()
-
-      
-
+    console.log(new CodeComp().mainCode())
       $.ajax({
          method: 'POST',
-         url: dataAddURL,
+         url: new CodeComp().mainCode(),
          data: formdata,
          dataType: 'json',
          contentType: false,
@@ -431,41 +358,43 @@ formdata.append('coldatas', dataRow)
           }
         })
         .done(function(callback){
-          // console.log('created==',callback)
-          var outputDatas = JSON.parse(callback.result)
-          console.log(outputDatas.result)
-          if(outputDatas.result) {
-            fileChange = false
-            if(action == 'create') {
-              self.listDatas[0].result.unshift(outputDatas.result)
-            } else {
-              
-              console.log('editOriginal=',outputDatas.result)
 
-              $.each(self.listDatas[0].result, function(index, elm) {
-                if(elm[1] == outputDatas.result[1]) {
-                  self.listDatas[0].result[index] = outputDatas.result
-                  // console.log()
+
+
+          let output = JSON.parse(callback.result)
+          console.log('created=', output)
+          if(output.result) {
+            if(output.result != 'pageremoved') {
+              if(output.result) {
+                if(action == 'create') {
+                  self.listDatas[0].result.splice(1, 0, output.result);
+                } else {
+                  self.listDatas[0].result[rowIndex-1] = output.result
                 }
-              });
-              console.log('editOut=',self.listDatas[0].result)
+                pushData(self.listDatas[0])
+              } else {
+                new CookieControls().deleteCookie()//Logout
+              }
+            } else {
+              alert('This page removed!')
+              new HashControls('dashboard').setHash()
             }
-            
-            pushData(self.listDatas[0])
           } else {
             new CookieControls().deleteCookie()//Logout
           }
+
+         
         })
         .fail(function(callback) {
-          // console.clear()
-          console.log('Fail',callback)
-          alert('This page removed!')
-          // new HashControls('dashboard').setHash()
+          alert('This action not completed! Please try again')
        })
        .always(function(){
          $('.loader').fadeOut()
+         $('#listing-okBtn').attr('disabled',false)
          $('#listing-modal').modal('hide')
-       });*/
+       });
+
+
 
     });
 

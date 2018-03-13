@@ -105,3 +105,29 @@ body {
 .m-t-2 {
   margin-top: 2rem;
 }
+
+.m-l-1 {
+  margin-left: 1rem;
+}
+
+.m-b-1 {
+  margin-bottom: 1rem;
+}
+
+.field-box .form-group {
+  height: 50px;
+}
+
+span.error {
+  color: #a94442;
+  font-size: 13px;
+}
+.dashboad-additional-datas {
+  display: none;
+}
+
+.field-box {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}

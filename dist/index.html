@@ -40,70 +40,77 @@
           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
           <h4 class="modal-title"></h4>
         </div>
+        <form id="dashboard-create-form">
         <div class="modal-body">
-          <form>
+          
             <div class="col-md-6">
               <div class="form-group">
                 <label>Name</label>
-                <input type="text" class="form-control" value="" id="dashboard-create-name">
+                <input type="text" class="form-control" name="createName" value="" id="dashboard-create-name">
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-group">
                 <label>Type</label>
-                <select id="dashboard-create-type" class="form-control">
+                <select id="dashboard-create-type" name="createType" class="form-control">
                   <option value="">Select type</option>
                   <option value="listing">Listing</option>
                   <option value="detail">Detail</option>
                 </select>
               </div>
             </div>
+
+
+
+            <div class="dashboad-additional-datas">
             
-            <div class="col-md-12 default-fields-box hidden">
-              <div class="checkbox">
-                <label>
-                  <input type="checkbox" checked="checked">
-                  Default fields
-                </label>
+              <div class="col-md-12 default-fields-box">
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" name="defaultFields" checked="checked">
+                    Default fields
+                  </label>
+                </div>
               </div>
-            </div>
+              
+              <div class="clearfix"></div>
+              
+                
+                <div class="field-box" data-type="listing">
+                  <div class="col-md-12"><h4><span class="pull-left">Define fields for <strong>listing</strong> section:</span><span class="m-l-1 m-b-1 pull-right"><button type="button" class="btn btn-success btn-sm add-new-field">Add new field</button></span></h4></div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <input type="text" class="form-control field-new default-field-new" name="listing_defineField_1" placeholder="Add new field">
+                    </div>
+                   </div>
+                   <div class="col-md-6">
+                    <div class="form-group">
+                      <input type="text" class="form-control field-new default-field-new" name="listing_defineField_2" placeholder="Add new field">
+                    </div>
+                   </div>
+                </div>
 
-            <div class="field-box field-box-listing" style="display: none">
-              <div class="col-md-12"><h4>Define fields for <strong>listing</strong> section:</h4></div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <input type="text" class="form-control field-new" placeholder="Add new field">
+                <div class="field-box" data-type="detail">
+                  <div class="col-md-12"><h4><span class="pull-left">Define fields for <strong>detail</strong> section:</span><span class="m-l-1 m-b-1 pull-right"><button type="button" class="btn btn-success btn-sm add-new-field">Add new field</button></span></h4></div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <input type="text" class="form-control field-new default-field-new" name="detail_defineField_1" placeholder="Add new field">
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <input type="text" class="form-control field-new" placeholder="Add new field">
-                </div>
-              </div>
-            </div>
+              
 
 
-            <div class="field-box field-box-detail" style="display: none">
-              <div class="col-md-12"><h4>Define fields for <strong>detail</strong> section:</h4></div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <input type="text" class="form-control field-new" placeholder="Add new field">
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <input type="text" class="form-control field-new" placeholder="Add new field">
-                </div>
-              </div>
             </div>
 
             <div class="clearfix"></div>
-          </form>
+          
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" id="dashboard-create-okBtn" disabled="disabled">Save changes</button>
+          <button type="submit" class="btn btn-primary" id="dashboard-create-okBtn">Save changes</button>
         </div>
+        </form>
       </div>
     </div>
   </div>
@@ -151,6 +158,7 @@
   <script src="main.bundle.js"></script>
   <script src="bowser.js"></script>
   <script src="fingerprint2.min.js"></script>
+  <!-- <script src="jquery.validate.min.js"></script> -->
   
 </body>
 </html>

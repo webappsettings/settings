@@ -1,6 +1,7 @@
 import $ from "jquery"
 import "../dist/lib/bootstrap/js/bootstrap.js"
 import "../dist/lib/jquery-ui/jquery-ui"
+import "../dist/lib/jquery.validate.min"
 
 import CookieControls from "components/cookieControls"
 import HashControls from 'components/hashControls';
@@ -65,10 +66,6 @@ let urlHash = new HashControls().getHash()
 
   
 
-  
-    
-  
-
     $('#logoutBtn').on("click", (e) => {
      new CookieControls().deleteCookie()
     });
@@ -117,7 +114,7 @@ let urlHash = new HashControls().getHash()
       
     }
     
-
+    
 
 }
 

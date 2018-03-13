@@ -9,7 +9,7 @@ class Dashboard {
     this.id = id
     this.googleListingURL = new CodeComp().mainCode()
     this.listDatas = []
-    this.access = GlobalArray.globalArray['access']
+    // this.access = GlobalArray.globalArray['access']
   }
   render() {
     const tpl =  `
@@ -29,21 +29,127 @@ class Dashboard {
 
     let self = this
 
-    let urlHash = new HashControls().getHash()
-
-    var sortStart, sortStop
+    let urlHash = new HashControls().getHash().split('?')[0]
 
 
-    if(self.access == 'full') {
+    var sortStart, sortStop, createNew = []
+
+
+    var $validator = $("#dashboard-create-form").validate({
+      errorElement: "span",
+      rules: {
+        'createName': {
+          required: true
+        },
+        'createType': {
+          required: true
+        }
+      },
+      messages: {
+        'createName': {
+          required: "Please enter a module name"
+        },
+        'createType': {
+          required: "Please select module type"
+        }
+
+      },
+      errorPlacement: function(error, element) {
+        if( element.parent().hasClass('input-group')) {
+          error.appendTo( element.parent().parent());
+        } else {
+            error.appendTo( element.parent());
+        }
+        
+      },
+      submitHandler: function() {
+        // alert('submit')
+        createNewModule()
+        return false
+      }
+    });
+
+
+    $('.field-box .add-new-field').off().on('click', function(event) {
+      var getType = $(this).closest('.field-box').data('type')
+      let totalL = $('.field-box[data-type="'+getType+'"] .field-new').length
+
+      $('.field-box[data-type="'+getType+'"]').append(`<div class="col-md-6 appended-field">
+          <div class="form-group">
+            <div class="input-group">
+              <input type="text" class="form-control field-new" name="`+getType+`_defineField_`+(totalL+1)+`" placeholder="Add new field">
+              <span class="input-group-btn">
+                <button class="btn btn-default field-remove" type="button" data-removefield="`+getType+`_defineField_`+(totalL+1)+`"><i class="ion-trash-a text-danger"></i></button>
+              </span>
+            </div>
+          </div>
+        </div>`)
+
+      $(`[name="`+getType+`_defineField_`+(totalL+1)+`"]`).rules("add", {
+        required: true,
+        messages: {
+          required: "Please fill this field or remove",
+        }
+      });
+
+    });
+
+    $('#dashboard-create-type').on('change', function(event) {
+
+        
+        if(GlobalArray.globalArray['access'] == 'full') {
+          if($(this).val()!='') {
+            if(!$('[name="defaultFields"]').is(':checked')) {
+              var getType = $(this).val()
+                $('.field-box[data-type="'+getType+'"]').show().siblings('.field-box').hide()
+            }
+            $('.dashboad-additional-datas').show()
+
+            $('.default-field-new').each(function(index, el) {
+              $(this).rules("add", {
+                required: true,
+                messages: {
+                  required: "Please fill this field",
+                }
+              });
+            });
+
+          } else {
+            $('.dashboad-additional-datas').hide()
+          }
+        }
+    });
+
+
+
+
+    $('.default-fields-box input[type="checkbox"]').on('change', function(event) {
+      if(!$(this).is(':checked')) {
+        var getType = $('#dashboard-create-type').val()
+        $('.field-box[data-type="'+getType+'"]').show().siblings('.field-box').hide()
+
+        
+
+        } else {
+          $('.field-box').hide()
+        }
+    });
+
+
+
+
+    if(GlobalArray.globalArray['access'] == 'full') {
       $("#dashboard-view").sortable({
         start: function(event, ui) {
           sortStart = $('#dashboard-view [data-moduleid='+ui.item[0].dataset.moduleid+']').index()
         },
         stop: function(event, ui) {
           sortStop = $('#dashboard-view [data-moduleid='+ui.item[0].dataset.moduleid+']').index()
-          let sortURL = new CodeComp().mainCode()+'&pageid='+urlHash+'&fromid='+(sortStart+1)+'&toid='+(sortStop+1)+'&action=sort'
-          console.log(sortURL)
+
+          
+          // console.log(sortURL)
             if(sortStart != sortStop) {
+              /*let sortURL = new CodeComp().mainCode()+'&pageid='+urlHash+'&fromid='+(sortStart+1)+'&toid='+(sortStop+1)+'&action=sort'
               $('.loader').fadeIn()
               $.getJSON(sortURL, function(callback) {
                 console.log(callback)
@@ -52,10 +158,115 @@ class Dashboard {
                   new CookieControls().deleteCookie()//Logout
                 } 
                 $('.loader').fadeOut()
-              })
+              })*/
+
+              let formdata = new FormData()
+              formdata.append('pagename', urlHash)
+              formdata.append('action', 'sort')
+              formdata.append('fromid', sortStart+1)
+              formdata.append('toid', sortStop+1)
+
+              $.ajax({
+                 method: 'POST',
+                 url: new CodeComp().mainCode(),
+                 data: formdata,
+                 dataType: 'json',
+                 contentType: false,
+                 processData: false,
+                 beforeSend: function(){
+                    $('.loader').fadeIn()
+                  }
+                })
+                .done(function(callback){
+                  let output = JSON.parse(callback.result)
+                  if(!output.result) {
+                    new CookieControls().deleteCookie()//Logout
+                  } 
+                })
+                .fail(function(callback) {
+                  alert('This action not completed! Please try again')
+                })
+               .always(function(){
+                  $('.loader').fadeOut()
+                }); 
+
+
            }
         }
       });
+    }
+
+
+    function createNewModule() {
+      let moduleName = $('#dashboard-create-name').val()
+      let moduleType = $('#dashboard-create-type').val()
+
+      var customHeaders = []
+  
+      // customHeaders[0]='_row'
+
+      if(!$('input[name="defaultFields"]').is(':checked')){
+        $('.field-box:visible .field-new').each(function(index, el) {
+          var values = $(this).val()
+          customHeaders[index]=values
+        });
+      }
+
+      // customHeaders.splice(0, 0, "_row");
+
+      
+      console.log(customHeaders)
+
+
+      customHeaders = JSON.stringify(customHeaders)
+
+      
+
+      // return false
+
+      var formdata = new FormData()
+
+      
+
+      formdata.append('customheaders', customHeaders)
+
+      formdata.append('pagename', urlHash)
+      formdata.append('action', 'create')
+      formdata.append('modulename', moduleName)
+      formdata.append('moduletype', moduleType)
+
+      $.ajax({
+         method: 'POST',
+         url: new CodeComp().mainCode(),
+         data: formdata,
+         dataType: 'json',
+         contentType: false,
+         processData: false,
+         beforeSend: function(){
+            $('.loader').fadeIn()
+          }
+        })
+        .done(function(outputDatas){
+
+          console.log(outputDatas)
+
+          var outputDatas = JSON.parse(outputDatas.result)
+
+          if(outputDatas.result) {
+            console.log(outputDatas)
+            self.listDatas[0].result.unshift(outputDatas.result)
+            pushData(self.listDatas[0])
+          }
+         
+        })
+        .fail(function(callback) {
+          console.log('Fail',callback)
+          alert('This action not completed! Please try again')
+       })
+       .always(function(){
+         $('.loader').fadeOut()
+         $('#dashboard-create-modal').modal('hide')
+       });
     }
 
     
@@ -65,13 +276,6 @@ class Dashboard {
 
     $.getJSON(readmodulesParamURL, function(callback) {
       console.log('all=',callback)
-
-      /*if(callback) {
-        self.listDatas.push(callback)
-      } else {
-        self.listDatas.push([])
-      }
-      pushData(self.listDatas[0])*/
 
       if(callback.result != '{"result":false}') {
         self.listDatas.push(callback)
@@ -88,116 +292,70 @@ class Dashboard {
 
 
     $(document).off().on('click', '.dashboard-remove-btn', function(event) {
-      var _this = $(this)
-      let id = $(this).attr('data-id')
-      let paramURL = new CodeComp().mainCode()+'&moduleid='+id+'&action=removemodule'
-      
-      console.log(self.listDatas[0].result)
-      $.getJSON(paramURL, function(callback) {
-        let output = JSON.parse(callback.result)
-        console.log(output)
-        if(output.result) {
-          // _this.closest('.col-md-4').remove();
-          self.listDatas[0].result = jQuery.grep(self.listDatas[0].result, function( elm, index ) {
-            return elm[0] != id         
-          })
-          pushData(self.listDatas[0])
-        } else {
-          new CookieControls().deleteCookie()//Logout
+
+      let result = confirm("Want to delete?");
+
+      if (result) {
+
+        let moduleId = $(this).attr('data-id')
+
+        let formdata = new FormData()
+        formdata.append('pagename', urlHash)
+        formdata.append('action', 'remove')
+        formdata.append('moduleid', moduleId)
+
+        $.ajax({
+         method: 'POST',
+         url: new CodeComp().mainCode(),
+         data: formdata,
+         dataType: 'json',
+         contentType: false,
+         processData: false,
+         beforeSend: function(){
+          $('.loader').fadeIn()
         }
-      }); 
+      })
+        .done(function(callback){
+          let output = JSON.parse(callback.result)
+          console.log(output)
+          if(output.result) {
+            self.listDatas[0].result = jQuery.grep(self.listDatas[0].result, function( elm, index ) {
+              return elm[0] != moduleId
+            })
+            pushData(self.listDatas[0])
+          } else {
+            new CookieControls().deleteCookie()//Logout
+          }
+        })
+        .fail(function(callback) {
+          alert('This action not completed! Please try again')
+        })
+        .always(function(){
+          $('.loader').fadeOut()
+        });
+      }
+
     });
 
     $(document).on('click', '#create-new-dashboard', function(event) {
       $('#dashboard-create-modal .form-control').val('')
-      $('#dashboard-create-okBtn').prop('disabled',true)
-      $('.field-box').hide()
-      $('#dashboard-create-modal').modal('show')
+      $('.appended-field').remove()
+      $('.dashboad-additional-datas,.field-box').hide()
+      $('input[name="defaultFields"]').prop('checked',true)
+      $('#dashboard-create-modal').modal('show')      
     });
 
-    $(document).on('click', '#dashboard-create-okBtn', function(event) {
-      let moduleName = $('#dashboard-create-name').val()
-      let moduleType = $('#dashboard-create-type').val()
+    
 
-      let paramURL = new CodeComp().mainCode()+'&modulename='+moduleName+'&moduletype='+moduleType+'&action=createmodule'
+    $(document).on('click', '.field-remove', function(event) {
+
+      let result = confirm("Want to delete?");
+      if (result) {
+        let getField = $(this).data('removefield')      
+        $('[name="'+getField+'"]').closest('.appended-field').remove()
+      }
       
-      console.log(paramURL)
-
-      $.getJSON(paramURL, function(callback) {
-        var outputDatas = JSON.parse(callback.result)
-        if(outputDatas.result) {
-          console.log(outputDatas)
-          self.listDatas[0].result.unshift(outputDatas.result)
-          pushData(self.listDatas[0])
-        } else {
-          new CookieControls().deleteCookie()//Logout
-        }
-        $('.loader').fadeOut()
-      })
-
-      $('#dashboard-create-modal').modal('hide')
-
     });
-
-    $(document).on('change', '#dashboard-create-type', function(event) {
-        // let access = GlobalArray.globalArray['access']
-        if(self.access == 'full') {
-          if($(this).val()!='') {
-            $('.default-fields-box').removeClass('hidden').find('input[type="checkbox"]').prop('checked',true);
-            $('.field-box-listing,.field-box-detail').hide()
-          } else {
-            $('.default-fields-box').addClass('hidden');
-          }
-          
-        }
-        dashboardBtnActive()
-    });
-
-    $('.default-fields-box input[type="checkbox"]').on('change', function(event) {
-      if(!$(this).is(':checked')) {
-        if($('#dashboard-create-type').val()=='listing') {
-            $('.field-box-detail').hide()
-            $('.field-box-listing').show()
-          } else if($('#dashboard-create-type').val()=='detail') {
-            $('.field-box-listing').hide()
-            $('.field-box-detail').show()
-          } 
-        } else {
-          $('.field-box-listing,.field-box-detail').hide()
-        }
-    });
- 
-    $(document).on('keyup', '#dashboard-create-name', function(event) {
-      dashboardBtnActive()
-    });
-
-    $(document).on('keyup', '.field-box:visible .field-new', function(event) {
-      if($(this).val() != '') {
-        $(this).addClass('filled-field')
-      } else {
-        $(this).removeClass('filled-field')
-      }
-      dashboardBtnActive()
-    });
-
-
-    function dashboardBtnActive() {
-      if(($('#dashboard-create-name').val() != '') && ($('#dashboard-create-type').val() != '')) {
-        // let access = GlobalArray.globalArray['access']
-        if(self.access == 'full') {
-          if($('.field-box:visible .field-new').length != $('.field-box:visible .field-new.filled-field').length) {
-            $('#dashboard-create-okBtn').prop('disabled', true)
-          } else {
-            $('#dashboard-create-okBtn').prop('disabled', false)
-          }
-        } else {
-          $('#dashboard-create-okBtn').prop('disabled', false)
-        }
-      } else {
-         $('#dashboard-create-okBtn').prop('disabled', true)
-      }
-    }
-
 
   }
 
@@ -218,5 +376,8 @@ const pushData = (data) => {
 
   $('#dashboard-view').html(lists)
 }
+
+
+
 
 export default Dashboard
