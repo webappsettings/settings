@@ -332,16 +332,18 @@ class CookieControls {
   }               
 
   deleteCookie() {
-    if(typeof GlobalArray.globalArray['main'] !== 'undefined') {
-      $.getJSON(new CodeComp().mainCode()+'&localcode='+this.getCookie("localSecureId")+'&user='+this.getCookie('user')+'&action=logout')
+    
+    if(typeof GlobalArray.globalArray['main'] != 'undefined') {
+      let logoutURL = new CodeComp().mainCode()+'&localcode='+this.getCookie("localSecureId")+'&user='+this.getCookie('user')+'&action=logout'
+      $.getJSON(logoutURL)
     }
-
     localStorage.setItem('logout-user', 'logout' + Math.random());
     this.setCookie('localSecureId',"",-1)
     this.setCookie('user',"",-1)
     this.setCookie('history',"",-1)
     new HashControls('login').setHash()
-
+    setTimeout(function() {location.reload()},100);
+    
   }
 
 }

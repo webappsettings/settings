@@ -120,69 +120,50 @@ class Listing {
     //Remove
     function removeThis(paramId, id, rowIndex) {
 
+      let result = confirm("Are you sure you want to remove this row?");
 
-      let formdata = new FormData()
-      formdata.append('pageid', paramId)
-      formdata.append('action', 'deleterow')
-      formdata.append('id', id)
-      formdata.append('rowindex', rowIndex)
+      if (result) {
+        let formdata = new FormData()
+        formdata.append('pageid', paramId)
+        formdata.append('action', 'deleterow')
+        formdata.append('id', id)
+        formdata.append('rowindex', rowIndex)
 
-      $.ajax({
-         method: 'POST',
-         url: new CodeComp().mainCode(),
-         data: formdata,
-         dataType: 'json',
-         contentType: false,
-         processData: false,
-         beforeSend: function(){
-            $('.loader').fadeIn()
-          }
-        })
-        .done(function(callback){
-          let output = JSON.parse(callback.result)
-          console.log('deleted=', output)
-          if(output.result) {
-            if(output.result != 'pageremoved') {
-              self.listDatas[0].result = jQuery.grep(self.listDatas[0].result, function( elm, index ) {
-                return elm[0] != id
-              })
-              pushData(self.listDatas[0])
-            } else {
-              alert('This page removed!')
-              new HashControls('dashboard').setHash()
+        $.ajax({
+           method: 'POST',
+           url: new CodeComp().mainCode(),
+           data: formdata,
+           dataType: 'json',
+           contentType: false,
+           processData: false,
+           beforeSend: function(){
+              $('.loader').fadeIn()
             }
-          } else {
-            new CookieControls().deleteCookie()//Logout
-          } 
-        })
-        .fail(function(callback) {
-          alert('This action not completed! Please try again')
-        })
-       .always(function(){
-          $('.loader').fadeOut()
-        });
-
-      
-      /*let deleteParamURL = new CodeComp().mainCode()+'&pageid='+paramId+'&id='+id+'&rowindex='+rowIndex+'&action=deleterow'
-
-      $.getJSON(deleteParamURL, function(callback) {
-
-        let output = JSON.parse(callback.result)
-        console.log('deleted=', output)
-        if(output.result) {
-          if(output.result != 'pageremoved') {
-            self.listDatas[0].result = jQuery.grep(self.listDatas[0].result, function( elm, index ) {
-              return elm[0] != id
-            })
-            pushData(self.listDatas[0])
-          } else {
-            alert('This page removed!')
-            new HashControls('dashboard').setHash()
-          }
-        } else {
-          new CookieControls().deleteCookie()//Logout
-        }
-      })*/
+          })
+          .done(function(callback){
+            let output = JSON.parse(callback.result)
+            console.log('deleted=', output)
+            if(output.result) {
+              if(output.result != 'pageremoved') {
+                self.listDatas[0].result = jQuery.grep(self.listDatas[0].result, function( elm, index ) {
+                  return elm[0] != id
+                })
+                pushData(self.listDatas[0])
+              } else {
+                alert('This page removed!')
+                new HashControls('dashboard').setHash()
+              }
+            } else {
+              new CookieControls().deleteCookie()//Logout
+            } 
+          })
+          .fail(function(callback) {
+            alert('This action not completed! Please try again')
+          })
+         .always(function(){
+            $('.loader').fadeOut()
+          });
+      }
 
     }
 
@@ -197,13 +178,14 @@ class Listing {
 
     function elmentPushToModal(action, rowId) {
 
+      imageURI = undefined
+      fileChange = false
       if(action == 'create') {
-        $('#listing-modal .modal-title').text('Create New')
-        imageURI = undefined
+        $('#listing-modal').addClass('createList').removeClass('editList').find('.modal-title').text('Create New')
         fileName = ''
         $('#listing-okBtn').attr({'data-action':'create', 'data-rowid':''})
       } else {
-        $('#listing-modal .modal-title').text('Edit')
+        $('#listing-modal').removeClass('createList').addClass('editList').find('.modal-title').text('Edit')
         $('#listing-okBtn').attr({'data-action':'edit', 'data-rowid':rowId})
       }
   
@@ -212,8 +194,22 @@ class Listing {
       var getListVal
       if(action=='edit') {
           var getListVal = getObjects(self.listDatas[0], 0, rowId)
-          console.log(getListVal)
+          let filePosition = headings.indexOf('(file)')
+          var imageURL = getListVal[0][filePosition]
+          if(imageURL != '') {
+            setTimeout(function() {
+              imagePush(imageURL)
+              /*$('.listing-image-preview').append('<img >')
+              $('.listing-image-preview img').attr('src',imageURL)
+              $('.listing-image-preview').css('background-image','url('+imageURL+')')*/
+            }, 0);
+          }
         }
+
+     
+
+
+      // uploadImg($inputImage, $image, options)
 
 
       $.each(headings, function(index, elm) {
@@ -236,7 +232,11 @@ class Listing {
           insertVal = getListVal[0][index]
         }
 
-        if((elm!='_') && (func!='count') && (func!='time') && (func!='file') && (func!='edit') && (func!='remove')) {
+
+
+        let ignoreFields = ['count','time','updatedtime','file','edit','remove'];
+
+        if((elm!='_') && ignoreFields.indexOf(func) == -1) {
           $('#listing-modal form').append(`
             <div class="col-md-6">
                   <div class="form-group">
@@ -249,9 +249,22 @@ class Listing {
         if(func=='file') {
           $('#listing-modal form').append(`
             <div class="col-md-12">
+              <div class="listing-image-preview"><img id="previewImage"></div>
               <div class="form-group">
                 <label>Upload Image</label>
-                <input type="file" class="dynamicElem elm-`+func+`" id="fileupload" data-filedname="`+func+`" data-colindex="`+colIndex+`">
+                <input type="file" name="file" accept=".jpg,.jpeg,.png,.gif,.bmp,.tiff" class="dynamicElem elm-`+func+`" id="fileUpload" data-filedname="`+func+`" data-colindex="`+colIndex+`">
+                <div class="imageControls">
+                  <button type="button" class="btn btn-primary" data-method="zoom" data-option="0.1" title="Zoom In"><i class="ion-ios-search-strong"></i></button>
+                  <button type="button" class="btn btn-primary" data-method="zoom" data-option="-0.1" title="Zoom In"><i class="ion-ios-search-strong"></i></button>
+
+                  <button type="button" class="btn btn-primary" data-method="move" data-option="-10" data-second-option="0" title="Move Left"><i class="ion-android-arrow-back"></i></button>
+                  <button type="button" class="btn btn-primary" data-method="move" data-option="10" data-second-option="0" title="Move Right"><i class="ion-android-arrow-forward"></i></button>
+                  <button type="button" class="btn btn-primary" data-method="move" data-option="0" data-second-option="-10" title="Move Up"><i class="ion-android-arrow-up"></i></button>
+                  <button type="button" class="btn btn-primary" data-method="move" data-option="0" data-second-option="10" title="Move Down"><i class="ion-android-arrow-down"></i></button>
+
+                  <button type="button" class="btn btn-primary" data-method="rotate" data-option="45" title="Rotate Left"><i class="ion-refresh"></i></button>
+                  <button type="button" class="btn btn-danger remove-image">Remove</button>
+                </div>
               </div>
             </div>
           `)
@@ -261,8 +274,19 @@ class Listing {
     }
 
 
+    
 
-    $(document).on('change', '#fileupload', function(event) {
+    function imagePush(imagePath) {
+      $('.listing-image-preview img').attr('src',imagePath)
+
+    }
+
+ 
+
+
+
+
+    /*$(document).on('change', '#fileUpload', function(event) {
       var inputFiles = this.files;
       if(inputFiles == undefined || inputFiles.length == 0) return;
       var inputFile = inputFiles[0];
@@ -271,15 +295,90 @@ class Listing {
       fileName = $(this).val().replace(/.*[\/\\]/, '')
       reader.onload = function(event) {
         imageURI = event.target.result
+        imagePush(imageURI)
       };
       reader.onerror = function(event) {
         alert("ERROR: " + event.target.error.code);
       };
       reader.readAsDataURL(inputFile);
-    });
+    });*/
 
 
+    var uploadedImageType,uploadedImageURL
 
+    var options = {
+        viewMode: 3,
+        aspectRatio: 1 / 1,
+        autoCropArea: 1,
+        strict: false,
+        guides: false,
+        highlight: false,
+        dragCrop: false,
+        dragMode: 'move',
+        cropBoxMovable: false,
+        cropBoxResizable: false,
+        minContainerWidth: 150,
+        minContainerHeight: 150
+      };
+
+    var URL = window.URL || window.webkitURL
+
+    if (URL) {
+          $(document).on('change', '#fileUpload', function(event) {
+          var files = this.files
+          var file
+          if (files && files.length) {
+
+            // $('.img-place-holder').addClass('hidden');
+            // $('.create_image_crop_container').removeClass('hidden');
+            // $inputImage.next('span').text('Change Image');
+
+            file = files[0]
+            fileChange = true
+            fileName = file.name
+            console.log('mainFILE=',file)
+
+            if (/^image\/\w+$/.test(file.type)) {
+              uploadedImageType = file.type
+              if (uploadedImageURL) {
+                URL.revokeObjectURL(uploadedImageURL)
+              }
+              uploadedImageURL = URL.createObjectURL(file)
+              $('#previewImage').cropper('destroy').attr('src', uploadedImageURL).cropper(options)
+
+              $('.imageControls').show()
+
+            } else {
+              window.alert('Please choose an image file.')
+            }
+          } 
+        });
+      }
+
+      $(document).on('click', '.imageControls button', function(event) {
+        event.preventDefault()
+        let prevImg = $('#previewImage')
+        if(!$(this).hasClass('remove-image')){
+          let method = $(this).data('method')
+          let option = $(this).data('option')
+          let secondOption = $(this).data('second-option')
+          if(typeof secondOption != 'undefined') {
+            prevImg.cropper(method, option,secondOption)
+          } else {
+            prevImg.cropper(method, option)
+          }
+        } else {
+            prevImg.cropper('destroy')
+            $('#fileUpload').val('')
+            fileChange = false
+            imageURI = undefined
+            $('#previewImage').attr('src','')
+            $('.imageControls').hide()
+        }
+        
+      });
+      
+    
 
     $('#listing-okBtn').off().on('click', function() {
 
@@ -311,14 +410,32 @@ class Listing {
       dataRow.push(obj)
       obj[1]=rowId
       
-      $('.modal.in:visible form .dynamicElem:not(#fileupload)').each(function(index, el) {
+      $('.modal.in:visible form .dynamicElem:not(#fileUpload)').each(function(index, el) {
         var colindex = $(this).attr('data-colindex')
         var values = $(this).val()
         obj[colindex]=values
       });
 
 
-      if(imageURI && fileChange){
+
+      // console.log('fileChange==',fileChange)
+      // console.log('imageURI==',imageURI)
+
+      // return false
+
+      // if(fileChange) {
+      //   imageURI = $('#previewImage').cropper('getCroppedCanvas',{'width':'100','height':'100'}).toDataURL(uploadedImageType)
+      // } else {
+      //   imageURI = undefined
+      // }
+      
+     
+      imageURI = undefined
+
+      if(fileChange){
+        let prevImg = $('#previewImage')
+        imageURI = prevImg.cropper('getCroppedCanvas',{'width':prevImg.parent().outerWidth(),'height':prevImg.parent().outerHeight()}).toDataURL(uploadedImageType)
+
         let filetype = imageURI.substring(5,imageURI.indexOf(';'))
 
         let img = imageURI.replace(/^.*,/, '')
@@ -358,7 +475,6 @@ class Listing {
           }
         })
         .done(function(callback){
-
 
 
           let output = JSON.parse(callback.result)
@@ -402,6 +518,9 @@ class Listing {
 }
 
 
+
+
+
 const pushData = (data) => {
   var tableHeading = ``
   var lists = ``
@@ -419,7 +538,9 @@ const pushData = (data) => {
 
       $.each(elm, function(index1, elm1) {
         var imgPath = `images/placeholder.png`
-        var bgImg = `style="background-image:url(`+imgPath+`)"`
+        var imgView = `<img src="`+imgPath+`" alt="" />`
+
+        var updatedTimeVal = `-`
 
         var func = headerValues[index1]
         if(func.charAt(0) == '_') {
@@ -430,7 +551,12 @@ const pushData = (data) => {
         // console.log(func)
         if(func=='count') {
           elm1 = index
-        } 
+        }
+        if(func=='updatedtime') {
+          if(elm1 == '') {
+            elm1 = updatedTimeVal
+          }
+        }
         if(func=='edit') {
           elm1 = `<a class="list-controls list-edit" data-rowindex="`+(index+1)+`" data-id="`+elm[0]+`">Edit</a>`
         }
@@ -440,9 +566,9 @@ const pushData = (data) => {
         if(func=='file') {
           if(elm1 != '') {
             imgPath = elm1
-            bgImg = `style="background-image:url(`+imgPath+`)"`
+            imgView = `<a href="`+imgPath+`" data-fancybox="gallery-image" data-fancybox><img src="`+imgPath+`" alt="" /></a>`
           }
-          elm1 = `<div class="img-thumb" `+bgImg+`><img src="`+imgPath+`" alt="" /></div>`
+          elm1 = `<div class="img-thumb">`+imgView+`</div>`
         }
 
 

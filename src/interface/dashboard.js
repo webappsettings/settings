@@ -127,9 +127,6 @@ class Dashboard {
       if(!$(this).is(':checked')) {
         var getType = $('#dashboard-create-type').val()
         $('.field-box[data-type="'+getType+'"]').show().siblings('.field-box').hide()
-
-        
-
         } else {
           $('.field-box').hide()
         }
@@ -202,15 +199,22 @@ class Dashboard {
       let moduleType = $('#dashboard-create-type').val()
 
       var customHeaders = []
+      var predefinedHeaders = []
   
       // customHeaders[0]='_row'
 
       if(!$('input[name="defaultFields"]').is(':checked')){
         $('.field-box:visible .field-new').each(function(index, el) {
-          var values = $(this).val()
+          let values = $(this).val()
           customHeaders[index]=values
         });
+
+        $('.active-predefined-fields .pre-field-new:checked').each(function(index, el) {
+          let values = $(this).val()
+          predefinedHeaders[index]=values
+        });
       }
+
 
       // customHeaders.splice(0, 0, "_row");
 
@@ -218,9 +222,10 @@ class Dashboard {
       console.log(customHeaders)
 
 
+      predefinedHeaders = JSON.stringify(predefinedHeaders)
       customHeaders = JSON.stringify(customHeaders)
 
-      
+      console.log(predefinedHeaders)
 
       // return false
 
@@ -228,6 +233,7 @@ class Dashboard {
 
       
 
+      formdata.append('predefinedheaders', predefinedHeaders)
       formdata.append('customheaders', customHeaders)
 
       formdata.append('pagename', urlHash)
@@ -257,6 +263,8 @@ class Dashboard {
             self.listDatas[0].result.unshift(outputDatas.result)
             pushData(self.listDatas[0])
           }
+
+          dashboardFormReset()
          
         })
         .fail(function(callback) {
@@ -268,6 +276,9 @@ class Dashboard {
          $('#dashboard-create-modal').modal('hide')
        });
     }
+
+
+    
 
     
 
@@ -287,13 +298,17 @@ class Dashboard {
 
       $('.loader').fadeOut()
 
-    })   
+    })  
+
+
+    
+
 
 
 
     $(document).off().on('click', '.dashboard-remove-btn', function(event) {
 
-      let result = confirm("Want to delete?");
+      let result = confirm("Are you sure you want to remove this module?");
 
       if (result) {
 
@@ -338,12 +353,19 @@ class Dashboard {
     });
 
     $(document).on('click', '#create-new-dashboard', function(event) {
-      $('#dashboard-create-modal .form-control').val('')
-      $('.appended-field').remove()
-      $('.dashboad-additional-datas,.field-box').hide()
-      $('input[name="defaultFields"]').prop('checked',true)
-      $('#dashboard-create-modal').modal('show')      
+      $('#dashboard-create-modal').modal('show')
     });
+
+    $(document).on('click', '#dashboad-reset', function(event) {
+      dashboardFormReset()
+    }) 
+
+
+    function dashboardFormReset() {
+      $('.dashboad-additional-datas,.field-box').hide()
+      $('.appended-field').remove()
+      $('#dashboard-create-modal form').trigger('reset')
+    }
 
     
 

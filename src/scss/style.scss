@@ -82,14 +82,17 @@ body {
 }
 
 .img-thumb {
-  width: 50px;
-  height: 70px;
-  background-repeat: no-repeat;
-  background-size: cover;
-  image-orientation: 0deg;
+  width: 56px;
+  height: 56px;
+  a {
+    display: block;
+  }
   img {
     width: 100%;
-    height: auto;
+    height: 100%;
+    background-image: url(../../dist/images/loading.gif);
+    background-repeat: no-repeat;
+    background-position: center;
   }
 }
 
@@ -122,12 +125,84 @@ span.error {
   color: #a94442;
   font-size: 13px;
 }
-.dashboad-additional-datas {
+.dashboad-additional-datas,.field-box {
   display: none;
 }
 
 .field-box {
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid #eee;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.active-predefined-fields {
+  background-color: #eee;
+  padding: 1rem;
+  margin: 1rem 0;
+  .checkbox {
+    margin: 0;
+    label {
+      margin-right: 3rem;
+      &:last-of-type {
+        margin-right: 0;
+      }
+    }
+  }
+}
+.listing-image-preview {
+  width: 150px;
+  height: 150px;
+  background-color: gainsboro;
+  float: left;
+  margin-right: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.25);
+  background-size: 90px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: white;
+  background-image: url(../../dist/images/placeholder.png);
+  img {
+    width: 100%;
+    height: auto;
+  }
+}
+.imageControls {
+  display: none;
+  button[data-option="0.1"] {
+    i.ion-ios-search-strong{
+      position: relative;
+      font-size: 15px;
+      &:after {
+        content: '+';
+        position: absolute;
+        left: 1px;
+        font-size: 11px;
+        top: 7px;
+        margin: auto;
+        line-height: 0;
+      }
+    }
+  }
+  button[data-option="-0.1"] {
+    i.ion-ios-search-strong{
+      font-size: 15px;
+      position: relative;
+      &:after {
+        content: '-';
+        position: absolute;
+        left: 2px;
+        font-size: 14px;
+        top: 6px;
+        margin: auto;
+        line-height: 0;
+      }
+    }
+  }
+}
+
+.editList {
+  .remove-image {
+    display: none;
+  }
 }

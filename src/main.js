@@ -1,7 +1,13 @@
 import $ from "jquery"
-import "../dist/lib/bootstrap/js/bootstrap.js"
+window.jQuery = $
+import Fingerprint2 from "../dist/lib/fingerprint2.min"
+import "../dist/lib/bowser"
+import "../dist/lib/bootstrap/js/bootstrap"
 import "../dist/lib/jquery-ui/jquery-ui"
 import "../dist/lib/jquery.validate.min"
+import "../dist/lib/cropper.js"
+require('../dist/lib/jquery.fancybox.min');
+
 
 import CookieControls from "components/cookieControls"
 import HashControls from 'components/hashControls';
@@ -60,10 +66,6 @@ let urlHash = new HashControls().getHash()
     
   });
   
-  
-
-  
-
   
 
     $('#logoutBtn').on("click", (e) => {
