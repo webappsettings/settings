@@ -9,6 +9,8 @@
   <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.css">
   <link rel="stylesheet" href="lib/jquery-ui/jquery-ui.css">
   <link rel="stylesheet" href="lib/ionic-icons/css/ionicons.min.css">
+  <link rel="stylesheet" href="lib/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="lib/cropper.css">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -77,7 +79,40 @@
               
                 
                 <div class="field-box" data-type="listing">
-                  <div class="col-md-12"><h4><span class="pull-left">Define fields for <strong>listing</strong> section:</span><span class="m-l-1 m-b-1 pull-right"><button type="button" class="btn btn-success btn-sm add-new-field">Add new field</button></span></h4></div>
+                  <div class="col-md-12"><h4><span class="pull-left">Define fields for <strong>listing</strong> section:</span></h4></div>
+                  <div class="col-md-12">
+                    <div class="active-predefined-fields">
+                      <div class="checkbox">
+                        <label>
+                          <input type="checkbox" class="pre-field-new" name="listingNumbers" value="#(count)" checked="checked">
+                          # numbers
+                        </label>
+                        <label>
+                          <input type="checkbox" class="pre-field-new" name="listingTime" value="Created on(time)">
+                          Created on
+                        </label>
+                        <label>
+                          <input type="checkbox" class="pre-field-new" name="listingTime" value="Updated on(updatedtime)">
+                          Updated on
+                        </label>
+                        <label>
+                          <input type="checkbox" class="pre-field-new" name="listingFile" value="(file)">
+                          File
+                        </label>
+                        <label>
+                          <input type="checkbox" class="pre-field-new" name="listingEditBtn" value="(edit)" checked="checked">
+                          Edit button
+                        </label>
+                        <label>
+                          <input type="checkbox" class="pre-field-new" name="listingRemoveBtn" value="(remove)" checked="checked">
+                          Remove button
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-12">
+                    <span class="m-l-1 m-b-1 pull-right"><button type="button" class="btn btn-success btn-sm add-new-field">Add new field</button></span>
+                  </div>
                   <div class="col-md-6">
                     <div class="form-group">
                       <input type="text" class="form-control field-new default-field-new" name="listing_defineField_1" placeholder="Add new field">
@@ -107,6 +142,7 @@
           
         </div>
         <div class="modal-footer">
+          <button type="button" class="btn btn-default" id="dashboad-reset">Reset</button>
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
           <button type="submit" class="btn btn-primary" id="dashboard-create-okBtn">Save changes</button>
         </div>
@@ -155,10 +191,12 @@
     </div>
   </div>
 
-  <script src="main.bundle.js"></script>
-  <script src="bowser.js"></script>
-  <script src="fingerprint2.min.js"></script>
-  <!-- <script src="jquery.validate.min.js"></script> -->
   
+  <script src="lib/bowser.js"></script>
+  <!-- <script src="lib/fingerprint2.min.js"></script> -->
+  <!-- <script src="lib/cropper.js"></script> -->
+  <!-- <script src="lib/jquery.fancybox.min.js"></script> -->
+  <script src="main.bundle.js"></script>
+
 </body>
 </html>
