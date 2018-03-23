@@ -6,29 +6,26 @@ class Login {
   }
   render() {
     const tpl =  `
-    <div class="container">
-      <div class="login-form">
-        <form>
-          <div class="form-group">
-            <input type="email" class="form-control" placeholder="Email address" value="" id="loginEmail">
-          </div>
-          <div class="form-group">
-            <input type="password" class="form-control" placeholder="Password" value="" id="loginPassword">
-          </div>
-          <div class="form-group">
-            <button type="submit" class="btn btn-primary" value="Submit" id="loginBtn" disabled="disabled">LOG IN
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+      <form class="form-signin text-center">
+        <img class="mb-4" src="images/settings-icon.png" alt="" width="72" height="72">
+        <h1 class="h3 mb-3 font-weight-normal">Sign in</h1>
+        <label for="loginEmail" class="sr-only">Email address</label>
+        <input type="email" id="loginEmail" class="form-control" placeholder="Email address" required="" autofocus="">
+        <label for="loginPassword" class="sr-only">Password</label>
+        <input type="password" id="loginPassword" class="form-control" placeholder="Password" required="">
+        <div class="checkbox mb-3">
+          <label>
+            <input type="checkbox" value="remember-me"> Remember me
+          </label>
+        </div>
+        <button class="btn btn-lg btn-primary btn-block" type="submit" id="loginBtn" disabled="disabled">LOG IN</button>
+        <p class="mt-5 mb-3 text-muted">© 2017-2018</p>
+      </form>
     `
     return tpl
   }
 
   clickHandler() {
-
-    // $(document).on('click', '#listing-create-btn', function() {
 
       $('#loginEmail,#loginPassword').on("keyup", (e) => {
         if(($('#loginEmail').val()!='') && ($('#loginPassword').val()!='')) {
@@ -36,16 +33,14 @@ class Login {
         } else {
             $('#loginBtn').prop('disabled',true)
         }
-        
       });
-
 
     $('#loginBtn').on("click", (e) => {
 
-       let loginE = encodeURIComponent($('#loginEmail').val())
-       let loginP = $('#loginPassword').val()
-      
-       new CookieControls(loginE, loginP).toCookie()
+     let loginE = encodeURIComponent($('#loginEmail').val())
+     let loginP = $('#loginPassword').val()
+    
+     new CookieControls(loginE, loginP).toCookie()
     });
 
   }

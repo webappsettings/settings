@@ -15,10 +15,10 @@ class Dashboard {
     const tpl =  `
     <div class="container">
       <div class="col-md-12">
-        <button class="btn btn-primary" type="button" id="create-new-dashboard">Create New</button>
+        <button class="btn btn-primary" type="button" id="create-new-dashboard" data-toggle="modal" data-target="#dashboard-create-modal">Create New</button>
       </div>
       <div class="clearfix"></div>
-      <div class="m-t-2" id="dashboard-view">        
+      <div class="card-deck mt-2 mb-3 text-center" id="dashboard-view">
       </div>
     </div>
     `
@@ -84,6 +84,8 @@ class Dashboard {
             </div>
           </div>
         </div>`)
+
+
 
       $(`[name="`+getType+`_defineField_`+(totalL+1)+`"]`).rules("add", {
         required: true,
@@ -352,9 +354,7 @@ class Dashboard {
 
     });
 
-    $(document).on('click', '#create-new-dashboard', function(event) {
-      $('#dashboard-create-modal').modal('show')
-    });
+
 
     $(document).on('click', '#dashboad-reset', function(event) {
       dashboardFormReset()
@@ -386,15 +386,23 @@ class Dashboard {
 const pushData = (data) => {
   var lists = ''
   $.each(data.result, function(index, elm) {
-    lists += `<div class="col-md-4 module-item" data-moduleid="`+elm[0]+`" data-startindex="`+index+`">
-            <div class="panel panel-default">
-              <i class="ion-close dashboard-remove-btn" data-id="`+elm[0]+`"></i>
-              <div class="panel-body">
-                <a href="#`+elm[3]+`?id=`+elm[0]+`&name=`+elm[2]+`" data-type="`+elm[3]+`">`+elm[2]+`</a>
+    lists += `<div class="card mb-4 box-shadow module-item" data-moduleid="`+elm[0]+`" data-startindex="`+index+`">
+              <div class="card-header">
+                <h4 class="my-0 font-weight-normal"></h4>
+                <i class="ion-close dashboard-remove-btn" data-id="`+elm[0]+`"></i>
               </div>
-            </div>
-          </div>`
-  })
+              <div class="card-body">
+                <h1 class="card-title pricing-card-title">$0 <small class="text-muted">/ mo</small></h1>
+                <ul class="list-unstyled mt-3 mb-4">
+                  <li>10 users included</li>
+                  <li>2 GB of storage</li>
+                  <li>Email support</li>
+                  <li>Help center access</li>
+                </ul>
+                <a href="#`+elm[3]+`?id=`+elm[0]+`&name=`+elm[2]+`" data-type="`+elm[3]+`" class="btn btn-lg btn-block btn-outline-primary">`+elm[2]+`</a>
+              </div>
+            </div>`
+    })
 
   $('#dashboard-view').html(lists)
 }

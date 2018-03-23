@@ -61,9 +61,9 @@ class PageView {
         $('.loader').fadeOut()
 
         if(self.page == 'login') {
-          $('#navTop').addClass('hidden')
+          $('#navTop').addClass('d-none').removeClass('d-flex')
         } else {
-          $('#navTop').removeClass('hidden')
+          $('#navTop').removeClass('d-none').addClass('d-flex')
         }
         $('.userName').text(decodeURIComponent(new CookieControls().getCookie('user')))
         

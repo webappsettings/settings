@@ -1,12 +1,20 @@
-import $ from "jquery"
-window.jQuery = $
+// import $ from "jquery"
+// var $  = require( 'jquery' );
+// window.jQuery = $
 import Fingerprint2 from "../dist/lib/fingerprint2.min"
-import "../dist/lib/bowser"
-import "../dist/lib/bootstrap/js/bootstrap"
+
+// import "../dist/lib/bootstrap/js/bootstrap"
+
+// import "../dist/lib/bootstrap/js/bootstrap"
+
 import "../dist/lib/jquery-ui/jquery-ui"
 import "../dist/lib/jquery.validate.min"
 import "../dist/lib/cropper.js"
+
+require( '../dist/lib/dataTables.bootstrap4.js' );
+require( '../dist/lib/responsive.bootstrap4.min.js' );
 require('../dist/lib/jquery.fancybox.min');
+
 
 
 import CookieControls from "components/cookieControls"
@@ -16,8 +24,6 @@ import GlobalArray from "components/globalArray";
 
 import Login from 'interface/login';
 import Allpages from 'interface/allPages';
-
-
 
 
 
@@ -38,7 +44,9 @@ const load = () => {
     }
   });
 
-let urlHash = new HashControls().getHash()
+
+
+  let urlHash = new HashControls().getHash()
 
   let prevHistory = new CookieControls().getCookie('history')
 
@@ -75,7 +83,6 @@ let urlHash = new HashControls().getHash()
 
 
     $(window).bind( 'hashchange',function(e) {
-
 
       let toPage = new HashControls().getHash()
 

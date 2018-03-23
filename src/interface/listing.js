@@ -173,6 +173,28 @@ class Listing {
     $(document).on('click', '#listing-create-btn', function() {
       elmentPushToModal('create')
     });
+/*
+    $(document).on('show.bs.modal', '#listing-modal', function (event) {
+      var button = $(event.relatedTarget)
+      var recipient = button.data('whatever')
+      alert(recipient)
+    })*/
+
+    $(document).on('mousedown', '.img-thumb', function() {
+       $('[data-fancybox]').fancybox({
+        buttons : [
+          'close'
+        ],
+        protect: true
+      });
+    });
+
+    $(document).on('click', '.fancybox-slide', function() {
+      $.fancybox.close();
+    });
+    $(window).bind('hashchange',function(e) {
+      $.fancybox.close();
+    });
 
 
 
@@ -270,7 +292,7 @@ class Listing {
           `)
         }
       })
-      $('#listing-modal').modal('show')
+      // $('#listing-modal').modal('show')
     }
 
 
@@ -410,7 +432,7 @@ class Listing {
       dataRow.push(obj)
       obj[1]=rowId
       
-      $('.modal.in:visible form .dynamicElem:not(#fileUpload)').each(function(index, el) {
+      $('.modal.show:visible form .dynamicElem:not(#fileUpload)').each(function(index, el) {
         var colindex = $(this).attr('data-colindex')
         var values = $(this).val()
         obj[colindex]=values
@@ -507,7 +529,7 @@ class Listing {
        .always(function(){
          $('.loader').fadeOut()
          $('#listing-okBtn').attr('disabled',false)
-         $('#listing-modal').modal('hide')
+         $('#listing-modal [data-dismiss="modal"]').trigger('click')
        });
 
 
@@ -520,14 +542,17 @@ class Listing {
 
 
 
+var dataTable
 
 const pushData = (data) => {
   var tableHeading = ``
   var lists = ``
-  
+  var getIndex = []
+    
   var headerValues
   $.each(data.result, function(index, elm) {
     // console.log('med=',elm)
+
     if(index == 0) {
 
       headerValues = elm
@@ -535,10 +560,11 @@ const pushData = (data) => {
       
 
       var listsInner = ``
-
+      
       $.each(elm, function(index1, elm1) {
         var imgPath = `images/placeholder.png`
         var imgView = `<img src="`+imgPath+`" alt="" />`
+        
 
         var updatedTimeVal = `-`
 
@@ -558,7 +584,7 @@ const pushData = (data) => {
           }
         }
         if(func=='edit') {
-          elm1 = `<a class="list-controls list-edit" data-rowindex="`+(index+1)+`" data-id="`+elm[0]+`">Edit</a>`
+          elm1 = `<a class="list-controls list-edit" data-rowindex="`+(index+1)+`" data-id="`+elm[0]+`" data-toggle="modal" data-target="#listing-modal">Edit</a>`
         }
         if(func=='remove') {
           elm1 = `<a class="list-controls list-remove" data-rowindex="`+(index+1)+`" data-id="`+elm[0]+`">Remove</a>`
@@ -566,11 +592,10 @@ const pushData = (data) => {
         if(func=='file') {
           if(elm1 != '') {
             imgPath = elm1
-            imgView = `<a href="`+imgPath+`" data-fancybox="gallery-image" data-fancybox><img src="`+imgPath+`" alt="" /></a>`
+            imgView = `<a href="`+imgPath+`" data-type="image" data-fancybox><img src="`+imgPath+`" alt="" /></a>`
           }
           elm1 = `<div class="img-thumb">`+imgView+`</div>`
         }
-
 
         if(func != '_') {
           listsInner += `<td>`+elm1+`</td>`
@@ -592,35 +617,51 @@ const pushData = (data) => {
 
       
       }
-      
+    
   });
 
 
 
   generateHeading(headerValues)
 
+
+
   function generateHeading(headingVal) {
+    
+    var pos = 0
+
+    let ignoreFields = ['file','edit','remove'];
+    
     $.each(headingVal, function(index, elm) {
       // if(index != 0) {
+        
         var tElm,func = ``
         if(elm.charAt(0) == '_') {
           elm='_'
         } else if(elm.indexOf("(") >= 0){
           tElm = elm.split("(")
           elm = tElm[0]
-          func = tElm[1].slice(0, -1);
+          func = tElm[1].slice(0, -1)
         }
         if(elm != '_') {
+          console.log(elm)
           tableHeading += `<th data-func=`+func+`>`+elm+`</th>`
+          if(ignoreFields.indexOf(func) != -1){
+            getIndex.push(pos)
+          } 
+          pos++
         }
+
+        
       
     })
+    console.log(getIndex)
   }
 
   $('#listing-view').html(`
-    <div class="pull-right"><button type="button" class="btn btn-primary" id="listing-create-btn">Create New</button></div>
+    <div class="pull-right"><button type="button" class="btn btn-primary" id="listing-create-btn" data-toggle="modal" data-target="#listing-modal" data-whatever="@mdo">Create New</button></div>
     <div class="clearfix"></div>
-    <table class="table table-responsive sortable-row">
+    <table class="listing-table table table-responsive sortable-row">
       <thead>
         <tr>
           `+tableHeading+`
@@ -631,6 +672,19 @@ const pushData = (data) => {
       </tbody>
     </table>
   `)
+
+
+  if(dataTable) {
+    dataTable.destroy(); 
+  }
+
+ 
+dataTable = $('.listing-table').DataTable({
+  responsive: true,
+  order: [],
+  columnDefs: [ { orderable: false, targets: getIndex } ]
+});
+  // [1,4,5]
 }
 
 
