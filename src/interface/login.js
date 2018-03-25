@@ -6,7 +6,7 @@ class Login {
   }
   render() {
     const tpl =  `
-      <form class="form-signin text-center">
+      <form class="form-signin shadow-box text-center">
         <img class="mb-4" src="images/settings-icon.png" alt="" width="72" height="72">
         <h1 class="h3 mb-3 font-weight-normal">Sign in</h1>
         <label for="loginEmail" class="sr-only">Email address</label>

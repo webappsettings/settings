@@ -20,8 +20,13 @@ class Listing {
           </ol>
         </nav>
       </div>
-      <div id="listing-view">
-        
+      
+      <div class="float-right"><button type="button" class="btn btn-light btn-sm mb-4" id="listing-create-btn" data-toggle="modal" data-target="#listing-modal">Create New</button></div>
+      <div class="clearfix"></div>
+      <div class="p-3 mb-5 bg-white rounded box-shadow">
+        <div id="listing-view">
+          
+        </div>
       </div>
     </div> 
     `
@@ -211,7 +216,7 @@ class Listing {
         $('#listing-okBtn').attr({'data-action':'edit', 'data-rowid':rowId})
       }
   
-      $('#listing-modal form').html('')
+      $('#listing-modal form .row').html('')
 
       var getListVal
       if(action=='edit') {
@@ -259,9 +264,9 @@ class Listing {
         let ignoreFields = ['count','time','updatedtime','file','edit','remove'];
 
         if((elm!='_') && ignoreFields.indexOf(func) == -1) {
-          $('#listing-modal form').append(`
+          $('#listing-modal form .row').append(`
             <div class="col-md-6">
-                  <div class="form-group">
+                  <div class="form-group input-group-sm mb-3">
                     <label>`+elm+`</label>
                     <input type="text" class="form-control dynamicElem" placeholder="`+elm+`" value="`+insertVal+`" data-filedname="`+func+`" data-colindex="`+colIndex+`">
                   </div>
@@ -269,10 +274,10 @@ class Listing {
             `)
           }
         if(func=='file') {
-          $('#listing-modal form').append(`
+          $('#listing-modal form .row').append(`
             <div class="col-md-12">
               <div class="listing-image-preview"><img id="previewImage"></div>
-              <div class="form-group">
+              <div class="form-group input-group-sm mb-3">
                 <label>Upload Image</label>
                 <input type="file" name="file" accept=".jpg,.jpeg,.png,.gif,.bmp,.tiff" class="dynamicElem elm-`+func+`" id="fileUpload" data-filedname="`+func+`" data-colindex="`+colIndex+`">
                 <div class="imageControls">
@@ -432,7 +437,7 @@ class Listing {
       dataRow.push(obj)
       obj[1]=rowId
       
-      $('.modal.show:visible form .dynamicElem:not(#fileUpload)').each(function(index, el) {
+      $('.modal.show:visible form .row .dynamicElem:not(#fileUpload)').each(function(index, el) {
         var colindex = $(this).attr('data-colindex')
         var values = $(this).val()
         obj[colindex]=values
@@ -584,10 +589,10 @@ const pushData = (data) => {
           }
         }
         if(func=='edit') {
-          elm1 = `<a class="list-controls list-edit" data-rowindex="`+(index+1)+`" data-id="`+elm[0]+`" data-toggle="modal" data-target="#listing-modal">Edit</a>`
+          elm1 = `<button class="btn btn-sm btn-outline-primary list-controls list-edit ion-edit" data-rowindex="`+(index+1)+`" data-id="`+elm[0]+`" data-toggle="modal" data-target="#listing-modal"></button>`
         }
         if(func=='remove') {
-          elm1 = `<a class="list-controls list-remove" data-rowindex="`+(index+1)+`" data-id="`+elm[0]+`">Remove</a>`
+          elm1 = `<button class="btn btn-sm btn-outline-danger list-controls list-remove ion-trash-a" data-rowindex="`+(index+1)+`" data-id="`+elm[0]+`"></button>`
         }
         if(func=='file') {
           if(elm1 != '') {
@@ -659,9 +664,7 @@ const pushData = (data) => {
   }
 
   $('#listing-view').html(`
-    <div class="pull-right"><button type="button" class="btn btn-primary" id="listing-create-btn" data-toggle="modal" data-target="#listing-modal" data-whatever="@mdo">Create New</button></div>
-    <div class="clearfix"></div>
-    <table class="listing-table table table-responsive sortable-row">
+    <table class="listing-table table table-responsive sortable-row clearfix">
       <thead>
         <tr>
           `+tableHeading+`

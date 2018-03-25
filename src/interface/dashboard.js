@@ -14,13 +14,13 @@ class Dashboard {
   render() {
     const tpl =  `
     <div class="container">
-      <div class="col-md-12">
-        <button class="btn btn-primary" type="button" id="create-new-dashboard" data-toggle="modal" data-target="#dashboard-create-modal">Create New</button>
-      </div>
-      <div class="clearfix"></div>
-      <div class="card-deck mt-2 mb-3 text-center" id="dashboard-view">
-      </div>
+      <button class="btn btn-light btn-sm mb-4" type="button" id="create-new-dashboard" data-toggle="modal" data-target="#dashboard-create-modal">Create New</button>
     </div>
+    <div class="clearfix"></div>
+      <div class="container">       
+        <div class="card-deck mt-2 mb-3 text-center" id="dashboard-view">
+        </div>
+      </div>
     `
     return tpl
   }
@@ -72,15 +72,15 @@ class Dashboard {
 
     $('.field-box .add-new-field').off().on('click', function(event) {
       var getType = $(this).closest('.field-box').data('type')
-      let totalL = $('.field-box[data-type="'+getType+'"] .field-new').length
+      let totalL = $('.field-box[data-type="'+getType+'"] .row .field-new').length
 
-      $('.field-box[data-type="'+getType+'"]').append(`<div class="col-md-6 appended-field">
+      $('.field-box[data-type="'+getType+'"] .row').append(`<div class="col-md-6 appended-field">
           <div class="form-group">
-            <div class="input-group">
+            <div class="input-group input-group-sm">
               <input type="text" class="form-control field-new" name="`+getType+`_defineField_`+(totalL+1)+`" placeholder="Add new field">
-              <span class="input-group-btn">
-                <button class="btn btn-default field-remove" type="button" data-removefield="`+getType+`_defineField_`+(totalL+1)+`"><i class="ion-trash-a text-danger"></i></button>
-              </span>
+              <div class="input-group-prepend">
+                <button class="btn btn-light field-remove input-group-button" type="button" data-removefield="`+getType+`_defineField_`+(totalL+1)+`"><i class="ion-trash-a"></i></button>
+              </div>
             </div>
           </div>
         </div>`)
@@ -125,7 +125,7 @@ class Dashboard {
 
 
 
-    $('.default-fields-box input[type="checkbox"]').on('change', function(event) {
+    $('input[name="defaultFields"]').on('change', function(event) {
       if(!$(this).is(':checked')) {
         var getType = $('#dashboard-create-type').val()
         $('.field-box[data-type="'+getType+'"]').show().siblings('.field-box').hide()
@@ -275,7 +275,7 @@ class Dashboard {
        })
        .always(function(){
          $('.loader').fadeOut()
-         $('#dashboard-create-modal').modal('hide')
+         $('#dashboard-create-modal [data-dismiss="modal"]').trigger('click')
        });
     }
 
@@ -386,20 +386,25 @@ class Dashboard {
 const pushData = (data) => {
   var lists = ''
   $.each(data.result, function(index, elm) {
+    var btn,icon
+    if(elm[3] == 'listing') {
+      btn = 'btn-outline-primary'
+      icon = 'ion-android-list'
+    } else {
+        btn = 'btn-outline-dark'
+        icon = 'ion-ios-compose'
+    }
     lists += `<div class="card mb-4 box-shadow module-item" data-moduleid="`+elm[0]+`" data-startindex="`+index+`">
               <div class="card-header">
                 <h4 class="my-0 font-weight-normal"></h4>
                 <i class="ion-close dashboard-remove-btn" data-id="`+elm[0]+`"></i>
               </div>
               <div class="card-body">
-                <h1 class="card-title pricing-card-title">$0 <small class="text-muted">/ mo</small></h1>
+                <h3 class="card-title">`+elm[2]+`</h3>
                 <ul class="list-unstyled mt-3 mb-4">
-                  <li>10 users included</li>
-                  <li>2 GB of storage</li>
-                  <li>Email support</li>
-                  <li>Help center access</li>
+                  <li>Type: <span class="text-success text-capitalize">`+elm[3]+`</span></li>
                 </ul>
-                <a href="#`+elm[3]+`?id=`+elm[0]+`&name=`+elm[2]+`" data-type="`+elm[3]+`" class="btn btn-lg btn-block btn-outline-primary">`+elm[2]+`</a>
+                <a href="#`+elm[3]+`?id=`+elm[0]+`&name=`+elm[2]+`" data-type="`+elm[3]+`" class="btn btn-sm btn-block `+btn+`"><i class="`+icon+`"></i> View</a>
               </div>
             </div>`
     })
