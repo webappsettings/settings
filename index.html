@@ -39,12 +39,12 @@
   
 
 
-  <div class="d-none flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow" id="navTop">
-    <h5 class="my-0 mr-md-auto font-weight-normal">Google App Settings</h5>
+  <div class="d-none flex-column flex-md-row align-items-center p-2 px-md-4 mb-3 bg-white border-bottom box-shadow" id="navTop">
+    <h5 class="my-0 mr-md-auto brand-name">Google App Settings</h5>
     <nav class="my-2 my-md-0 mr-md-3">
       <span class="userName"></span>
     </nav>
-    <a class="btn btn-outline-primary logoutBtn" id="logoutBtn" href="#">Logout</a>
+    <a class="btn btn-sm btn-outline-primary logoutBtn" id="logoutBtn" href="#">Logout</a>
   </div>
 
   <div class="loader"></div>
@@ -52,11 +52,11 @@
   <section class="section-view"></section>
 
   <div class="modal fade" id="dashboard-create-modal">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-          <h4 class="modal-title"></h4>
+          <h6 class="modal-title"></h6>
         </div>
         <form id="dashboard-create-form">
         <div class="modal-body">
@@ -64,15 +64,15 @@
           <div class="container-fluid">
             <div class="row">
               <div class="col-md-6">
-                <div class="form-group">
+                <div class="form-group input-group-sm mb-3">
                   <label>Name</label>
                   <input type="text" class="form-control" name="createName" value="" id="dashboard-create-name">
                 </div>
               </div>
               <div class="col-md-6">
-                <div class="form-group">
+                <div class="form-group input-group-sm mb-3">
                   <label>Type</label>
-                  <select id="dashboard-create-type" name="createType" class="form-control">
+                  <select id="dashboard-create-type" name="createType" class="form-control custom-select">
                     <option value="">Select type</option>
                     <option value="listing">Listing</option>
                     <option value="detail">Detail</option>
@@ -82,129 +82,187 @@
             </div>
           </div>
 
-
-            <div class="dashboad-additional-datas">
+          <div class="dashboad-additional-datas">
             
+              
               <div class="col-md-12 default-fields-box">
-                <div class="checkbox">
+                <div class="checkbox custom-control custom-checkbox">
+                  <input type="checkbox" class="custom-control-input" id="defaultFields" name="defaultFields" checked="checked">
+                  <label class="custom-control-label" for="defaultFields">Default fields</label>
+                </div>
+                <!-- <div class="checkbox">
                   <label>
                     <input type="checkbox" name="defaultFields" checked="checked">
                     Default fields
                   </label>
-                </div>
+                </div> -->
               </div>
               
               <div class="clearfix"></div>
               
                 
-                <div class="field-box" data-type="listing">
-                  <div class="col-md-12"><h4><span class="pull-left">Define fields for <strong>listing</strong> section:</span></h4></div>
-                  <div class="col-md-12">
-                    <div class="active-predefined-fields">
-                      <div class="checkbox">
-                        <label>
-                          <input type="checkbox" class="pre-field-new" name="listingNumbers" value="#(count)" checked="checked">
-                          # numbers
-                        </label>
-                        <label>
-                          <input type="checkbox" class="pre-field-new" name="listingTime" value="Created on(time)">
-                          Created on
-                        </label>
-                        <label>
-                          <input type="checkbox" class="pre-field-new" name="listingTime" value="Updated on(updatedtime)">
-                          Updated on
-                        </label>
-                        <label>
-                          <input type="checkbox" class="pre-field-new" name="listingFile" value="(file)">
-                          File
-                        </label>
-                        <label>
-                          <input type="checkbox" class="pre-field-new" name="listingEditBtn" value="(edit)" checked="checked">
-                          Edit button
-                        </label>
-                        <label>
-                          <input type="checkbox" class="pre-field-new" name="listingRemoveBtn" value="(remove)" checked="checked">
-                          Remove button
-                        </label>
+              <div class="field-box" data-type="listing">
+                <div class="container-fluid">
+                  <div class="row">
+                    <div class="col-md-12"><h6 class="font-weight-400"><span class="pull-left">Define fields for <strong>listing</strong> section:</span></h6></div>
+                    <div class="col-md-12">
+                      <div class="active-predefined-fields card">
+                        <div class="checkbox">
+
+                          <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input pre-field-new" id="listingNumbers" name="listingNumbers" value="#(count)" checked="checked">
+                            <label class="custom-control-label" for="listingNumbers"># SR Numbers</label>
+                          </div>
+
+                          <!-- <label>
+                            <input type="checkbox" class="pre-field-new" name="listingNumbers" value="#(count)" checked="checked">
+                            # numbers
+                          </label> -->
+                          <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input pre-field-new" id="listingTime" name="listingTime" value="Created on(time)">
+                            <label class="custom-control-label" for="listingTime">Created on</label>
+                          </div>
+
+                          <!-- <label>
+                            <input type="checkbox" class="pre-field-new" name="listingTime" value="Created on(time)">
+                            Created on
+                          </label> -->
+                          <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input pre-field-new" id="listingUpdateTime" name="listingUpdateTime" value="Updated on(updatedtime)">
+                            <label class="custom-control-label" for="listingUpdateTime">Updated on</label>
+                          </div>
+
+                          <!-- <label>
+                            <input type="checkbox" class="pre-field-new" name="listingTime" value="Updated on(updatedtime)">
+                            Updated on
+                          </label> -->
+
+                          <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input pre-field-new" id="listingFile" name="listingFile" value="(file)">
+                            <label class="custom-control-label" for="listingFile">File</label>
+                          </div>
+
+                          <!-- <label>
+                            <input type="checkbox" class="pre-field-new" name="listingFile" value="(file)">
+                            File
+                          </label> -->
+
+                          <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input pre-field-new" id="listingEditBtn" name="listingEditBtn" value="(edit)" checked="checked">
+                            <label class="custom-control-label" for="listingEditBtn">Edit button</label>
+                          </div>
+
+                          <!-- <label>
+                            <input type="checkbox" class="pre-field-new" name="listingEditBtn" value="(edit)" checked="checked">
+                            Edit button
+                          </label> -->
+
+                          <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input pre-field-new" id="listingRemoveBtn" name="listingRemoveBtn" value="(remove)" checked="checked">
+                            <label class="custom-control-label" for="listingRemoveBtn">Remove button</label>
+                          </div>
+
+                          <!-- <label>
+                            <input type="checkbox" class="pre-field-new" name="listingRemoveBtn" value="(remove)" checked="checked">
+                            Remove button
+                          </label> -->
+
+                          
+
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-12">
+                      <span class="m-l-1 m-b-1 float-right"><button type="button" class="btn btn-success btn-sm add-new-field">Add new field</button></span>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group input-group-sm mb-3">
+                        <input type="text" class="form-control field-new default-field-new" name="listing_defineField_1" placeholder="Add new field">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group input-group-sm mb-3">
+                        <input type="text" class="form-control field-new default-field-new" name="listing_defineField_2" placeholder="Add new field">
                       </div>
                     </div>
                   </div>
-                  <div class="col-md-12">
-                    <span class="m-l-1 m-b-1 pull-right"><button type="button" class="btn btn-success btn-sm add-new-field">Add new field</button></span>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <input type="text" class="form-control field-new default-field-new" name="listing_defineField_1" placeholder="Add new field">
-                    </div>
-                   </div>
-                   <div class="col-md-6">
-                    <div class="form-group">
-                      <input type="text" class="form-control field-new default-field-new" name="listing_defineField_2" placeholder="Add new field">
-                    </div>
-                   </div>
                 </div>
+              </div>
 
-                <div class="field-box" data-type="detail">
-                  <div class="col-md-12"><h4><span class="pull-left">Define fields for <strong>detail</strong> section:</span><span class="m-l-1 m-b-1 pull-right"><button type="button" class="btn btn-success btn-sm add-new-field">Add new field</button></span></h4></div>
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <input type="text" class="form-control field-new default-field-new" name="detail_defineField_1" placeholder="Add new field">
+              <div class="field-box" data-type="detail">
+                <div class="container-fluid">
+                  <div class="row">
+                    <div class="col-md-12"><h6 class="font-weight-400"><span class="pull-left">Define fields for <strong>detail</strong> section:</span><span class="m-l-1 m-b-1 float-right"><button type="button" class="btn btn-success btn-sm add-new-field">Add new field</button></span></h6></div>
+                    <div class="col-md-6">
+                      <div class="form-group input-group-sm mb-3">
+                        <input type="text" class="form-control field-new default-field-new" name="detail_defineField_1" placeholder="Add new field">
+                      </div>
                     </div>
                   </div>
                 </div>
+              </div>
               
 
 
-            </div>
+            
+            
+          </div>
 
-            <div class="clearfix"></div>
+          <div class="clearfix"></div>
           
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" id="dashboad-reset">Reset</button>
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary" id="dashboard-create-okBtn">Save changes</button>
+        <div class="modal-footer">          
+          <button type="button" class="btn btn-outline-dark btn-sm" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-dark btn-sm float-left" id="dashboad-reset">Reset</button>
+          <button type="submit" class="btn btn-primary btn-sm" id="dashboard-create-okBtn">Save changes</button>
         </div>
         </form>
       </div>
     </div>
   </div>
 
-  <div class="modal fade" id="listing-modal">
-    <div class="modal-dialog modal-lg">
+  <div class="modal fade" id="listing-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-          <h4 class="modal-title"></h4>
+          <h6 class="modal-title"></h6>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          
         </div>
         <div class="modal-body">
           <form>
-            <!-- <div class="col-md-6">
-              <div class="form-group">
-                <label>Name</label>
-                <input type="text" class="form-control" value="" id="listing-name">
+            <div class="container-fluid">
+              <div class="row">
+                
+                  <!-- <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Name</label>
+                      <input type="text" class="form-control" value="" id="listing-name">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>User ID</label>
+                      <input type="text" class="form-control" value="" id="listing-userid">
+                    </div>
+                  </div> -->
+                  
+                  <!-- <div class="col-md-12">
+                    <div class="form-group">
+                      <label>Upload Image</label>
+                      <input type="file" id="listing-imageupload">
+                    </div>
+                  </div> -->
+                  
+                  
+                </div>
               </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label>User ID</label>
-                <input type="text" class="form-control" value="" id="listing-userid">
-              </div>
-            </div> -->
-            
-            <!-- <div class="col-md-12">
-              <div class="form-group">
-                <label>Upload Image</label>
-                <input type="file" id="listing-imageupload">
-              </div>
-            </div> -->
-            
+            <div class="clearfix"></div>
           </form>
-          <div class="clearfix"></div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" id="listing-okBtn">Save changes</button>
+          <button type="button" class="btn btn-outline-dark btn-sm" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary btn-sm" id="listing-okBtn">Save changes</button>
         </div>
       </div>
     </div>

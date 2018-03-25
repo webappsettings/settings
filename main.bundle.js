@@ -24360,7 +24360,7 @@ var Login = function () {
   _createClass(Login, [{
     key: "render",
     value: function render() {
-      var tpl = "\n      <form class=\"form-signin text-center\">\n        <img class=\"mb-4\" src=\"images/settings-icon.png\" alt=\"\" width=\"72\" height=\"72\">\n        <h1 class=\"h3 mb-3 font-weight-normal\">Sign in</h1>\n        <label for=\"loginEmail\" class=\"sr-only\">Email address</label>\n        <input type=\"email\" id=\"loginEmail\" class=\"form-control\" placeholder=\"Email address\" required=\"\" autofocus=\"\">\n        <label for=\"loginPassword\" class=\"sr-only\">Password</label>\n        <input type=\"password\" id=\"loginPassword\" class=\"form-control\" placeholder=\"Password\" required=\"\">\n        <div class=\"checkbox mb-3\">\n          <label>\n            <input type=\"checkbox\" value=\"remember-me\"> Remember me\n          </label>\n        </div>\n        <button class=\"btn btn-lg btn-primary btn-block\" type=\"submit\" id=\"loginBtn\" disabled=\"disabled\">LOG IN</button>\n        <p class=\"mt-5 mb-3 text-muted\">\xA9 2017-2018</p>\n      </form>\n    ";
+      var tpl = "\n      <form class=\"form-signin shadow-box text-center\">\n        <img class=\"mb-4\" src=\"images/settings-icon.png\" alt=\"\" width=\"72\" height=\"72\">\n        <h1 class=\"h3 mb-3 font-weight-normal\">Sign in</h1>\n        <label for=\"loginEmail\" class=\"sr-only\">Email address</label>\n        <input type=\"email\" id=\"loginEmail\" class=\"form-control\" placeholder=\"Email address\" required=\"\" autofocus=\"\">\n        <label for=\"loginPassword\" class=\"sr-only\">Password</label>\n        <input type=\"password\" id=\"loginPassword\" class=\"form-control\" placeholder=\"Password\" required=\"\">\n        <div class=\"checkbox mb-3\">\n          <label>\n            <input type=\"checkbox\" value=\"remember-me\"> Remember me\n          </label>\n        </div>\n        <button class=\"btn btn-lg btn-primary btn-block\" type=\"submit\" id=\"loginBtn\" disabled=\"disabled\">LOG IN</button>\n        <p class=\"mt-5 mb-3 text-muted\">\xA9 2017-2018</p>\n      </form>\n    ";
       return tpl;
     }
   }, {
@@ -24480,8 +24480,10 @@ var PageView = function () {
         $('.loader').fadeOut();
 
         if (self.page == 'login') {
+          $('body').addClass('login-page');
           $('#navTop').addClass('d-none').removeClass('d-flex');
         } else {
+          $('body').removeClass('login-page');
           $('#navTop').removeClass('d-none').addClass('d-flex');
         }
         $('.userName').text(decodeURIComponent(new _cookieControls2.default().getCookie('user')));
@@ -34020,7 +34022,7 @@ var Dashboard = function () {
   _createClass(Dashboard, [{
     key: 'render',
     value: function render() {
-      var tpl = '\n    <div class="container">\n      <div class="col-md-12">\n        <button class="btn btn-primary" type="button" id="create-new-dashboard" data-toggle="modal" data-target="#dashboard-create-modal">Create New</button>\n      </div>\n      <div class="clearfix"></div>\n      <div class="card-deck mt-2 mb-3 text-center" id="dashboard-view">\n      </div>\n    </div>\n    ';
+      var tpl = '\n    <div class="container">\n      <button class="btn btn-light btn-sm mb-4" type="button" id="create-new-dashboard" data-toggle="modal" data-target="#dashboard-create-modal">Create New</button>\n    </div>\n    <div class="clearfix"></div>\n      <div class="container">       \n        <div class="card-deck mt-2 mb-3 text-center" id="dashboard-view">\n        </div>\n      </div>\n    ';
       return tpl;
     }
   }, {
@@ -34070,9 +34072,9 @@ var Dashboard = function () {
 
       $('.field-box .add-new-field').off().on('click', function (event) {
         var getType = $(this).closest('.field-box').data('type');
-        var totalL = $('.field-box[data-type="' + getType + '"] .field-new').length;
+        var totalL = $('.field-box[data-type="' + getType + '"] .row .field-new').length;
 
-        $('.field-box[data-type="' + getType + '"]').append('<div class="col-md-6 appended-field">\n          <div class="form-group">\n            <div class="input-group">\n              <input type="text" class="form-control field-new" name="' + getType + '_defineField_' + (totalL + 1) + '" placeholder="Add new field">\n              <span class="input-group-btn">\n                <button class="btn btn-default field-remove" type="button" data-removefield="' + getType + '_defineField_' + (totalL + 1) + '"><i class="ion-trash-a text-danger"></i></button>\n              </span>\n            </div>\n          </div>\n        </div>');
+        $('.field-box[data-type="' + getType + '"] .row').append('<div class="col-md-6 appended-field">\n          <div class="form-group">\n            <div class="input-group input-group-sm">\n              <input type="text" class="form-control field-new" name="' + getType + '_defineField_' + (totalL + 1) + '" placeholder="Add new field">\n              <div class="input-group-prepend">\n                <button class="btn btn-light field-remove input-group-button" type="button" data-removefield="' + getType + '_defineField_' + (totalL + 1) + '"><i class="ion-trash-a"></i></button>\n              </div>\n            </div>\n          </div>\n        </div>');
 
         $('[name="' + getType + '_defineField_' + (totalL + 1) + '"]').rules("add", {
           required: true,
@@ -34106,7 +34108,7 @@ var Dashboard = function () {
         }
       });
 
-      $('.default-fields-box input[type="checkbox"]').on('change', function (event) {
+      $('input[name="defaultFields"]').on('change', function (event) {
         if (!$(this).is(':checked')) {
           var getType = $('#dashboard-create-type').val();
           $('.field-box[data-type="' + getType + '"]').show().siblings('.field-box').hide();
@@ -34238,7 +34240,7 @@ var Dashboard = function () {
           alert('This action not completed! Please try again');
         }).always(function () {
           $('.loader').fadeOut();
-          $('#dashboard-create-modal').modal('hide');
+          $('#dashboard-create-modal [data-dismiss="modal"]').trigger('click');
         });
       }
 
@@ -34327,7 +34329,15 @@ var Dashboard = function () {
 var pushData = function pushData(data) {
   var lists = '';
   $.each(data.result, function (index, elm) {
-    lists += '<div class="card mb-4 box-shadow module-item" data-moduleid="' + elm[0] + '" data-startindex="' + index + '">\n              <div class="card-header">\n                <h4 class="my-0 font-weight-normal"></h4>\n                <i class="ion-close dashboard-remove-btn" data-id="' + elm[0] + '"></i>\n              </div>\n              <div class="card-body">\n                <h1 class="card-title pricing-card-title">$0 <small class="text-muted">/ mo</small></h1>\n                <ul class="list-unstyled mt-3 mb-4">\n                  <li>10 users included</li>\n                  <li>2 GB of storage</li>\n                  <li>Email support</li>\n                  <li>Help center access</li>\n                </ul>\n                <a href="#' + elm[3] + '?id=' + elm[0] + '&name=' + elm[2] + '" data-type="' + elm[3] + '" class="btn btn-lg btn-block btn-outline-primary">' + elm[2] + '</a>\n              </div>\n            </div>';
+    var btn, icon;
+    if (elm[3] == 'listing') {
+      btn = 'btn-outline-primary';
+      icon = 'ion-android-list';
+    } else {
+      btn = 'btn-outline-dark';
+      icon = 'ion-ios-compose';
+    }
+    lists += '<div class="card mb-4 box-shadow module-item" data-moduleid="' + elm[0] + '" data-startindex="' + index + '">\n              <div class="card-header">\n                <h4 class="my-0 font-weight-normal"></h4>\n                <i class="ion-close dashboard-remove-btn" data-id="' + elm[0] + '"></i>\n              </div>\n              <div class="card-body">\n                <h3 class="card-title">' + elm[2] + '</h3>\n                <ul class="list-unstyled mt-3 mb-4">\n                  <li>Type: <span class="text-success text-capitalize">' + elm[3] + '</span></li>\n                </ul>\n                <a href="#' + elm[3] + '?id=' + elm[0] + '&name=' + elm[2] + '" data-type="' + elm[3] + '" class="btn btn-sm btn-block ' + btn + '"><i class="' + icon + '"></i> View</a>\n              </div>\n            </div>';
   });
 
   $('#dashboard-view').html(lists);
@@ -34383,7 +34393,7 @@ var Listing = function () {
   _createClass(Listing, [{
     key: "render",
     value: function render() {
-      var tpl = "\n    <div class=\"container\">\n      <div class=\"section-top\">\n        <nav aria-label=\"breadcrumb\">\n          <ol class=\"breadcrumb\">\n            <li class=\"breadcrumb-item\"><a href=\"#dashboard\">Dashboard</a></li>\n            <li class=\"breadcrumb-item active\" aria-current=\"page\"></li>\n          </ol>\n        </nav>\n      </div>\n      <div id=\"listing-view\">\n        \n      </div>\n    </div> \n    ";
+      var tpl = "\n    <div class=\"container\">\n      <div class=\"section-top\">\n        <nav aria-label=\"breadcrumb\">\n          <ol class=\"breadcrumb\">\n            <li class=\"breadcrumb-item\"><a href=\"#dashboard\">Dashboard</a></li>\n            <li class=\"breadcrumb-item active\" aria-current=\"page\"></li>\n          </ol>\n        </nav>\n      </div>\n      \n      <div class=\"float-right\"><button type=\"button\" class=\"btn btn-light btn-sm mb-4\" id=\"listing-create-btn\" data-toggle=\"modal\" data-target=\"#listing-modal\">Create New</button></div>\n      <div class=\"clearfix\"></div>\n      <div class=\"p-3 mb-5 bg-white rounded box-shadow\">\n        <div id=\"listing-view\">\n          \n        </div>\n      </div>\n    </div> \n    ";
       return tpl;
     }
   }, {
@@ -34554,7 +34564,7 @@ var Listing = function () {
           $('#listing-okBtn').attr({ 'data-action': 'edit', 'data-rowid': rowId });
         }
 
-        $('#listing-modal form').html('');
+        $('#listing-modal form .row').html('');
 
         var getListVal;
         if (action == 'edit') {
@@ -34597,10 +34607,10 @@ var Listing = function () {
           var ignoreFields = ['count', 'time', 'updatedtime', 'file', 'edit', 'remove'];
 
           if (elm != '_' && ignoreFields.indexOf(func) == -1) {
-            $('#listing-modal form').append("\n            <div class=\"col-md-6\">\n                  <div class=\"form-group\">\n                    <label>" + elm + "</label>\n                    <input type=\"text\" class=\"form-control dynamicElem\" placeholder=\"" + elm + "\" value=\"" + insertVal + "\" data-filedname=\"" + func + "\" data-colindex=\"" + colIndex + "\">\n                  </div>\n                </div>\n            ");
+            $('#listing-modal form .row').append("\n            <div class=\"col-md-6\">\n                  <div class=\"form-group input-group-sm mb-3\">\n                    <label>" + elm + "</label>\n                    <input type=\"text\" class=\"form-control dynamicElem\" placeholder=\"" + elm + "\" value=\"" + insertVal + "\" data-filedname=\"" + func + "\" data-colindex=\"" + colIndex + "\">\n                  </div>\n                </div>\n            ");
           }
           if (func == 'file') {
-            $('#listing-modal form').append("\n            <div class=\"col-md-12\">\n              <div class=\"listing-image-preview\"><img id=\"previewImage\"></div>\n              <div class=\"form-group\">\n                <label>Upload Image</label>\n                <input type=\"file\" name=\"file\" accept=\".jpg,.jpeg,.png,.gif,.bmp,.tiff\" class=\"dynamicElem elm-" + func + "\" id=\"fileUpload\" data-filedname=\"" + func + "\" data-colindex=\"" + colIndex + "\">\n                <div class=\"imageControls\">\n                  <button type=\"button\" class=\"btn btn-primary\" data-method=\"zoom\" data-option=\"0.1\" title=\"Zoom In\"><i class=\"ion-ios-search-strong\"></i></button>\n                  <button type=\"button\" class=\"btn btn-primary\" data-method=\"zoom\" data-option=\"-0.1\" title=\"Zoom In\"><i class=\"ion-ios-search-strong\"></i></button>\n\n                  <button type=\"button\" class=\"btn btn-primary\" data-method=\"move\" data-option=\"-10\" data-second-option=\"0\" title=\"Move Left\"><i class=\"ion-android-arrow-back\"></i></button>\n                  <button type=\"button\" class=\"btn btn-primary\" data-method=\"move\" data-option=\"10\" data-second-option=\"0\" title=\"Move Right\"><i class=\"ion-android-arrow-forward\"></i></button>\n                  <button type=\"button\" class=\"btn btn-primary\" data-method=\"move\" data-option=\"0\" data-second-option=\"-10\" title=\"Move Up\"><i class=\"ion-android-arrow-up\"></i></button>\n                  <button type=\"button\" class=\"btn btn-primary\" data-method=\"move\" data-option=\"0\" data-second-option=\"10\" title=\"Move Down\"><i class=\"ion-android-arrow-down\"></i></button>\n\n                  <button type=\"button\" class=\"btn btn-primary\" data-method=\"rotate\" data-option=\"45\" title=\"Rotate Left\"><i class=\"ion-refresh\"></i></button>\n                  <button type=\"button\" class=\"btn btn-danger remove-image\">Remove</button>\n                </div>\n              </div>\n            </div>\n          ");
+            $('#listing-modal form .row').append("\n            <div class=\"col-md-12\">\n              <div class=\"listing-image-preview\"><img id=\"previewImage\"></div>\n              <div class=\"form-group input-group-sm mb-3\">\n                <label>Upload Image</label>\n                <input type=\"file\" name=\"file\" accept=\".jpg,.jpeg,.png,.gif,.bmp,.tiff\" class=\"dynamicElem elm-" + func + "\" id=\"fileUpload\" data-filedname=\"" + func + "\" data-colindex=\"" + colIndex + "\">\n                <div class=\"imageControls\">\n                  <button type=\"button\" class=\"btn btn-primary\" data-method=\"zoom\" data-option=\"0.1\" title=\"Zoom In\"><i class=\"ion-ios-search-strong\"></i></button>\n                  <button type=\"button\" class=\"btn btn-primary\" data-method=\"zoom\" data-option=\"-0.1\" title=\"Zoom In\"><i class=\"ion-ios-search-strong\"></i></button>\n\n                  <button type=\"button\" class=\"btn btn-primary\" data-method=\"move\" data-option=\"-10\" data-second-option=\"0\" title=\"Move Left\"><i class=\"ion-android-arrow-back\"></i></button>\n                  <button type=\"button\" class=\"btn btn-primary\" data-method=\"move\" data-option=\"10\" data-second-option=\"0\" title=\"Move Right\"><i class=\"ion-android-arrow-forward\"></i></button>\n                  <button type=\"button\" class=\"btn btn-primary\" data-method=\"move\" data-option=\"0\" data-second-option=\"-10\" title=\"Move Up\"><i class=\"ion-android-arrow-up\"></i></button>\n                  <button type=\"button\" class=\"btn btn-primary\" data-method=\"move\" data-option=\"0\" data-second-option=\"10\" title=\"Move Down\"><i class=\"ion-android-arrow-down\"></i></button>\n\n                  <button type=\"button\" class=\"btn btn-primary\" data-method=\"rotate\" data-option=\"45\" title=\"Rotate Left\"><i class=\"ion-refresh\"></i></button>\n                  <button type=\"button\" class=\"btn btn-danger remove-image\">Remove</button>\n                </div>\n              </div>\n            </div>\n          ");
           }
         });
         // $('#listing-modal').modal('show')
@@ -34729,7 +34739,7 @@ var Listing = function () {
         dataRow.push(obj);
         obj[1] = rowId;
 
-        $('.modal.show:visible form .dynamicElem:not(#fileUpload)').each(function (index, el) {
+        $('.modal.show:visible form .row .dynamicElem:not(#fileUpload)').each(function (index, el) {
           var colindex = $(this).attr('data-colindex');
           var values = $(this).val();
           obj[colindex] = values;
@@ -34864,10 +34874,10 @@ var pushData = function pushData(data) {
           }
         }
         if (func == 'edit') {
-          elm1 = "<a class=\"list-controls list-edit\" data-rowindex=\"" + (index + 1) + "\" data-id=\"" + elm[0] + "\" data-toggle=\"modal\" data-target=\"#listing-modal\">Edit</a>";
+          elm1 = "<button class=\"btn btn-sm btn-outline-primary list-controls list-edit ion-edit\" data-rowindex=\"" + (index + 1) + "\" data-id=\"" + elm[0] + "\" data-toggle=\"modal\" data-target=\"#listing-modal\"></button>";
         }
         if (func == 'remove') {
-          elm1 = "<a class=\"list-controls list-remove\" data-rowindex=\"" + (index + 1) + "\" data-id=\"" + elm[0] + "\">Remove</a>";
+          elm1 = "<button class=\"btn btn-sm btn-outline-danger list-controls list-remove ion-trash-a\" data-rowindex=\"" + (index + 1) + "\" data-id=\"" + elm[0] + "\"></button>";
         }
         if (func == 'file') {
           if (elm1 != '') {
@@ -34926,7 +34936,7 @@ var pushData = function pushData(data) {
     console.log(getIndex);
   }
 
-  $('#listing-view').html("\n    <div class=\"pull-right\"><button type=\"button\" class=\"btn btn-primary\" id=\"listing-create-btn\" data-toggle=\"modal\" data-target=\"#listing-modal\" data-whatever=\"@mdo\">Create New</button></div>\n    <div class=\"clearfix\"></div>\n    <table class=\"listing-table table table-responsive sortable-row\">\n      <thead>\n        <tr>\n          " + tableHeading + "\n        </tr>\n      </thead>\n      <tbody>\n        " + lists + "            \n      </tbody>\n    </table>\n  ");
+  $('#listing-view').html("\n    <table class=\"listing-table table table-responsive sortable-row clearfix\">\n      <thead>\n        <tr>\n          " + tableHeading + "\n        </tr>\n      </thead>\n      <tbody>\n        " + lists + "            \n      </tbody>\n    </table>\n  ");
 
   if (dataTable) {
     dataTable.destroy();
