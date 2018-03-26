@@ -342,8 +342,6 @@ class CookieControls {
     this.setCookie('user',"",-1)
     this.setCookie('history',"",-1)
     new HashControls('login').setHash()
-    setTimeout(function() {location.reload()},100);
-    
   }
 
 }

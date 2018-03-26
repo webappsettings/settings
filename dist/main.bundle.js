@@ -10240,9 +10240,6 @@ var CookieControls = function () {
       this.setCookie('user', "", -1);
       this.setCookie('history', "", -1);
       new _hashControls2.default('login').setHash();
-      setTimeout(function () {
-        location.reload();
-      }, 100);
     }
   }]);
 
