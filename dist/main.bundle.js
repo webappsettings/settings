@@ -24357,28 +24357,79 @@ var Login = function () {
   _createClass(Login, [{
     key: "render",
     value: function render() {
-      var tpl = "\n      <form class=\"form-signin shadow-box text-center\">\n        <img class=\"mb-4\" src=\"images/settings-icon.png\" alt=\"\" width=\"72\" height=\"72\">\n        <h1 class=\"h3 mb-3 font-weight-normal\">Sign in</h1>\n        <label for=\"loginEmail\" class=\"sr-only\">Email address</label>\n        <input type=\"email\" id=\"loginEmail\" class=\"form-control\" placeholder=\"Email address\" required=\"\" autofocus=\"\">\n        <label for=\"loginPassword\" class=\"sr-only\">Password</label>\n        <input type=\"password\" id=\"loginPassword\" class=\"form-control\" placeholder=\"Password\" required=\"\">\n        <div class=\"checkbox mb-3\">\n          <label>\n            <input type=\"checkbox\" value=\"remember-me\"> Remember me\n          </label>\n        </div>\n        <button class=\"btn btn-lg btn-primary btn-block\" type=\"submit\" id=\"loginBtn\" disabled=\"disabled\">LOG IN</button>\n        <p class=\"mt-5 mb-3 text-muted\">\xA9 2017-2018</p>\n      </form>\n    ";
+      var tpl = "\n      <form class=\"form-signin\" id=\"login-form\">\n\n        <div class=\"text-center mb-4\">\n          <img class=\"mb-4\" src=\"images/settings-icon.png\" alt=\"\" width=\"72\" height=\"72\">\n          <h1 class=\"h3 mb-3 font-weight-normal\">Sign in</h1>\n        </div>\n     \n        <div class=\"form-label-group\">\n          <input type=\"text\" id=\"loginEmail\" class=\"form-control\" placeholder=\"User name\" name=\"loginEmail\">\n          <label for=\"loginEmail\">User name</label>\n        </div>\n\n        <div class=\"form-label-group\">\n          <input type=\"password\" id=\"loginPassword\" class=\"form-control\" placeholder=\"Password\" name=\"loginPassword\">\n          <label for=\"loginPassword\">Password</label>\n        </div>\n        \n        <div class=\"custom-control custom-checkbox mb-3 checkbox text-left text-muted\">\n          <input type=\"checkbox\" class=\"custom-control-input\" id=\"rememberChkBox\" value=\"rememberChkBox\">\n          <label class=\"custom-control-label\" for=\"rememberChkBox\">Remember me</label>\n        </div>\n\n        <button class=\"btn btn-lg btn-primary btn-block\" type=\"submit\" id=\"loginBtn\">Sign in</button>\n        <p class=\"mt-5 mb-3 text-muted text-center\">\xA9 2017-2018</p>\n      </form>\n    ";
       return tpl;
     }
   }, {
     key: "clickHandler",
     value: function clickHandler() {
 
-      $('#loginEmail,#loginPassword').on("keyup", function (e) {
-        if ($('#loginEmail').val() != '' && $('#loginPassword').val() != '') {
-          $('#loginBtn').prop('disabled', false);
-        } else {
-          $('#loginBtn').prop('disabled', true);
+      var $validator = $("#login-form").validate({
+        errorElement: "span",
+        rules: {
+          'loginEmail': {
+            required: true
+          },
+          'loginPassword': {
+            required: true
+          }
+        },
+        messages: {
+          'loginEmail': {
+            required: "Please enter user name"
+          },
+          'loginPassword': {
+            required: "Please enter password"
+          }
+        },
+        errorPlacement: function errorPlacement(error, element) {
+          error.appendTo(element.parent());
+        },
+        submitHandler: function submitHandler() {
+          var loginE = encodeURIComponent($('#loginEmail').val());
+          var loginP = $('#loginPassword').val();
+          new _cookieControls2.default(loginE, loginP).toCookie();
+          return false;
         }
       });
 
-      $('#loginBtn').on("click", function (e) {
+      /*$('#loginEmail,#loginPassword').on("keyup", (e) => {
+        if(($('#loginEmail').val()!='') && ($('#loginPassword').val()!='')) {
+          $('#loginBtn').prop('disabled',false)
+        } else {
+            $('#loginBtn').prop('disabled',true)
+        }
+      });*/
 
-        var loginE = encodeURIComponent($('#loginEmail').val());
-        var loginP = $('#loginPassword').val();
+      //Remember
+      if (localStorage.chkbox && localStorage.chkbox != '') {
+        $('#rememberChkBox').prop('checked', true);
+        $('#loginEmail').val(localStorage.username);
+        $('#loginPassword').val(localStorage.pass);
+      } else {
+        $('#rememberChkBox').prop('checked', false);
+        $('#loginEmail').val('');
+        $('#loginPassword').val('');
+      }
 
-        new _cookieControls2.default(loginE, loginP).toCookie();
+      $('#rememberChkBox').on("click", function (e) {
+        if ($('#rememberChkBox').is(':checked')) {
+          localStorage.username = $('#loginEmail').val();
+          localStorage.pass = $('#loginPassword').val();
+          localStorage.chkbox = $('#rememberChkBox').val();
+        } else {
+          localStorage.username = '';
+          localStorage.pass = '';
+          localStorage.chkbox = '';
+        }
       });
+
+      /*$('#loginBtn').on("click", (e) => {
+         let loginE = encodeURIComponent($('#loginEmail').val())
+       let loginP = $('#loginPassword').val()
+      
+       new CookieControls(loginE, loginP).toCookie()
+      });*/
     }
   }]);
 
