@@ -96,9 +96,7 @@ class Dashboard {
 
     });
 
-    $('#dashboard-create-type').on('change', function(event) {
-
-        
+    $('#dashboard-create-type').on('change', function(event) {        
         if(GlobalArray.globalArray['access'] == 'full') {
           if($(this).val()!='') {
             if(!$('[name="defaultFields"]').is(':checked')) {
@@ -129,9 +127,9 @@ class Dashboard {
       if(!$(this).is(':checked')) {
         var getType = $('#dashboard-create-type').val()
         $('.field-box[data-type="'+getType+'"]').show().siblings('.field-box').hide()
-        } else {
-          $('.field-box').hide()
-        }
+      } else {
+        $('.field-box').hide()
+      }
     });
 
 
@@ -189,7 +187,6 @@ class Dashboard {
                   $('.loader').fadeOut()
                 }); 
 
-
            }
         }
       });
@@ -211,7 +208,7 @@ class Dashboard {
           customHeaders[index]=values
         });
 
-        $('.active-predefined-fields .pre-field-new:checked').each(function(index, el) {
+        $('.field-box:visible .active-predefined-fields .pre-field-new:checked').each(function(index, el) {
           let values = $(this).val()
           predefinedHeaders[index]=values
         });

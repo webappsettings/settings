@@ -22,7 +22,9 @@ class Listing {
       </div>
       
       <div class="float-right"><button type="button" class="btn btn-light btn-sm mb-4" id="listing-create-btn" data-toggle="modal" data-target="#listing-modal">Create New</button></div>
+
       <div class="clearfix"></div>
+
       <div class="p-3 mb-5 bg-white rounded box-shadow">
         <div id="listing-view">
           
@@ -44,7 +46,7 @@ class Listing {
     // let paramURL = self.googleListingURL+'&action=read'
     let paramId = GlobalArray.globalArray.paramid
     let paramName = GlobalArray.globalArray.paramname
-    $('.breadcrumb-item.active').html('Listing: '+paramName)
+    $('.breadcrumb-item.active').html('Listing: '+decodeURI(paramName))
 
 
     let readlistParamURL = new CodeComp().mainCode()+'&pageid='+paramId+'&action=readpagedatas'
@@ -79,8 +81,8 @@ class Listing {
         new CookieControls().deleteCookie()//Logout
       }
       
-      
       $('.loader').fadeOut()
+
     }) 
 
 
@@ -207,6 +209,7 @@ class Listing {
 
       imageURI = undefined
       fileChange = false
+      
       if(action == 'create') {
         $('#listing-modal').addClass('createList').removeClass('editList').find('.modal-title').text('Create New')
         fileName = ''
@@ -215,25 +218,26 @@ class Listing {
         $('#listing-modal').removeClass('createList').addClass('editList').find('.modal-title').text('Edit')
         $('#listing-okBtn').attr({'data-action':'edit', 'data-rowid':rowId})
       }
-  
+
       $('#listing-modal form .row').html('')
 
       var getListVal
       if(action=='edit') {
-          var getListVal = getObjects(self.listDatas[0], 0, rowId)
-          let filePosition = headings.indexOf('(file)')
-          var imageURL = getListVal[0][filePosition]
-          if(imageURL != '') {
-            setTimeout(function() {
-              imagePush(imageURL)
-              /*$('.listing-image-preview').append('<img >')
-              $('.listing-image-preview img').attr('src',imageURL)
-              $('.listing-image-preview').css('background-image','url('+imageURL+')')*/
-            }, 0);
-          }
-        }
+        var getListVal = getObjects(self.listDatas[0], 0, rowId)
+        let filePosition = headings.indexOf('(file)')
+        var imageURL = getListVal[0][filePosition]
+        let fileName = getListVal[0][filePosition+2]
+        console.log('fileName:',fileName)
 
-     
+        if(imageURL != '') {
+          setTimeout(function() {
+            imagePush(imageURL)
+            $('[for="fileUpload"]').text(fileName)
+          }, 0);
+        }
+      }
+
+
 
 
       // uploadImg($inputImage, $image, options)
@@ -266,38 +270,44 @@ class Listing {
         if((elm!='_') && ignoreFields.indexOf(func) == -1) {
           $('#listing-modal form .row').append(`
             <div class="col-md-6">
-                  <div class="form-group input-group-sm mb-3">
-                    <label>`+elm+`</label>
-                    <input type="text" class="form-control dynamicElem" placeholder="`+elm+`" value="`+insertVal+`" data-filedname="`+func+`" data-colindex="`+colIndex+`">
-                  </div>
-                </div>
+            <div class="form-group input-group-sm mb-3">
+            <label>`+elm+`</label>
+            <input type="text" class="form-control dynamicElem" placeholder="`+elm+`" value="`+insertVal+`" data-filedname="`+func+`" data-colindex="`+colIndex+`">
+            </div>
+            </div>
             `)
-          }
+        }
         if(func=='file') {
           $('#listing-modal form .row').append(`
             <div class="col-md-12">
-              <div class="listing-image-preview"><img id="previewImage"></div>
-              <div class="form-group input-group-sm mb-3">
-                <label>Upload Image</label>
-                <input type="file" name="file" accept=".jpg,.jpeg,.png,.gif,.bmp,.tiff" class="dynamicElem elm-`+func+`" id="fileUpload" data-filedname="`+func+`" data-colindex="`+colIndex+`">
-                <div class="imageControls">
-                  <button type="button" class="btn btn-primary" data-method="zoom" data-option="0.1" title="Zoom In"><i class="ion-ios-search-strong"></i></button>
-                  <button type="button" class="btn btn-primary" data-method="zoom" data-option="-0.1" title="Zoom In"><i class="ion-ios-search-strong"></i></button>
+            <div class="listing-image-preview"><img id="previewImage"></div>
 
-                  <button type="button" class="btn btn-primary" data-method="move" data-option="-10" data-second-option="0" title="Move Left"><i class="ion-android-arrow-back"></i></button>
-                  <button type="button" class="btn btn-primary" data-method="move" data-option="10" data-second-option="0" title="Move Right"><i class="ion-android-arrow-forward"></i></button>
-                  <button type="button" class="btn btn-primary" data-method="move" data-option="0" data-second-option="-10" title="Move Up"><i class="ion-android-arrow-up"></i></button>
-                  <button type="button" class="btn btn-primary" data-method="move" data-option="0" data-second-option="10" title="Move Down"><i class="ion-android-arrow-down"></i></button>
+            <div class="imageControls">
+            <button type="button" class="btn btn-primary" data-method="zoom" data-option="0.1" title="Zoom In"><i class="ion-ios-search-strong"></i></button>
+            <button type="button" class="btn btn-primary" data-method="zoom" data-option="-0.1" title="Zoom In"><i class="ion-ios-search-strong"></i></button>
 
-                  <button type="button" class="btn btn-primary" data-method="rotate" data-option="45" title="Rotate Left"><i class="ion-refresh"></i></button>
-                  <button type="button" class="btn btn-danger remove-image">Remove</button>
-                </div>
-              </div>
+            <button type="button" class="btn btn-primary" data-method="move" data-option="-10" data-second-option="0" title="Move Left"><i class="ion-android-arrow-back"></i></button>
+            <button type="button" class="btn btn-primary" data-method="move" data-option="10" data-second-option="0" title="Move Right"><i class="ion-android-arrow-forward"></i></button>
+            <button type="button" class="btn btn-primary" data-method="move" data-option="0" data-second-option="-10" title="Move Up"><i class="ion-android-arrow-up"></i></button>
+            <button type="button" class="btn btn-primary" data-method="move" data-option="0" data-second-option="10" title="Move Down"><i class="ion-android-arrow-down"></i></button>
+
+            <button type="button" class="btn btn-primary" data-method="rotate" data-option="45" title="Rotate Left"><i class="ion-refresh"></i></button>
+            <button type="button" class="btn btn-danger remove-image">Remove</button>
             </div>
-          `)
+
+
+            <div class="form-group input-group-sm mb-3">
+            <div class="custom-file">
+            <input type="file" name="file" accept=".jpg,.jpeg,.png,.gif,.bmp,.tiff" class="custom-file-input dynamicElem elm-`+func+`" id="fileUpload" data-filedname="`+func+`" data-colindex="`+colIndex+`">
+            <label class="custom-file-label" for="fileUpload">Choose image...</label>
+            </div>
+
+
+            </div>
+            </div>
+            `)
         }
       })
-      // $('#listing-modal').modal('show')
     }
 
 
@@ -363,6 +373,7 @@ class Listing {
             file = files[0]
             fileChange = true
             fileName = file.name
+            $('[for="fileUpload"]').text(fileName)
             console.log('mainFILE=',file)
 
             if (/^image\/\w+$/.test(file.type)) {
@@ -397,6 +408,7 @@ class Listing {
         } else {
             prevImg.cropper('destroy')
             $('#fileUpload').val('')
+            $('[for="fileUpload"]').text('Choose image...')
             fileChange = false
             imageURI = undefined
             $('#previewImage').attr('src','')
@@ -553,33 +565,27 @@ const pushData = (data) => {
   var tableHeading = ``
   var lists = ``
   var getIndex = []
-    
   var headerValues
+
   $.each(data.result, function(index, elm) {
-    // console.log('med=',elm)
 
     if(index == 0) {
-
       headerValues = elm
     } else {
       
-
       var listsInner = ``
       
       $.each(elm, function(index1, elm1) {
         var imgPath = `images/placeholder.png`
         var imgView = `<img src="`+imgPath+`" alt="" />`
-        
-
         var updatedTimeVal = `-`
-
         var func = headerValues[index1]
+
         if(func.charAt(0) == '_') {
           func='_'
         } else if(func.indexOf("(") >= 0) {
           func = func.split("(")[1].slice(0, -1)
         }
-        // console.log(func)
         if(func=='count') {
           elm1 = index
         }
@@ -601,18 +607,9 @@ const pushData = (data) => {
           }
           elm1 = `<div class="img-thumb">`+imgView+`</div>`
         }
-
         if(func != '_') {
           listsInner += `<td>`+elm1+`</td>`
         }
-
-        /*listsInner = `<td>`+(index)+`</td>
-            <td>`+elm[0]+`</td>
-            <td>`+elm[2]+`</td>
-            <td>`+elm[3]+`</td>
-            <td><div class="img-thumb" `+bgImg+`><img src="`+imgPath+`" alt="" /></div></td>
-            <td><a class="list-controls list-edit" data-id=`+elm[1]+`>Edit</a></td>
-            <td><a class="list-controls list-remove" data-id=`+elm[1]+` data-mediaid=`+elm[4]+`>Remove</a></td>`*/
 
       });
 
@@ -620,7 +617,6 @@ const pushData = (data) => {
            `+listsInner+` 
           </tr>`
 
-      
       }
     
   });
@@ -656,8 +652,6 @@ const pushData = (data) => {
           } 
           pos++
         }
-
-        
       
     })
     console.log(getIndex)

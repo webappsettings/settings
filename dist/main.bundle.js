@@ -24484,10 +24484,6 @@ var PageView = function () {
     value: function visible() {
       var self = this;
 
-      // self.page = self.page.toLowerCase().replace(/\b[a-z]/g, function(letter) {
-      //  return letter.toUpperCase();
-      // });
-
       if (self.page.indexOf('?') > -1) {
         var getId = getUrlVars(self.page)["id"];
         var getName = getUrlVars(self.page)["name"];
@@ -34133,7 +34129,6 @@ var Dashboard = function () {
       });
 
       $('#dashboard-create-type').on('change', function (event) {
-
         if (_globalArray2.default.globalArray['access'] == 'full') {
           if ($(this).val() != '') {
             if (!$('[name="defaultFields"]').is(':checked')) {
@@ -34232,7 +34227,7 @@ var Dashboard = function () {
             customHeaders[index] = values;
           });
 
-          $('.active-predefined-fields .pre-field-new:checked').each(function (index, el) {
+          $('.field-box:visible .active-predefined-fields .pre-field-new:checked').each(function (index, el) {
             var values = $(this).val();
             predefinedHeaders[index] = values;
           });
@@ -34441,7 +34436,7 @@ var Listing = function () {
   _createClass(Listing, [{
     key: "render",
     value: function render() {
-      var tpl = "\n    <div class=\"container\">\n      <div class=\"section-top\">\n        <nav aria-label=\"breadcrumb\">\n          <ol class=\"breadcrumb\">\n            <li class=\"breadcrumb-item\"><a href=\"#dashboard\">Dashboard</a></li>\n            <li class=\"breadcrumb-item active\" aria-current=\"page\"></li>\n          </ol>\n        </nav>\n      </div>\n      \n      <div class=\"float-right\"><button type=\"button\" class=\"btn btn-light btn-sm mb-4\" id=\"listing-create-btn\" data-toggle=\"modal\" data-target=\"#listing-modal\">Create New</button></div>\n      <div class=\"clearfix\"></div>\n      <div class=\"p-3 mb-5 bg-white rounded box-shadow\">\n        <div id=\"listing-view\">\n          \n        </div>\n      </div>\n    </div> \n    ";
+      var tpl = "\n    <div class=\"container\">\n      <div class=\"section-top\">\n        <nav aria-label=\"breadcrumb\">\n          <ol class=\"breadcrumb\">\n            <li class=\"breadcrumb-item\"><a href=\"#dashboard\">Dashboard</a></li>\n            <li class=\"breadcrumb-item active\" aria-current=\"page\"></li>\n          </ol>\n        </nav>\n      </div>\n      \n      <div class=\"float-right\"><button type=\"button\" class=\"btn btn-light btn-sm mb-4\" id=\"listing-create-btn\" data-toggle=\"modal\" data-target=\"#listing-modal\">Create New</button></div>\n\n      <div class=\"clearfix\"></div>\n\n      <div class=\"p-3 mb-5 bg-white rounded box-shadow\">\n        <div id=\"listing-view\">\n          \n        </div>\n      </div>\n    </div> \n    ";
       return tpl;
     }
   }, {
@@ -34458,7 +34453,7 @@ var Listing = function () {
       // let paramURL = self.googleListingURL+'&action=read'
       var paramId = _globalArray2.default.globalArray.paramid;
       var paramName = _globalArray2.default.globalArray.paramname;
-      $('.breadcrumb-item.active').html('Listing: ' + paramName);
+      $('.breadcrumb-item.active').html('Listing: ' + decodeURI(paramName));
 
       var readlistParamURL = new _codeComp2.default().mainCode() + '&pageid=' + paramId + '&action=readpagedatas';
 
@@ -34603,6 +34598,7 @@ var Listing = function () {
 
         imageURI = undefined;
         fileChange = false;
+
         if (action == 'create') {
           $('#listing-modal').addClass('createList').removeClass('editList').find('.modal-title').text('Create New');
           fileName = '';
@@ -34619,12 +34615,13 @@ var Listing = function () {
           var getListVal = getObjects(self.listDatas[0], 0, rowId);
           var filePosition = headings.indexOf('(file)');
           var imageURL = getListVal[0][filePosition];
+          var _fileName = getListVal[0][filePosition + 2];
+          console.log('fileName:', _fileName);
+
           if (imageURL != '') {
             setTimeout(function () {
               imagePush(imageURL);
-              /*$('.listing-image-preview').append('<img >')
-              $('.listing-image-preview img').attr('src',imageURL)
-              $('.listing-image-preview').css('background-image','url('+imageURL+')')*/
+              $('[for="fileUpload"]').text(_fileName);
             }, 0);
           }
         }
@@ -34655,13 +34652,12 @@ var Listing = function () {
           var ignoreFields = ['count', 'time', 'updatedtime', 'file', 'edit', 'remove'];
 
           if (elm != '_' && ignoreFields.indexOf(func) == -1) {
-            $('#listing-modal form .row').append("\n            <div class=\"col-md-6\">\n                  <div class=\"form-group input-group-sm mb-3\">\n                    <label>" + elm + "</label>\n                    <input type=\"text\" class=\"form-control dynamicElem\" placeholder=\"" + elm + "\" value=\"" + insertVal + "\" data-filedname=\"" + func + "\" data-colindex=\"" + colIndex + "\">\n                  </div>\n                </div>\n            ");
+            $('#listing-modal form .row').append("\n            <div class=\"col-md-6\">\n            <div class=\"form-group input-group-sm mb-3\">\n            <label>" + elm + "</label>\n            <input type=\"text\" class=\"form-control dynamicElem\" placeholder=\"" + elm + "\" value=\"" + insertVal + "\" data-filedname=\"" + func + "\" data-colindex=\"" + colIndex + "\">\n            </div>\n            </div>\n            ");
           }
           if (func == 'file') {
-            $('#listing-modal form .row').append("\n            <div class=\"col-md-12\">\n              <div class=\"listing-image-preview\"><img id=\"previewImage\"></div>\n              <div class=\"form-group input-group-sm mb-3\">\n                <label>Upload Image</label>\n                <input type=\"file\" name=\"file\" accept=\".jpg,.jpeg,.png,.gif,.bmp,.tiff\" class=\"dynamicElem elm-" + func + "\" id=\"fileUpload\" data-filedname=\"" + func + "\" data-colindex=\"" + colIndex + "\">\n                <div class=\"imageControls\">\n                  <button type=\"button\" class=\"btn btn-primary\" data-method=\"zoom\" data-option=\"0.1\" title=\"Zoom In\"><i class=\"ion-ios-search-strong\"></i></button>\n                  <button type=\"button\" class=\"btn btn-primary\" data-method=\"zoom\" data-option=\"-0.1\" title=\"Zoom In\"><i class=\"ion-ios-search-strong\"></i></button>\n\n                  <button type=\"button\" class=\"btn btn-primary\" data-method=\"move\" data-option=\"-10\" data-second-option=\"0\" title=\"Move Left\"><i class=\"ion-android-arrow-back\"></i></button>\n                  <button type=\"button\" class=\"btn btn-primary\" data-method=\"move\" data-option=\"10\" data-second-option=\"0\" title=\"Move Right\"><i class=\"ion-android-arrow-forward\"></i></button>\n                  <button type=\"button\" class=\"btn btn-primary\" data-method=\"move\" data-option=\"0\" data-second-option=\"-10\" title=\"Move Up\"><i class=\"ion-android-arrow-up\"></i></button>\n                  <button type=\"button\" class=\"btn btn-primary\" data-method=\"move\" data-option=\"0\" data-second-option=\"10\" title=\"Move Down\"><i class=\"ion-android-arrow-down\"></i></button>\n\n                  <button type=\"button\" class=\"btn btn-primary\" data-method=\"rotate\" data-option=\"45\" title=\"Rotate Left\"><i class=\"ion-refresh\"></i></button>\n                  <button type=\"button\" class=\"btn btn-danger remove-image\">Remove</button>\n                </div>\n              </div>\n            </div>\n          ");
+            $('#listing-modal form .row').append("\n            <div class=\"col-md-12\">\n            <div class=\"listing-image-preview\"><img id=\"previewImage\"></div>\n\n            <div class=\"imageControls\">\n            <button type=\"button\" class=\"btn btn-primary\" data-method=\"zoom\" data-option=\"0.1\" title=\"Zoom In\"><i class=\"ion-ios-search-strong\"></i></button>\n            <button type=\"button\" class=\"btn btn-primary\" data-method=\"zoom\" data-option=\"-0.1\" title=\"Zoom In\"><i class=\"ion-ios-search-strong\"></i></button>\n\n            <button type=\"button\" class=\"btn btn-primary\" data-method=\"move\" data-option=\"-10\" data-second-option=\"0\" title=\"Move Left\"><i class=\"ion-android-arrow-back\"></i></button>\n            <button type=\"button\" class=\"btn btn-primary\" data-method=\"move\" data-option=\"10\" data-second-option=\"0\" title=\"Move Right\"><i class=\"ion-android-arrow-forward\"></i></button>\n            <button type=\"button\" class=\"btn btn-primary\" data-method=\"move\" data-option=\"0\" data-second-option=\"-10\" title=\"Move Up\"><i class=\"ion-android-arrow-up\"></i></button>\n            <button type=\"button\" class=\"btn btn-primary\" data-method=\"move\" data-option=\"0\" data-second-option=\"10\" title=\"Move Down\"><i class=\"ion-android-arrow-down\"></i></button>\n\n            <button type=\"button\" class=\"btn btn-primary\" data-method=\"rotate\" data-option=\"45\" title=\"Rotate Left\"><i class=\"ion-refresh\"></i></button>\n            <button type=\"button\" class=\"btn btn-danger remove-image\">Remove</button>\n            </div>\n\n\n            <div class=\"form-group input-group-sm mb-3\">\n            <div class=\"custom-file\">\n            <input type=\"file\" name=\"file\" accept=\".jpg,.jpeg,.png,.gif,.bmp,.tiff\" class=\"custom-file-input dynamicElem elm-" + func + "\" id=\"fileUpload\" data-filedname=\"" + func + "\" data-colindex=\"" + colIndex + "\">\n            <label class=\"custom-file-label\" for=\"fileUpload\">Choose image...</label>\n            </div>\n\n\n            </div>\n            </div>\n            ");
           }
         });
-        // $('#listing-modal').modal('show')
       }
 
       function imagePush(imagePath) {
@@ -34717,6 +34713,7 @@ var Listing = function () {
             file = files[0];
             fileChange = true;
             fileName = file.name;
+            $('[for="fileUpload"]').text(fileName);
             console.log('mainFILE=', file);
 
             if (/^image\/\w+$/.test(file.type)) {
@@ -34750,6 +34747,7 @@ var Listing = function () {
         } else {
           prevImg.cropper('destroy');
           $('#fileUpload').val('');
+          $('[for="fileUpload"]').text('Choose image...');
           fileChange = false;
           imageURI = undefined;
           $('#previewImage').attr('src', '');
@@ -34888,13 +34886,11 @@ var pushData = function pushData(data) {
   var tableHeading = "";
   var lists = "";
   var getIndex = [];
-
   var headerValues;
+
   $.each(data.result, function (index, elm) {
-    // console.log('med=',elm)
 
     if (index == 0) {
-
       headerValues = elm;
     } else {
 
@@ -34903,16 +34899,14 @@ var pushData = function pushData(data) {
       $.each(elm, function (index1, elm1) {
         var imgPath = "images/placeholder.png";
         var imgView = "<img src=\"" + imgPath + "\" alt=\"\" />";
-
         var updatedTimeVal = "-";
-
         var func = headerValues[index1];
+
         if (func.charAt(0) == '_') {
           func = '_';
         } else if (func.indexOf("(") >= 0) {
           func = func.split("(")[1].slice(0, -1);
         }
-        // console.log(func)
         if (func == 'count') {
           elm1 = index;
         }
@@ -34934,18 +34928,9 @@ var pushData = function pushData(data) {
           }
           elm1 = "<div class=\"img-thumb\">" + imgView + "</div>";
         }
-
         if (func != '_') {
           listsInner += "<td>" + elm1 + "</td>";
         }
-
-        /*listsInner = `<td>`+(index)+`</td>
-            <td>`+elm[0]+`</td>
-            <td>`+elm[2]+`</td>
-            <td>`+elm[3]+`</td>
-            <td><div class="img-thumb" `+bgImg+`><img src="`+imgPath+`" alt="" /></div></td>
-            <td><a class="list-controls list-edit" data-id=`+elm[1]+`>Edit</a></td>
-            <td><a class="list-controls list-remove" data-id=`+elm[1]+` data-mediaid=`+elm[4]+`>Remove</a></td>`*/
       });
 
       lists += "<tr data-rowid=\"" + elm[0] + "\">\n           " + listsInner + " \n          </tr>";
@@ -35046,15 +35031,23 @@ var Detail = function () {
   _createClass(Detail, [{
     key: "render",
     value: function render() {
-      var tpl = "\n    <div class=\"container\">\n      <div class=\"section-top\">\n        <nav aria-label=\"breadcrumb\">\n          <ol class=\"breadcrumb\">\n            <li class=\"breadcrumb-item\"><a href=\"#dashboard\">Dashboard</a></li>\n            <li class=\"breadcrumb-item active\" aria-current=\"page\"></li>\n          </ol>\n        </nav>\n      </div>\n      <div id=\"listing-view\">\n        dfdfdfdf\n      </div>\n    </div> \n    ";
+      var tpl = "\n    <div class=\"container\">\n      <div class=\"section-top\">\n        <nav aria-label=\"breadcrumb\">\n          <ol class=\"breadcrumb\">\n            <li class=\"breadcrumb-item\"><a href=\"#dashboard\">Dashboard</a></li>\n            <li class=\"breadcrumb-item active\" aria-current=\"page\"></li>\n          </ol>\n        </nav>\n      </div>\n\n      <div class=\"float-right\"><button type=\"button\" class=\"btn btn-light btn-sm mb-4\" id=\"detail-create-btn\" data-toggle=\"modal\" data-target=\"#listing-modal\">Create New</button></div>\n      \n      <div class=\"clearfix\"></div>\n\n      <div class=\"p-3 mb-5 bg-white rounded box-shadow\">\n        <div id=\"detail-view\">\n          <div class=\"row\">\n          </div>\n        </div>\n      </div>\n\n    </div> \n    ";
       return tpl;
     }
   }, {
     key: "clickHandler",
     value: function clickHandler() {
+
+      var imageURI,
+          fileName,
+          fileChange = false,
+          headings;
+      var self = this;
+      var urlHash = new _hashControls2.default().getHash().split('?')[0];
+
       var paramId = _globalArray2.default.globalArray.paramid;
       var paramName = _globalArray2.default.globalArray.paramname;
-      $('.breadcrumb-item.active').html('Detail: ' + paramName);
+      $('.breadcrumb-item.active').html('Detail: ' + decodeURI(paramName));
 
       var readdetailParamURL = new _codeComp2.default().mainCode() + '&pagetype=detail&pageid=' + paramId + '&action=readpagedatas';
 
@@ -35063,13 +35056,127 @@ var Detail = function () {
       $('.loader').fadeIn();
       $.getJSON(readdetailParamURL, function (callback) {
         console.log(callback);
+
+        if (callback.result != '{"result":false}') {
+          if (callback.result[0] == 'pageremoved') {
+            alert('This page removed!');
+            new _hashControls2.default('dashboard').setHash();
+          } else {
+
+            headings = callback.result[0];
+            console.log('callbackHeading===', headings);
+
+            self.listDatas.push(callback);
+            pushData(self.listDatas[0]);
+          }
+        } else {
+          new _cookieControls2.default().deleteCookie(); //Logout
+        }
+
         $('.loader').fadeOut();
       });
+
+      //Create New
+      $(document).on('click', '#detail-create-btn', function () {
+        elmentPushToModal('create');
+      });
+
+      function elmentPushToModal(action, rowId) {
+        if (action == 'create') {
+          $('#listing-modal').addClass('createList').removeClass('editList').find('.modal-title').text('Create New');
+          fileName = '';
+          $('#listing-okBtn').attr({ 'data-action': 'create', 'data-rowid': '' });
+        } else {
+          $('#listing-modal').removeClass('createList').addClass('editList').find('.modal-title').text('Edit');
+          $('#listing-okBtn').attr({ 'data-action': 'edit', 'data-rowid': rowId });
+        }
+
+        $('#listing-modal form .row').html('');
+
+        console.log('modal-headings==', headings);
+      }
     }
   }]);
 
   return Detail;
 }();
+
+/*function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}*/
+
+var pushData = function pushData(data) {
+
+  var allDiv = "";
+  var headerValues;
+  var row;
+
+  // var cnt = 1
+  var setName;
+
+  $.each(data.result, function (index, elm) {
+
+    if (index == 0) {
+      headerValues = elm;
+    } else {
+
+      row = "";
+
+      $.each(elm, function (index1, elm1) {
+        /*var imgPath = `images/placeholder.png`
+        var imgView = `<img src="`+imgPath+`" alt="" />`
+        var updatedTimeVal = `-`*/
+        var innerDiv = "";
+        var func = headerValues[index1];
+        console.log(func);
+        if (func.charAt(0) == '_') {
+          func = '_';
+        } else if (func.indexOf("(") >= 0) {
+          setName = func.split("(")[0];
+          func = func.split("(")[1].slice(0, -1);
+        }
+
+        if (func != '_') {
+
+          if (elm1 != '') {
+
+            if (func != 'address') {
+              elm1 = "<label>" + setName + "</label>\n                <input type=\"text\" class=\"form-control\" readonly placeholder=\"" + setName + "\" value=\"" + elm1 + "\">";
+            } else {
+              elm1 = "<label>" + setName + "</label>\n                <textarea class=\"form-control\" rows=\"3\" readonly placeholder=\"" + setName + "\">" + elm1 + "</textarea>";
+            }
+
+            row += "<div class=\"col-md-4 mb-3\">" + elm1 + "</div>";
+
+            /*innerDiv += `<div class="col-md-4 mb-3">`+elm1+`</div>`
+            if(cnt % 2 != 0) {
+              row += `<div class="row">`+innerDiv
+            } else {
+              if(cnt == 1) {
+                row += innerDiv
+              } else {
+                row += innerDiv+`</div>`
+              }
+            }
+            cnt++*/
+          }
+        }
+      });
+    }
+  });
+
+  /*if(cnt % 2 == 0) {
+    row += `</div>`
+  }*/
+
+  if (typeof row == 'undefined') {
+    row = "<p class=\"mb-0 w-100 text-center\">No Records Found</p>";
+  }
+
+  allDiv += "<div class=\"form-row\">\n  " + row + " \n  </div>";
+
+  $('#detail-view').html(allDiv);
+};
 
 exports.default = Detail;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))

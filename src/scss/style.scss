@@ -278,7 +278,7 @@ span.error {
 .imageControls {
   display: none;
   button[data-option="0.1"] {
-    i.ion-ios-search-strong{
+    i.ion-ios-search-strong {
       position: relative;
       font-size: 15px;
       &:after {
@@ -293,7 +293,7 @@ span.error {
     }
   }
   button[data-option="-0.1"] {
-    i.ion-ios-search-strong{
+    i.ion-ios-search-strong {
       font-size: 15px;
       position: relative;
       &:after {
@@ -418,4 +418,3 @@ h6.font-weight-400 {
     margin: auto;
   }
 }
-
