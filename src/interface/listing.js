@@ -25,7 +25,7 @@ class Listing {
 
       <div class="clearfix"></div>
 
-      <div class="p-3 mb-5 bg-white rounded box-shadow">
+      <div class="p-4 mb-5 bg-white rounded box-shadow">
         <div id="listing-view">
           
         </div>
@@ -270,43 +270,46 @@ class Listing {
         if((elm!='_') && ignoreFields.indexOf(func) == -1) {
           $('#listing-modal form .row').append(`
             <div class="col-md-6">
-            <div class="form-group input-group-sm mb-3">
-            <label>`+elm+`</label>
-            <input type="text" class="form-control dynamicElem" placeholder="`+elm+`" value="`+insertVal+`" data-filedname="`+func+`" data-colindex="`+colIndex+`">
-            </div>
+              <div class="form-group input-group-sm mb-3">
+              <label>`+elm+`</label>
+              <input type="text" class="form-control dynamicElem" placeholder="`+elm+`" value="`+insertVal+`" data-filedname="`+func+`" data-colindex="`+colIndex+`">
+              </div>
             </div>
             `)
         }
         if(func=='file') {
           $('#listing-modal form .row').append(`
-            <div class="col-md-12">
-            <div class="listing-image-preview"><img id="previewImage"></div>
+            <div class="col-md-12" style="display:flex; margin-bottom: 2rem;">
+              <div class="listing-image-preview"><img id="previewImage"></div>
+              
+              <div class="img-section-arrange">
+                <div>
 
-            <div class="imageControls">
-            <button type="button" class="btn btn-primary" data-method="zoom" data-option="0.1" title="Zoom In"><i class="ion-ios-search-strong"></i></button>
-            <button type="button" class="btn btn-primary" data-method="zoom" data-option="-0.1" title="Zoom In"><i class="ion-ios-search-strong"></i></button>
+                  <div class="form-group input-group-sm mb-3">
+                    <div class="custom-file">
+                    <input type="file" name="file" accept=".jpg,.jpeg,.png,.gif,.bmp,.tiff" class="custom-file-input dynamicElem elm-`+func+`" id="fileUpload" data-filedname="`+func+`" data-colindex="`+colIndex+`">
+                    <label class="custom-file-label" for="fileUpload">Choose image...</label>
+                    </div>
+                  </div>
 
-            <button type="button" class="btn btn-primary" data-method="move" data-option="-10" data-second-option="0" title="Move Left"><i class="ion-android-arrow-back"></i></button>
-            <button type="button" class="btn btn-primary" data-method="move" data-option="10" data-second-option="0" title="Move Right"><i class="ion-android-arrow-forward"></i></button>
-            <button type="button" class="btn btn-primary" data-method="move" data-option="0" data-second-option="-10" title="Move Up"><i class="ion-android-arrow-up"></i></button>
-            <button type="button" class="btn btn-primary" data-method="move" data-option="0" data-second-option="10" title="Move Down"><i class="ion-android-arrow-down"></i></button>
+                  <div class="imageControls">
+                    <button type="button" class="btn btn-primary btn-sm" data-method="zoom" data-option="0.1" title="Zoom In"><i class="ion-ios-search-strong"></i></button>
+                    <button type="button" class="btn btn-primary btn-sm" data-method="zoom" data-option="-0.1" title="Zoom In"><i class="ion-ios-search-strong"></i></button>
 
-            <button type="button" class="btn btn-primary" data-method="rotate" data-option="45" title="Rotate Left"><i class="ion-refresh"></i></button>
-            <button type="button" class="btn btn-danger remove-image">Remove</button>
-            </div>
+                    <button type="button" class="btn btn-primary btn-sm" data-method="move" data-option="-10" data-second-option="0" title="Move Left"><i class="ion-android-arrow-back"></i></button>
+                    <button type="button" class="btn btn-primary btn-sm" data-method="move" data-option="10" data-second-option="0" title="Move Right"><i class="ion-android-arrow-forward"></i></button>
+                    <button type="button" class="btn btn-primary btn-sm" data-method="move" data-option="0" data-second-option="-10" title="Move Up"><i class="ion-android-arrow-up"></i></button>
+                    <button type="button" class="btn btn-primary btn-sm" data-method="move" data-option="0" data-second-option="10" title="Move Down"><i class="ion-android-arrow-down"></i></button>
 
+                    <button type="button" class="btn btn-primary btn-sm" data-method="rotate" data-option="45" title="Rotate Left"><i class="ion-refresh"></i></button>
+                    <button type="button" class="btn btn-danger btn-sm remove-image"><i class="ion-trash-a"></i></button>
+                  </div>                
 
-            <div class="form-group input-group-sm mb-3">
-            <div class="custom-file">
-            <input type="file" name="file" accept=".jpg,.jpeg,.png,.gif,.bmp,.tiff" class="custom-file-input dynamicElem elm-`+func+`" id="fileUpload" data-filedname="`+func+`" data-colindex="`+colIndex+`">
-            <label class="custom-file-label" for="fileUpload">Choose image...</label>
-            </div>
-
-
-            </div>
+                </div>
+              </div>
             </div>
             `)
-        }
+          }
       })
     }
 

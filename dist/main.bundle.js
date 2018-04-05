@@ -34436,7 +34436,7 @@ var Listing = function () {
   _createClass(Listing, [{
     key: "render",
     value: function render() {
-      var tpl = "\n    <div class=\"container\">\n      <div class=\"section-top\">\n        <nav aria-label=\"breadcrumb\">\n          <ol class=\"breadcrumb\">\n            <li class=\"breadcrumb-item\"><a href=\"#dashboard\">Dashboard</a></li>\n            <li class=\"breadcrumb-item active\" aria-current=\"page\"></li>\n          </ol>\n        </nav>\n      </div>\n      \n      <div class=\"float-right\"><button type=\"button\" class=\"btn btn-light btn-sm mb-4\" id=\"listing-create-btn\" data-toggle=\"modal\" data-target=\"#listing-modal\">Create New</button></div>\n\n      <div class=\"clearfix\"></div>\n\n      <div class=\"p-3 mb-5 bg-white rounded box-shadow\">\n        <div id=\"listing-view\">\n          \n        </div>\n      </div>\n    </div> \n    ";
+      var tpl = "\n    <div class=\"container\">\n      <div class=\"section-top\">\n        <nav aria-label=\"breadcrumb\">\n          <ol class=\"breadcrumb\">\n            <li class=\"breadcrumb-item\"><a href=\"#dashboard\">Dashboard</a></li>\n            <li class=\"breadcrumb-item active\" aria-current=\"page\"></li>\n          </ol>\n        </nav>\n      </div>\n      \n      <div class=\"float-right\"><button type=\"button\" class=\"btn btn-light btn-sm mb-4\" id=\"listing-create-btn\" data-toggle=\"modal\" data-target=\"#listing-modal\">Create New</button></div>\n\n      <div class=\"clearfix\"></div>\n\n      <div class=\"p-4 mb-5 bg-white rounded box-shadow\">\n        <div id=\"listing-view\">\n          \n        </div>\n      </div>\n    </div> \n    ";
       return tpl;
     }
   }, {
@@ -34652,10 +34652,10 @@ var Listing = function () {
           var ignoreFields = ['count', 'time', 'updatedtime', 'file', 'edit', 'remove'];
 
           if (elm != '_' && ignoreFields.indexOf(func) == -1) {
-            $('#listing-modal form .row').append("\n            <div class=\"col-md-6\">\n            <div class=\"form-group input-group-sm mb-3\">\n            <label>" + elm + "</label>\n            <input type=\"text\" class=\"form-control dynamicElem\" placeholder=\"" + elm + "\" value=\"" + insertVal + "\" data-filedname=\"" + func + "\" data-colindex=\"" + colIndex + "\">\n            </div>\n            </div>\n            ");
+            $('#listing-modal form .row').append("\n            <div class=\"col-md-6\">\n              <div class=\"form-group input-group-sm mb-3\">\n              <label>" + elm + "</label>\n              <input type=\"text\" class=\"form-control dynamicElem\" placeholder=\"" + elm + "\" value=\"" + insertVal + "\" data-filedname=\"" + func + "\" data-colindex=\"" + colIndex + "\">\n              </div>\n            </div>\n            ");
           }
           if (func == 'file') {
-            $('#listing-modal form .row').append("\n            <div class=\"col-md-12\">\n            <div class=\"listing-image-preview\"><img id=\"previewImage\"></div>\n\n            <div class=\"imageControls\">\n            <button type=\"button\" class=\"btn btn-primary\" data-method=\"zoom\" data-option=\"0.1\" title=\"Zoom In\"><i class=\"ion-ios-search-strong\"></i></button>\n            <button type=\"button\" class=\"btn btn-primary\" data-method=\"zoom\" data-option=\"-0.1\" title=\"Zoom In\"><i class=\"ion-ios-search-strong\"></i></button>\n\n            <button type=\"button\" class=\"btn btn-primary\" data-method=\"move\" data-option=\"-10\" data-second-option=\"0\" title=\"Move Left\"><i class=\"ion-android-arrow-back\"></i></button>\n            <button type=\"button\" class=\"btn btn-primary\" data-method=\"move\" data-option=\"10\" data-second-option=\"0\" title=\"Move Right\"><i class=\"ion-android-arrow-forward\"></i></button>\n            <button type=\"button\" class=\"btn btn-primary\" data-method=\"move\" data-option=\"0\" data-second-option=\"-10\" title=\"Move Up\"><i class=\"ion-android-arrow-up\"></i></button>\n            <button type=\"button\" class=\"btn btn-primary\" data-method=\"move\" data-option=\"0\" data-second-option=\"10\" title=\"Move Down\"><i class=\"ion-android-arrow-down\"></i></button>\n\n            <button type=\"button\" class=\"btn btn-primary\" data-method=\"rotate\" data-option=\"45\" title=\"Rotate Left\"><i class=\"ion-refresh\"></i></button>\n            <button type=\"button\" class=\"btn btn-danger remove-image\">Remove</button>\n            </div>\n\n\n            <div class=\"form-group input-group-sm mb-3\">\n            <div class=\"custom-file\">\n            <input type=\"file\" name=\"file\" accept=\".jpg,.jpeg,.png,.gif,.bmp,.tiff\" class=\"custom-file-input dynamicElem elm-" + func + "\" id=\"fileUpload\" data-filedname=\"" + func + "\" data-colindex=\"" + colIndex + "\">\n            <label class=\"custom-file-label\" for=\"fileUpload\">Choose image...</label>\n            </div>\n\n\n            </div>\n            </div>\n            ");
+            $('#listing-modal form .row').append("\n            <div class=\"col-md-12\" style=\"display:flex; margin-bottom: 2rem;\">\n              <div class=\"listing-image-preview\"><img id=\"previewImage\"></div>\n              \n              <div class=\"img-section-arrange\">\n                <div>\n\n                  <div class=\"form-group input-group-sm mb-3\">\n                    <div class=\"custom-file\">\n                    <input type=\"file\" name=\"file\" accept=\".jpg,.jpeg,.png,.gif,.bmp,.tiff\" class=\"custom-file-input dynamicElem elm-" + func + "\" id=\"fileUpload\" data-filedname=\"" + func + "\" data-colindex=\"" + colIndex + "\">\n                    <label class=\"custom-file-label\" for=\"fileUpload\">Choose image...</label>\n                    </div>\n                  </div>\n\n                  <div class=\"imageControls\">\n                    <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"zoom\" data-option=\"0.1\" title=\"Zoom In\"><i class=\"ion-ios-search-strong\"></i></button>\n                    <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"zoom\" data-option=\"-0.1\" title=\"Zoom In\"><i class=\"ion-ios-search-strong\"></i></button>\n\n                    <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"move\" data-option=\"-10\" data-second-option=\"0\" title=\"Move Left\"><i class=\"ion-android-arrow-back\"></i></button>\n                    <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"move\" data-option=\"10\" data-second-option=\"0\" title=\"Move Right\"><i class=\"ion-android-arrow-forward\"></i></button>\n                    <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"move\" data-option=\"0\" data-second-option=\"-10\" title=\"Move Up\"><i class=\"ion-android-arrow-up\"></i></button>\n                    <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"move\" data-option=\"0\" data-second-option=\"10\" title=\"Move Down\"><i class=\"ion-android-arrow-down\"></i></button>\n\n                    <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"rotate\" data-option=\"45\" title=\"Rotate Left\"><i class=\"ion-refresh\"></i></button>\n                    <button type=\"button\" class=\"btn btn-danger btn-sm remove-image\"><i class=\"ion-trash-a\"></i></button>\n                  </div>                \n\n                </div>\n              </div>\n            </div>\n            ");
           }
         });
       }
@@ -35031,7 +35031,7 @@ var Detail = function () {
   _createClass(Detail, [{
     key: "render",
     value: function render() {
-      var tpl = "\n    <div class=\"container\">\n      <div class=\"section-top\">\n        <nav aria-label=\"breadcrumb\">\n          <ol class=\"breadcrumb\">\n            <li class=\"breadcrumb-item\"><a href=\"#dashboard\">Dashboard</a></li>\n            <li class=\"breadcrumb-item active\" aria-current=\"page\"></li>\n          </ol>\n        </nav>\n      </div>\n\n      <div class=\"float-right\"><button type=\"button\" class=\"btn btn-light btn-sm mb-4\" id=\"detail-create-btn\" data-toggle=\"modal\" data-target=\"#listing-modal\">Create New</button></div>\n      \n      <div class=\"clearfix\"></div>\n\n      <div class=\"p-3 mb-5 bg-white rounded box-shadow\">\n        <div id=\"detail-view\">\n          <div class=\"row\">\n          </div>\n        </div>\n      </div>\n\n    </div> \n    ";
+      var tpl = "\n    <div class=\"container\">\n      <div class=\"section-top\">\n        <nav aria-label=\"breadcrumb\">\n          <ol class=\"breadcrumb\">\n            <li class=\"breadcrumb-item\"><a href=\"#dashboard\">Dashboard</a></li>\n            <li class=\"breadcrumb-item active\" aria-current=\"page\"></li>\n          </ol>\n        </nav>\n      </div>\n\n      <div class=\"float-right d-none\"><button type=\"button\" class=\"btn btn-light btn-sm mb-4\" id=\"detail-edit-btn\">Edit Details</button></div>\n      <div class=\"float-right d-none\"><button type=\"button\" class=\"btn btn-light btn-sm mb-4\" id=\"detail-save-btn\">Save Details</button></div>\n\n      <div class=\"clearfix\"></div>\n\n      <div class=\"p-4 mb-5 bg-white rounded box-shadow\">\n        <div id=\"detail-view\">\n          <div class=\"row\">\n          </div>\n        </div>\n      </div>\n\n    </div> \n    ";
       return tpl;
     }
   }, {
@@ -35067,7 +35067,15 @@ var Detail = function () {
             console.log('callbackHeading===', headings);
 
             self.listDatas.push(callback);
-            pushData(self.listDatas[0]);
+
+            console.log('datas==', self.listDatas[0].result[1]);
+
+            if (!self.listDatas[0].result[1]) {
+              pushData(self.listDatas[0], 'create');
+              // elmentPushToModal('create')
+            } else {
+              pushData(self.listDatas[0], 'read');
+            }
           }
         } else {
           new _cookieControls2.default().deleteCookie(); //Logout
@@ -35077,24 +35085,160 @@ var Detail = function () {
       });
 
       //Create New
-      $(document).on('click', '#detail-create-btn', function () {
-        elmentPushToModal('create');
+      /*$(document).on('click', '#detail-create-btn', function() {
+        elmentPushToModal('create')
+      });*/
+
+      /*function elmentPushToModal(action, rowId) {
+          var getListVal
+          
+        if(action == 'create') {
+          $('#listing-modal').addClass('createList').removeClass('editList').find('.modal-title').text('Add Details')
+          fileName = ''
+          $('#listing-okBtn').attr({'data-action':'create', 'data-rowid':''})
+        } else {
+          $('#listing-modal').removeClass('createList').addClass('editList').find('.modal-title').text('Edit')
+          $('#listing-okBtn').attr({'data-action':'edit', 'data-rowid':rowId})
+        }
+          $('#listing-modal form .row').html('')
+          console.log('modal-headings==',headings)
+          $.each(headings, function(index, elm) {
+            var colIndex = index+1
+          
+          var tElm,func = ``
+          if(elm.charAt(0) == '_') {
+            elm='_'
+          }
+          else if(elm.indexOf("(") >= 0){
+            tElm = elm.split("(")
+            elm = tElm[0]
+            func = tElm[1].slice(0, -1);
+          }
+            var insertVal = ''
+            if(getListVal) {
+            insertVal = getListVal[0][index]
+          }
+      
+          let ignoreFields = ['count','time','updatedtime','file','edit','remove','subdetails'];
+            if((elm!='_') && ignoreFields.indexOf(func) == -1) {
+            $('#detail-view').append(`
+              <div class="col-md-6">
+              <div class="form-group input-group-sm mb-3">
+              <label>`+elm+`</label>
+              <input type="text" class="form-control dynamicElem" placeholder="`+elm+`" value="`+insertVal+`" data-filedname="`+func+`" data-colindex="`+colIndex+`">
+              </div>
+              </div>
+              `)
+          }
+          if(func=='file') {
+            $('#detail-view').append(`
+              <div class="col-md-12" style="display:flex; margin-bottom: 2rem;">
+                <div class="listing-image-preview"><img id="previewImage"></div>
+                
+                <div class="img-section-arrange">
+                  <div>
+                      <div class="form-group input-group-sm mb-3">
+                      <div class="custom-file">
+                      <input type="file" name="file" accept=".jpg,.jpeg,.png,.gif,.bmp,.tiff" class="custom-file-input dynamicElem elm-`+func+`" id="fileUpload" data-filedname="`+func+`" data-colindex="`+colIndex+`">
+                      <label class="custom-file-label" for="fileUpload">Choose image...</label>
+                      </div>
+                    </div>
+                      <div class="imageControls">
+                      <button type="button" class="btn btn-primary btn-sm" data-method="zoom" data-option="0.1" title="Zoom In"><i class="ion-ios-search-strong"></i></button>
+                      <button type="button" class="btn btn-primary btn-sm" data-method="zoom" data-option="-0.1" title="Zoom In"><i class="ion-ios-search-strong"></i></button>
+                        <button type="button" class="btn btn-primary btn-sm" data-method="move" data-option="-10" data-second-option="0" title="Move Left"><i class="ion-android-arrow-back"></i></button>
+                      <button type="button" class="btn btn-primary btn-sm" data-method="move" data-option="10" data-second-option="0" title="Move Right"><i class="ion-android-arrow-forward"></i></button>
+                      <button type="button" class="btn btn-primary btn-sm" data-method="move" data-option="0" data-second-option="-10" title="Move Up"><i class="ion-android-arrow-up"></i></button>
+                      <button type="button" class="btn btn-primary btn-sm" data-method="move" data-option="0" data-second-option="10" title="Move Down"><i class="ion-android-arrow-down"></i></button>
+                        <button type="button" class="btn btn-primary btn-sm" data-method="rotate" data-option="45" title="Rotate Left"><i class="ion-refresh"></i></button>
+                      <button type="button" class="btn btn-danger btn-sm remove-image"><i class="ion-trash-a"></i></button>
+                    </div>                
+                    </div>
+                </div>
+              </div>
+              `)
+          }
+        })
+          }*/
+
+      var uploadedImageType, uploadedImageURL;
+
+      var options = {
+        viewMode: 3,
+        aspectRatio: 1 / 1,
+        autoCropArea: 1,
+        strict: false,
+        guides: false,
+        highlight: false,
+        dragCrop: false,
+        dragMode: 'move',
+        cropBoxMovable: false,
+        cropBoxResizable: false,
+        minContainerWidth: 150,
+        minContainerHeight: 150
+      };
+
+      var URL = window.URL || window.webkitURL;
+
+      if (URL) {
+        $(document).on('change', '#fileUpload', function (event) {
+          var files = this.files;
+          var file;
+          if (files && files.length) {
+
+            // $('.img-place-holder').addClass('hidden');
+            // $('.create_image_crop_container').removeClass('hidden');
+            // $inputImage.next('span').text('Change Image');
+
+            file = files[0];
+            fileChange = true;
+            fileName = file.name;
+            $('[for="fileUpload"]').text(fileName);
+            console.log('mainFILE=', file);
+
+            if (/^image\/\w+$/.test(file.type)) {
+              uploadedImageType = file.type;
+              if (uploadedImageURL) {
+                URL.revokeObjectURL(uploadedImageURL);
+              }
+              uploadedImageURL = URL.createObjectURL(file);
+              $('#previewImage').cropper('destroy').attr('src', uploadedImageURL).cropper(options);
+
+              $('.imageControls').show();
+            } else {
+              window.alert('Please choose an image file.');
+            }
+          }
+        });
+      }
+
+      $(document).on('click', '.imageControls button', function (event) {
+        event.preventDefault();
+        var prevImg = $('#previewImage');
+        if (!$(this).hasClass('remove-image')) {
+          var method = $(this).data('method');
+          var option = $(this).data('option');
+          var secondOption = $(this).data('second-option');
+          if (typeof secondOption != 'undefined') {
+            prevImg.cropper(method, option, secondOption);
+          } else {
+            prevImg.cropper(method, option);
+          }
+        } else {
+          prevImg.cropper('destroy');
+          $('#fileUpload').val('');
+          $('[for="fileUpload"]').text('Choose image...');
+          fileChange = false;
+          imageURI = undefined;
+          $('#previewImage').attr('src', '');
+          $('.imageControls').hide();
+        }
       });
 
-      function elmentPushToModal(action, rowId) {
-        if (action == 'create') {
-          $('#listing-modal').addClass('createList').removeClass('editList').find('.modal-title').text('Create New');
-          fileName = '';
-          $('#listing-okBtn').attr({ 'data-action': 'create', 'data-rowid': '' });
-        } else {
-          $('#listing-modal').removeClass('createList').addClass('editList').find('.modal-title').text('Edit');
-          $('#listing-okBtn').attr({ 'data-action': 'edit', 'data-rowid': rowId });
-        }
+      $(document).on('click', '#detail-edit-btn', function () {
 
-        $('#listing-modal form .row').html('');
-
-        console.log('modal-headings==', headings);
-      }
+        pushData(self.listDatas[0], 'edit');
+      });
     }
   }]);
 
@@ -35105,7 +35249,65 @@ var Detail = function () {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }*/
 
-var pushData = function pushData(data) {
+var pushData = function pushData(data, action) {
+
+  // let fileName
+
+
+  var headings = data.result[0];
+  var getListVal = data.result[1];
+
+  console.log('getListVal', getListVal);
+
+  var readOnly = '';
+
+  if (action == 'create') {
+    // $('#listing-modal').addClass('createList').removeClass('editList').find('.modal-title').text('Add Details')
+    // fileName = ''
+    $('#detail-save-btn').parent().removeClass('d-none');
+    // $('#listing-okBtn').attr({'data-action':'create', 'data-rowid':''})
+  }
+  if (action == 'read') {
+    readOnly = 'readonly';
+    $('#detail-edit-btn').parent().removeClass('d-none');
+    // $('#listing-modal').removeClass('createList').addClass('editList').find('.modal-title').text('Edit')
+    // $('#listing-okBtn').attr({'data-action':'edit', 'data-rowid':rowId})
+  }
+
+  // $('#listing-modal form .row').html('')
+  $('#detail-view .row').html('');
+
+  console.log('modal-headings==', headings);
+
+  $.each(headings, function (index, elm) {
+
+    var colIndex = index + 1;
+
+    var tElm,
+        func = "";
+    if (elm.charAt(0) == '_') {
+      elm = '_';
+    } else if (elm.indexOf("(") >= 0) {
+      tElm = elm.split("(");
+      elm = tElm[0];
+      func = tElm[1].slice(0, -1);
+    }
+
+    var insertVal = '';
+
+    if (typeof getListVal != 'undefined') {
+      insertVal = getListVal[index];
+    }
+
+    var ignoreFields = ['count', 'time', 'updatedtime', 'file', 'edit', 'remove', 'subdetails'];
+
+    if (elm != '_' && ignoreFields.indexOf(func) == -1) {
+      $('#detail-view .row').append("\n            <div class=\"col-md-4\">\n              <div class=\"form-group input-group-sm mb-3\">\n              <label>" + elm + "</label>\n              <input type=\"text\" class=\"form-control dynamicElem\" " + readOnly + " placeholder=\"" + elm + "\" value=\"" + insertVal + "\" data-filedname=\"" + func + "\" data-colindex=\"" + colIndex + "\">\n              </div>\n            </div>\n          ");
+    }
+    if (func == 'file') {
+      $('#detail-view .row').append("\n            <div class=\"col-md-12\" style=\"display:flex; margin-bottom: 2rem;\">\n              <div class=\"listing-image-preview\"><img id=\"previewImage\"></div>\n              \n              <div class=\"img-section-arrange\">\n                <div>\n\n                  <div class=\"form-group input-group-sm mb-3\">\n                    <div class=\"custom-file\">\n                    <input type=\"file\" name=\"file\" accept=\".jpg,.jpeg,.png,.gif,.bmp,.tiff\" class=\"custom-file-input dynamicElem elm-" + func + "\" id=\"fileUpload\" data-filedname=\"" + func + "\" data-colindex=\"" + colIndex + "\">\n                    <label class=\"custom-file-label\" for=\"fileUpload\">Choose image...</label>\n                    </div>\n                  </div>\n\n                  <div class=\"imageControls\">\n                    <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"zoom\" data-option=\"0.1\" title=\"Zoom In\"><i class=\"ion-ios-search-strong\"></i></button>\n                    <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"zoom\" data-option=\"-0.1\" title=\"Zoom In\"><i class=\"ion-ios-search-strong\"></i></button>\n\n                    <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"move\" data-option=\"-10\" data-second-option=\"0\" title=\"Move Left\"><i class=\"ion-android-arrow-back\"></i></button>\n                    <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"move\" data-option=\"10\" data-second-option=\"0\" title=\"Move Right\"><i class=\"ion-android-arrow-forward\"></i></button>\n                    <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"move\" data-option=\"0\" data-second-option=\"-10\" title=\"Move Up\"><i class=\"ion-android-arrow-up\"></i></button>\n                    <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"move\" data-option=\"0\" data-second-option=\"10\" title=\"Move Down\"><i class=\"ion-android-arrow-down\"></i></button>\n\n                    <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"rotate\" data-option=\"45\" title=\"Rotate Left\"><i class=\"ion-refresh\"></i></button>\n                    <button type=\"button\" class=\"btn btn-danger btn-sm remove-image\"><i class=\"ion-trash-a\"></i></button>\n                  </div>                \n\n                </div>\n              </div>\n            </div>\n            ");
+    }
+  });
 
   var allDiv = "";
   var headerValues;
@@ -35114,68 +35316,81 @@ var pushData = function pushData(data) {
   // var cnt = 1
   var setName;
 
-  $.each(data.result, function (index, elm) {
+  // $.each(data.result, function(index, elm) {
 
-    if (index == 0) {
-      headerValues = elm;
-    } else {
+  //   if(index == 0) {
+  //     headerValues = elm
+  //   } else {
 
-      row = "";
+  //     row = ``
 
-      $.each(elm, function (index1, elm1) {
-        /*var imgPath = `images/placeholder.png`
-        var imgView = `<img src="`+imgPath+`" alt="" />`
-        var updatedTimeVal = `-`*/
-        var innerDiv = "";
-        var func = headerValues[index1];
-        console.log(func);
-        if (func.charAt(0) == '_') {
-          func = '_';
-        } else if (func.indexOf("(") >= 0) {
-          setName = func.split("(")[0];
-          func = func.split("(")[1].slice(0, -1);
-        }
 
-        if (func != '_') {
+  //     $.each(elm, function(index1, elm1) {
+  //       /*var imgPath = `images/placeholder.png`
+  //       var imgView = `<img src="`+imgPath+`" alt="" />`
+  //       var updatedTimeVal = `-`*/
+  //       var innerDiv = ``
+  //       var func = headerValues[index1]
+  //       console.log(func)
+  //       if(func.charAt(0) == '_') {
+  //         func='_'
+  //       } else if(func.indexOf("(") >= 0) {
+  //         setName = func.split("(")[0]
+  //         func = func.split("(")[1].slice(0, -1)
+  //       }
 
-          if (elm1 != '') {
+  //       if(func != '_') {
 
-            if (func != 'address') {
-              elm1 = "<label>" + setName + "</label>\n                <input type=\"text\" class=\"form-control\" readonly placeholder=\"" + setName + "\" value=\"" + elm1 + "\">";
-            } else {
-              elm1 = "<label>" + setName + "</label>\n                <textarea class=\"form-control\" rows=\"3\" readonly placeholder=\"" + setName + "\">" + elm1 + "</textarea>";
-            }
+  //         if(elm1 != '') {
 
-            row += "<div class=\"col-md-4 mb-3\">" + elm1 + "</div>";
+  //           if(func!='address') {
+  //             elm1 = `<label>`+setName+`</label>
+  //               <input type="text" class="form-control" readonly placeholder="`+setName+`" value="`+elm1+`">`
+  //           } 
+  //           else {
+  //             elm1 = `<label>`+setName+`</label>
+  //               <textarea class="form-control" rows="3" readonly placeholder="`+setName+`">`+elm1+`</textarea>`
+  //           }
 
-            /*innerDiv += `<div class="col-md-4 mb-3">`+elm1+`</div>`
-            if(cnt % 2 != 0) {
-              row += `<div class="row">`+innerDiv
-            } else {
-              if(cnt == 1) {
-                row += innerDiv
-              } else {
-                row += innerDiv+`</div>`
-              }
-            }
-            cnt++*/
-          }
-        }
-      });
-    }
-  });
+  //           row += `<div class="col-md-4 mb-3">`+elm1+`</div>`
+
+  //           /*innerDiv += `<div class="col-md-4 mb-3">`+elm1+`</div>`
+  //           if(cnt % 2 != 0) {
+  //             row += `<div class="row">`+innerDiv
+  //           } else {
+  //             if(cnt == 1) {
+  //               row += innerDiv
+  //             } else {
+  //               row += innerDiv+`</div>`
+  //             }
+  //           }
+  //           cnt++*/
+  //         }
+
+  //       }
+
+  //     });
+
+  //   }
+
+  // });
 
   /*if(cnt % 2 == 0) {
     row += `</div>`
   }*/
 
-  if (typeof row == 'undefined') {
-    row = "<p class=\"mb-0 w-100 text-center\">No Records Found</p>";
-  }
+  // if(typeof row == 'undefined') {
+  //   row = `<p class="mb-0 w-100 text-center">No Records Found</p>`
+  //   // $('#detail-create-btn').trigger('click')
+  // }
 
-  allDiv += "<div class=\"form-row\">\n  " + row + " \n  </div>";
+  // allDiv += `<div class="form-row">
+  // `+row+` 
+  // </div>`
 
-  $('#detail-view').html(allDiv);
+
+  // $('#detail-view').html(allDiv)
+
 };
 
 exports.default = Detail;

@@ -196,10 +196,11 @@ span.error {
 .listing-image-preview {
   width: 150px;
   height: 150px;
+  min-width: 150px;
+  min-height: 150px;
   background-color: gainsboro;
   float: left;
   margin-right: 2rem;
-  margin-bottom: 2rem;
   -webkit-box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.25);
           box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.25);
   background-size: 90px;
@@ -318,5 +319,18 @@ h6.font-weight-400 {
 .module-item .btn-block {
   max-width: 110px;
   margin: auto; }
+
+.img-section-arrange {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center; }
+
+.custom-file-label {
+  height: auto !important; }
+  .custom-file-label:after {
+    height: auto !important; }
 
 /*# sourceMappingURL=style.css.map*/
