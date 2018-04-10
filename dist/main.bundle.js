@@ -35239,6 +35239,11 @@ var Detail = function () {
 
         pushData(self.listDatas[0], 'edit');
       });
+
+      $(document).on('click', '#detail-save-btn', function () {
+
+        pushData(self.listDatas[0], 'read');
+      });
     }
   }]);
 
@@ -35261,6 +35266,8 @@ var pushData = function pushData(data, action) {
 
   var readOnly = '';
 
+  $('#detail-view').attr('data-mode', action);
+
   if (action == 'create') {
     // $('#listing-modal').addClass('createList').removeClass('editList').find('.modal-title').text('Add Details')
     // fileName = ''
@@ -35269,9 +35276,14 @@ var pushData = function pushData(data, action) {
   }
   if (action == 'read') {
     readOnly = 'readonly';
+    $('#detail-save-btn').parent().addClass('d-none');
     $('#detail-edit-btn').parent().removeClass('d-none');
     // $('#listing-modal').removeClass('createList').addClass('editList').find('.modal-title').text('Edit')
     // $('#listing-okBtn').attr({'data-action':'edit', 'data-rowid':rowId})
+  }
+  if (action == 'edit') {
+    $('#detail-edit-btn').parent().addClass('d-none');
+    $('#detail-save-btn').parent().removeClass('d-none');
   }
 
   // $('#listing-modal form .row').html('')
@@ -35302,10 +35314,35 @@ var pushData = function pushData(data, action) {
     var ignoreFields = ['count', 'time', 'updatedtime', 'file', 'edit', 'remove', 'subdetails'];
 
     if (elm != '_' && ignoreFields.indexOf(func) == -1) {
-      $('#detail-view .row').append("\n            <div class=\"col-md-4\">\n              <div class=\"form-group input-group-sm mb-3\">\n              <label>" + elm + "</label>\n              <input type=\"text\" class=\"form-control dynamicElem\" " + readOnly + " placeholder=\"" + elm + "\" value=\"" + insertVal + "\" data-filedname=\"" + func + "\" data-colindex=\"" + colIndex + "\">\n              </div>\n            </div>\n          ");
+
+      var typeElm = "",
+          fullElm;
+      if (func.indexOf("[") >= 0) {
+        typeElm = func.split("[")[1].slice(0, -1);
+      }
+      console.log('func==', typeElm);
+
+      if (typeElm == 'ti' || typeElm == "") {
+        fullElm = "<input type=\"text\" class=\"form-control dynamicElem\" " + readOnly + " placeholder=\"" + elm + "\" value=\"" + insertVal + "\" data-filedname=\"" + func + "\" data-colindex=\"" + colIndex + "\">";
+      }
+      if (typeElm == 'ta') {
+        fullElm = "<textarea rows=\"4\" class=\"form-control dynamicElem\" " + readOnly + " placeholder=\"" + elm + "\" data-filedname=\"" + func + "\" data-colindex=\"" + colIndex + "\">" + insertVal + "</textarea>";
+      }
+
+      $('#detail-view .row').append("\n            <div class=\"col-md-4\">\n              <div class=\"form-group input-group-sm mb-3\">\n              <label>" + elm + "</label>\n              " + fullElm + "\n              </div>\n            </div>\n          ");
     }
     if (func == 'file') {
-      $('#detail-view .row').append("\n            <div class=\"col-md-12\" style=\"display:flex; margin-bottom: 2rem;\">\n              <div class=\"listing-image-preview\"><img id=\"previewImage\"></div>\n              \n              <div class=\"img-section-arrange\">\n                <div>\n\n                  <div class=\"form-group input-group-sm mb-3\">\n                    <div class=\"custom-file\">\n                    <input type=\"file\" name=\"file\" accept=\".jpg,.jpeg,.png,.gif,.bmp,.tiff\" class=\"custom-file-input dynamicElem elm-" + func + "\" id=\"fileUpload\" data-filedname=\"" + func + "\" data-colindex=\"" + colIndex + "\">\n                    <label class=\"custom-file-label\" for=\"fileUpload\">Choose image...</label>\n                    </div>\n                  </div>\n\n                  <div class=\"imageControls\">\n                    <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"zoom\" data-option=\"0.1\" title=\"Zoom In\"><i class=\"ion-ios-search-strong\"></i></button>\n                    <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"zoom\" data-option=\"-0.1\" title=\"Zoom In\"><i class=\"ion-ios-search-strong\"></i></button>\n\n                    <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"move\" data-option=\"-10\" data-second-option=\"0\" title=\"Move Left\"><i class=\"ion-android-arrow-back\"></i></button>\n                    <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"move\" data-option=\"10\" data-second-option=\"0\" title=\"Move Right\"><i class=\"ion-android-arrow-forward\"></i></button>\n                    <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"move\" data-option=\"0\" data-second-option=\"-10\" title=\"Move Up\"><i class=\"ion-android-arrow-up\"></i></button>\n                    <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"move\" data-option=\"0\" data-second-option=\"10\" title=\"Move Down\"><i class=\"ion-android-arrow-down\"></i></button>\n\n                    <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"rotate\" data-option=\"45\" title=\"Rotate Left\"><i class=\"ion-refresh\"></i></button>\n                    <button type=\"button\" class=\"btn btn-danger btn-sm remove-image\"><i class=\"ion-trash-a\"></i></button>\n                  </div>                \n\n                </div>\n              </div>\n            </div>\n            ");
+      console.log(insertVal);
+      // $('[for="fileUpload"]').text('Choose image...')
+      var imageId = '',
+          imageName = 'Choose image...';
+
+      if (insertVal != '') {
+        imageId = getListVal[index + 1];
+        imageName = getListVal[index + 2];
+      }
+
+      $('#detail-view .row').append("\n            <div class=\"col-md-12\" style=\"display:flex; margin-bottom: 2rem;\">\n              <div class=\"listing-image-preview\"><img id=\"previewImage\" src=\"" + insertVal + "\"></div>\n              \n              <div class=\"img-section-arrange\">\n                <div>\n\n                  <div class=\"form-group input-group-sm mb-3\">\n                    <div class=\"custom-file\">\n                    <input type=\"file\" name=\"file\" accept=\".jpg,.jpeg,.png,.gif,.bmp,.tiff\" class=\"custom-file-input dynamicElem elm-" + func + "\" id=\"fileUpload\" data-filedname=\"" + func + "\" data-colindex=\"" + colIndex + "\" data-imageid=\"" + imageId + "\">\n                    <label class=\"custom-file-label\" for=\"fileUpload\">" + imageName + "</label>\n                    </div>\n                  </div>\n\n                  <div class=\"imageControls\">\n                    <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"zoom\" data-option=\"0.1\" title=\"Zoom In\"><i class=\"ion-ios-search-strong\"></i></button>\n                    <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"zoom\" data-option=\"-0.1\" title=\"Zoom In\"><i class=\"ion-ios-search-strong\"></i></button>\n\n                    <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"move\" data-option=\"-10\" data-second-option=\"0\" title=\"Move Left\"><i class=\"ion-android-arrow-back\"></i></button>\n                    <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"move\" data-option=\"10\" data-second-option=\"0\" title=\"Move Right\"><i class=\"ion-android-arrow-forward\"></i></button>\n                    <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"move\" data-option=\"0\" data-second-option=\"-10\" title=\"Move Up\"><i class=\"ion-android-arrow-up\"></i></button>\n                    <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"move\" data-option=\"0\" data-second-option=\"10\" title=\"Move Down\"><i class=\"ion-android-arrow-down\"></i></button>\n\n                    <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"rotate\" data-option=\"45\" title=\"Rotate Left\"><i class=\"ion-refresh\"></i></button>\n                    <button type=\"button\" class=\"btn btn-danger btn-sm remove-image\"><i class=\"ion-trash-a\"></i></button>\n                  </div>                \n\n                </div>\n              </div>\n            </div>\n            ");
     }
   });
 

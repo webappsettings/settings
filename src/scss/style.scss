@@ -431,3 +431,7 @@ h6.font-weight-400 {
     height: auto !important;
   }
 }
+
+[data-mode="read"] .img-section-arrange {
+  display: none;
+}

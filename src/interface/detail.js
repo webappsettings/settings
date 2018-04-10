@@ -275,8 +275,18 @@ class Detail {
         pushData(self.listDatas[0], 'edit')
 
 
+      });
+
+
+      $(document).on('click', '#detail-save-btn', function() {
+
+        pushData(self.listDatas[0], 'read')
+
 
       });
+
+
+
 
     
 
@@ -307,6 +317,7 @@ const pushData = (data, action) => {
 
   var readOnly = ''
 
+      $('#detail-view').attr('data-mode',action)
       
       if(action == 'create') {
         // $('#listing-modal').addClass('createList').removeClass('editList').find('.modal-title').text('Add Details')
@@ -316,9 +327,14 @@ const pushData = (data, action) => {
       }
       if(action == 'read') {
           readOnly='readonly'
+           $('#detail-save-btn').parent().addClass('d-none')
           $('#detail-edit-btn').parent().removeClass('d-none')
         // $('#listing-modal').removeClass('createList').addClass('editList').find('.modal-title').text('Edit')
         // $('#listing-okBtn').attr({'data-action':'edit', 'data-rowid':rowId})
+      }
+      if(action == 'edit') {
+        $('#detail-edit-btn').parent().addClass('d-none')
+        $('#detail-save-btn').parent().removeClass('d-none')
       }
 
       // $('#listing-modal form .row').html('')
@@ -353,27 +369,50 @@ const pushData = (data, action) => {
         let ignoreFields = ['count','time','updatedtime','file','edit','remove','subdetails'];
 
         if((elm!='_') && ignoreFields.indexOf(func) == -1) {
+          
+          var typeElm = ``, fullElm
+          if(func.indexOf("[") >= 0) {
+            typeElm = func.split("[")[1].slice(0, -1)
+          }
+          console.log('func==',typeElm)
+
+          if(typeElm == 'ti' || typeElm ==``) {
+            fullElm = `<input type="text" class="form-control dynamicElem" `+readOnly+` placeholder="`+elm+`" value="`+insertVal+`" data-filedname="`+func+`" data-colindex="`+colIndex+`">`
+          } 
+          if(typeElm == 'ta') {
+            fullElm = `<textarea rows="4" class="form-control dynamicElem" `+readOnly+` placeholder="`+elm+`" data-filedname="`+func+`" data-colindex="`+colIndex+`">`+insertVal+`</textarea>`
+          }
+
           $('#detail-view .row').append(`
             <div class="col-md-4">
               <div class="form-group input-group-sm mb-3">
               <label>`+elm+`</label>
-              <input type="text" class="form-control dynamicElem" `+readOnly+` placeholder="`+elm+`" value="`+insertVal+`" data-filedname="`+func+`" data-colindex="`+colIndex+`">
+              `+fullElm+`
               </div>
             </div>
           `)
         }
         if(func=='file') {
+          console.log(insertVal)
+          // $('[for="fileUpload"]').text('Choose image...')
+          let imageId = '', imageName = 'Choose image...'
+
+          if(insertVal != '') {
+            imageId = getListVal[index+1]
+            imageName = getListVal[index+2]
+          }
+
           $('#detail-view .row').append(`
             <div class="col-md-12" style="display:flex; margin-bottom: 2rem;">
-              <div class="listing-image-preview"><img id="previewImage"></div>
+              <div class="listing-image-preview"><img id="previewImage" src="`+insertVal+`"></div>
               
               <div class="img-section-arrange">
                 <div>
 
                   <div class="form-group input-group-sm mb-3">
                     <div class="custom-file">
-                    <input type="file" name="file" accept=".jpg,.jpeg,.png,.gif,.bmp,.tiff" class="custom-file-input dynamicElem elm-`+func+`" id="fileUpload" data-filedname="`+func+`" data-colindex="`+colIndex+`">
-                    <label class="custom-file-label" for="fileUpload">Choose image...</label>
+                    <input type="file" name="file" accept=".jpg,.jpeg,.png,.gif,.bmp,.tiff" class="custom-file-input dynamicElem elm-`+func+`" id="fileUpload" data-filedname="`+func+`" data-colindex="`+colIndex+`" data-imageid="`+imageId+`">
+                    <label class="custom-file-label" for="fileUpload">`+imageName+`</label>
                     </div>
                   </div>
 
@@ -396,16 +435,6 @@ const pushData = (data, action) => {
             `)
         }
       })
-
-
-
-
-
-
-
-
-
-
 
 
 
