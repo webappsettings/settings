@@ -442,7 +442,6 @@ class Listing {
         formdata.append('action', 'create')
       } else {
         var rowId = $(this).attr('data-rowid')
-        
         formdata.append('action', 'edit')
         formdata.append('rowindex', rowIndex)
       }
@@ -492,8 +491,6 @@ class Listing {
         formdata.append('file', '')
       }
 
-
-
       console.log(dataRow)
 
       // for (var pair of formdata.entries()) {
@@ -501,10 +498,9 @@ class Listing {
       // }
 
   dataRow = JSON.stringify(dataRow)
-
   formdata.append('coldatas', dataRow)
 
-    console.log(new CodeComp().mainCode())
+   
       $.ajax({
          method: 'POST',
          url: new CodeComp().mainCode(),
@@ -517,7 +513,6 @@ class Listing {
           }
         })
         .done(function(callback){
-
 
           let output = JSON.parse(callback.result)
           console.log('created=', output)

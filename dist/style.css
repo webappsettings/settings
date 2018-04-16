@@ -333,7 +333,7 @@ h6.font-weight-400 {
   .custom-file-label:after {
     height: auto !important; }
 
-[data-mode="read"] .img-section-arrange {
+[data-action="read"] .img-section-arrange {
   display: none; }
 
 /*# sourceMappingURL=style.css.map*/

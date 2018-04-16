@@ -28,8 +28,10 @@ class Detail {
 
       <div class="p-4 mb-5 bg-white rounded box-shadow">
         <div id="detail-view">
-          <div class="row">
-          </div>
+          <form id="detail-view-create-form">
+            <div class="row">
+            </div>
+          </form>
         </div>
       </div>
 
@@ -280,7 +282,123 @@ class Detail {
 
       $(document).on('click', '#detail-save-btn', function() {
 
-        pushData(self.listDatas[0], 'read')
+        // $(this).prop('disabled',true)
+
+        var formdata = new FormData()
+
+        formdata.append('pagename', urlHash)
+
+        let paramId = GlobalArray.globalArray.paramid
+        formdata.append('pageid', paramId)
+
+        let action = $(this).attr('data-action')
+        formdata.append('action', action)
+
+        if(action == 'create') {
+          var timestamp = new Date()
+          var rowId = timestamp.toISOString().replace(/\D/g,"").substr(0,14)
+        } else {
+          var rowId = $(this).attr('data-rowid')
+        }
+
+
+        var dataRow = []
+        var obj = {}
+        dataRow.push(obj)
+        obj[1]=rowId
+
+        $('#detail-view form .row .dynamicElem:not(#fileUpload)').each(function(index, el) {
+          var colindex = $(this).attr('data-colindex')
+          var values = $(this).val()
+          obj[colindex]=values
+        });
+
+
+        imageURI = undefined
+
+        if(fileChange){
+          let prevImg = $('#previewImage')
+          imageURI = prevImg.cropper('getCroppedCanvas',{'width':prevImg.parent().outerWidth(),'height':prevImg.parent().outerHeight()}).toDataURL(uploadedImageType)
+
+          let filetype = imageURI.substring(5,imageURI.indexOf(';'))
+
+          let img = imageURI.replace(/^.*,/, '')
+
+          formdata.append('filechange', fileChange)
+          formdata.append('file', img)
+          formdata.append('filename', fileName)
+          formdata.append('filetype', filetype)
+          formdata.append('foldername', 'listing')
+
+        } else {
+          formdata.append('file', '')
+        }
+        
+
+        dataRow = JSON.stringify(dataRow)
+        formdata.append('coldatas', dataRow)
+
+        /*for (var pair of formdata.entries()) {
+          console.log(pair[0]+ '= ' + pair[1]); 
+        }
+        */
+
+      $.ajax({
+         method: 'POST',
+         url: new CodeComp().mainCode(),
+         data: formdata,
+         dataType: 'json',
+         contentType: false,
+         processData: false,
+         beforeSend: function(){
+            $('.loader').fadeIn()
+          }
+        })
+        .done(function(callback){
+
+          let output = JSON.parse(callback.result)
+          console.log('created=', output)
+          if(output.result) {
+            if(output.result != 'pageremoved') {
+              if(output.result) {
+                /*if(action == 'create') {
+                  self.listDatas[0].result.splice(1, 0, output.result);
+                } else {
+                  self.listDatas[0].result[rowIndex-1] = output.result
+                }*/
+
+                /*console.log('oldData==', self.listDatas[0])
+
+                console.log('newData==', output.result)*/
+
+                self.listDatas[0].result[1] = output.result
+                pushData(self.listDatas[0],'read')
+
+              } else {
+                new CookieControls().deleteCookie()//Logout
+              }
+            } else {
+              alert('This page removed!')
+              new HashControls('dashboard').setHash()
+            }
+          } else {
+            new CookieControls().deleteCookie()//Logout
+          }
+
+         
+        })
+        .fail(function(callback) {
+          alert('This action not completed! Please try again')
+       })
+       .always(function(){
+         $('.loader').fadeOut()
+       });
+
+
+        // alert(action)
+
+
+        // pushData(self.listDatas[0], 'read')
 
 
       });
@@ -292,8 +410,6 @@ class Detail {
 
   }
 }
-
-
 
 
 
@@ -313,11 +429,18 @@ const pushData = (data, action) => {
   var headings = data.result[0]
   var getListVal = data.result[1]
 
+  var getRowId = ''
+
   console.log('getListVal',getListVal)
 
   var readOnly = ''
 
-      $('#detail-view').attr('data-mode',action)
+      $('#detail-view').attr('data-action',action)
+      if(typeof getListVal != 'undefined') {
+        getRowId = getListVal[0]
+      }
+      $('#detail-save-btn').attr({'data-action':action, 'data-rowid':getRowId})
+      // $('#detail-save-btn').attr('data-rowid', getListVal[0]);
       
       if(action == 'create') {
         // $('#listing-modal').addClass('createList').removeClass('editList').find('.modal-title').text('Add Details')
@@ -341,6 +464,8 @@ const pushData = (data, action) => {
       $('#detail-view .row').html('')
 
       console.log('modal-headings==',headings)
+
+
 
       $.each(headings, function(index, elm) {
 
@@ -382,6 +507,10 @@ const pushData = (data, action) => {
           if(typeElm == 'ta') {
             fullElm = `<textarea rows="4" class="form-control dynamicElem" `+readOnly+` placeholder="`+elm+`" data-filedname="`+func+`" data-colindex="`+colIndex+`">`+insertVal+`</textarea>`
           }
+
+
+
+          
 
           $('#detail-view .row').append(`
             <div class="col-md-4">
