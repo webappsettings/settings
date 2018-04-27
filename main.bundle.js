@@ -35028,7 +35028,7 @@ var Detail = function () {
   _createClass(Detail, [{
     key: "render",
     value: function render() {
-      var tpl = "\n    <div class=\"container\">\n      <div class=\"section-top\">\n        <nav aria-label=\"breadcrumb\">\n          <ol class=\"breadcrumb\">\n            <li class=\"breadcrumb-item\"><a href=\"#dashboard\">Dashboard</a></li>\n            <li class=\"breadcrumb-item active\" aria-current=\"page\"></li>\n          </ol>\n        </nav>\n      </div>\n\n      <div class=\"float-right d-none\"><button type=\"button\" class=\"btn btn-light btn-sm mb-4\" id=\"detail-edit-btn\">Edit Details</button></div>\n      <div class=\"float-right d-none\"><button type=\"button\" class=\"btn btn-light btn-sm mb-4\" id=\"detail-save-btn\">Save Details</button></div>\n\n      <div class=\"clearfix\"></div>\n\n      <div class=\"p-4 mb-5 bg-white rounded box-shadow\">\n        <div id=\"detail-view\">\n          <form id=\"detail-view-create-form\">\n            <div class=\"row\">\n            </div>\n          </form>\n        </div>\n      </div>\n\n    </div> \n    ";
+      var tpl = "\n    <div class=\"container\">\n      <div class=\"section-top\">\n        <nav aria-label=\"breadcrumb\">\n          <ol class=\"breadcrumb\">\n            <li class=\"breadcrumb-item\"><a href=\"#dashboard\">Dashboard</a></li>\n            <li class=\"breadcrumb-item active\" aria-current=\"page\"></li>\n          </ol>\n        </nav>\n      </div>\n\n      <div class=\"float-right d-none\"><button type=\"button\" class=\"btn btn-light btn-sm mb-4\" id=\"detail-edit-btn\">Edit Details</button></div>\n      <div class=\"float-right d-none\"><button type=\"button\" class=\"btn btn-light btn-sm mb-4\" id=\"detail-save-btn\">Save Details</button></div>\n\n      <div class=\"clearfix\"></div>\n      \n      \n      <div id=\"details-all\" class=\"mb-5\">\n        \n        <div class=\"p-4 mb-3 bg-white rounded box-shadow detail-sections\">\n          <div id=\"detail-view\">\n            <form id=\"detail-view-create-form\">\n              <div class=\"row\">\n              </div>\n            </form>\n          </div>\n        </div>\n\n        \n      </div>\n\n\n\n    </div> \n    ";
       return tpl;
     }
   }, {
@@ -35048,11 +35048,12 @@ var Detail = function () {
 
       var readdetailParamURL = new _codeComp2.default().mainCode() + '&pagetype=detail&pageid=' + paramId + '&action=readpagedatas';
 
-      console.log('detail=', readdetailParamURL);
+      // console.log('detail=',readdetailParamURL)
 
       $('.loader').fadeIn();
       $.getJSON(readdetailParamURL, function (callback) {
-        console.log(callback);
+        // console.log(callback)
+
 
         if (callback.result != '{"result":false}') {
           if (callback.result[0] == 'pageremoved') {
@@ -35061,11 +35062,12 @@ var Detail = function () {
           } else {
 
             headings = callback.result[0];
-            console.log('callbackHeading===', headings);
+            // console.log('callbackHeading===',headings)
+
 
             self.listDatas.push(callback);
 
-            console.log('datas==', self.listDatas[0].result[1]);
+            // console.log('datas==',self.listDatas[0].result[1])
 
             if (!self.listDatas[0].result[1]) {
               pushData(self.listDatas[0], 'create');
@@ -35358,185 +35360,266 @@ var Detail = function () {
 
 var pushData = function pushData(data, action) {
 
-  // let fileName
+  console.log('allDATA==', data);
 
+  var getListVal, multipleSection;
 
   var headings = data.result[0];
-  var getListVal = data.result[1];
 
-  var getRowId = '';
+  $.each(data.result, function (ind, el) {
 
-  console.log('getListVal', getListVal);
+    if (ind == 1) {
+      multipleSection = false;
+      getListVal = data.result[ind];
 
-  var readOnly = '';
+      var getRowId = '';
 
-  $('#detail-view').attr('data-action', action);
-  if (typeof getListVal != 'undefined') {
-    getRowId = getListVal[0];
-  }
-  $('#detail-save-btn').attr({ 'data-action': action, 'data-rowid': getRowId });
-  // $('#detail-save-btn').attr('data-rowid', getListVal[0]);
+      // console.log('getListVal',getListVal)
 
-  if (action == 'create') {
-    // $('#listing-modal').addClass('createList').removeClass('editList').find('.modal-title').text('Add Details')
-    // fileName = ''
-    $('#detail-save-btn').parent().removeClass('d-none');
-    // $('#listing-okBtn').attr({'data-action':'create', 'data-rowid':''})
-  }
-  if (action == 'read') {
-    readOnly = 'readonly';
-    $('#detail-save-btn').parent().addClass('d-none');
-    $('#detail-edit-btn').parent().removeClass('d-none');
-    // $('#listing-modal').removeClass('createList').addClass('editList').find('.modal-title').text('Edit')
-    // $('#listing-okBtn').attr({'data-action':'edit', 'data-rowid':rowId})
-  }
-  if (action == 'edit') {
-    $('#detail-edit-btn').parent().addClass('d-none');
-    $('#detail-save-btn').parent().removeClass('d-none');
-  }
+      var readOnly = '';
 
-  // $('#listing-modal form .row').html('')
-  $('#detail-view .row').html('');
+      $('#detail-view').attr('data-action', action);
+      if (typeof getListVal != 'undefined') {
+        getRowId = getListVal[0];
+      }
+      $('#detail-save-btn').attr({ 'data-action': action, 'data-rowid': getRowId });
 
-  console.log('modal-headings==', headings);
+      if (action == 'create') {
+        $('#detail-save-btn').parent().removeClass('d-none');
+      }
+      if (action == 'read') {
+        readOnly = 'readonly';
+        $('#detail-save-btn').parent().addClass('d-none');
+        $('#detail-edit-btn').parent().removeClass('d-none');
+      }
+      if (action == 'edit') {
+        $('#detail-edit-btn').parent().addClass('d-none');
+        $('#detail-save-btn').parent().removeClass('d-none');
+      }
 
-  $.each(headings, function (index, elm) {
+      $('#detail-view .row').html('');
 
-    var colIndex = index + 1;
+      // console.log('modal-headings==',headings)
 
-    var tElm,
-        func = "";
-    if (elm.charAt(0) == '_') {
-      elm = '_';
-    } else if (elm.indexOf("(") >= 0) {
-      tElm = elm.split("(");
-      elm = tElm[0];
-      func = tElm[1].slice(0, -1);
+
+      $.each(headings, function (index, elm) {
+
+        var colIndex = index + 1;
+
+        var tElm,
+            func = "";
+        if (elm.charAt(0) == '_') {
+          elm = '_';
+        } else if (elm.indexOf("(") >= 0) {
+          tElm = elm.split("(");
+          elm = tElm[0];
+          func = tElm[1].slice(0, -1);
+        }
+
+        var insertVal = '';
+
+        if (typeof getListVal != 'undefined') {
+          insertVal = getListVal[index];
+        }
+
+        var ignoreFields = ['count', 'time', 'updatedtime', 'file', 'edit', 'remove', 'subdetails'];
+
+        if (elm != '_' && ignoreFields.indexOf(func) == -1) {
+
+          var typeElm = "",
+              fullElm;
+          if (func.indexOf("[") >= 0) {
+            typeElm = func.split("[")[1].slice(0, -1);
+          }
+          // console.log('func==',typeElm)
+
+          if (typeElm == 'ti' || typeElm == "") {
+            fullElm = "<input type=\"text\" class=\"form-control dynamicElem\" " + readOnly + " placeholder=\"" + elm + "\" value=\"" + insertVal + "\" data-filedname=\"" + func + "\" data-colindex=\"" + colIndex + "\">";
+          }
+          if (typeElm == 'ta') {
+            fullElm = "<textarea rows=\"4\" class=\"form-control dynamicElem\" " + readOnly + " placeholder=\"" + elm + "\" data-filedname=\"" + func + "\" data-colindex=\"" + colIndex + "\">" + insertVal + "</textarea>";
+          }
+
+          $('#detail-view .row').append("\n            <div class=\"col-md-4\">\n            <div class=\"form-group input-group-sm mb-3\">\n            <label>" + elm + "</label>\n            " + fullElm + "\n            </div>\n            </div>\n            ");
+        }
+        if (func == 'file') {
+          console.log(insertVal);
+          // $('[for="fileUpload"]').text('Choose image...')
+          var imageId = '',
+              imageName = 'Choose image...';
+
+          if (insertVal != '') {
+            imageId = getListVal[index + 1];
+            imageName = getListVal[index + 2];
+          }
+
+          $('#detail-view .row').append("\n            <div class=\"col-md-12\" style=\"display:flex; margin-bottom: 2rem;\">\n            <div class=\"listing-image-preview\"><img id=\"previewImage\" src=\"" + insertVal + "\"></div>\n\n            <div class=\"img-section-arrange\">\n            <div>\n\n            <div class=\"form-group input-group-sm mb-3\">\n            <div class=\"custom-file\">\n            <input type=\"file\" name=\"file\" accept=\".jpg,.jpeg,.png,.gif,.bmp,.tiff\" class=\"custom-file-input dynamicElem elm-" + func + "\" id=\"fileUpload\" data-filedname=\"" + func + "\" data-colindex=\"" + colIndex + "\" data-imageid=\"" + imageId + "\">\n            <label class=\"custom-file-label\" for=\"fileUpload\">" + imageName + "</label>\n            </div>\n            </div>\n\n            <div class=\"imageControls\">\n            <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"zoom\" data-option=\"0.1\" title=\"Zoom In\"><i class=\"ion-ios-search-strong\"></i></button>\n            <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"zoom\" data-option=\"-0.1\" title=\"Zoom In\"><i class=\"ion-ios-search-strong\"></i></button>\n\n            <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"move\" data-option=\"-10\" data-second-option=\"0\" title=\"Move Left\"><i class=\"ion-android-arrow-back\"></i></button>\n            <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"move\" data-option=\"10\" data-second-option=\"0\" title=\"Move Right\"><i class=\"ion-android-arrow-forward\"></i></button>\n            <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"move\" data-option=\"0\" data-second-option=\"-10\" title=\"Move Up\"><i class=\"ion-android-arrow-up\"></i></button>\n            <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"move\" data-option=\"0\" data-second-option=\"10\" title=\"Move Down\"><i class=\"ion-android-arrow-down\"></i></button>\n\n            <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"rotate\" data-option=\"45\" title=\"Rotate Left\"><i class=\"ion-refresh\"></i></button>\n            <button type=\"button\" class=\"btn btn-danger btn-sm remove-image\"><i class=\"ion-trash-a\"></i></button>\n            </div>                \n\n            </div>\n            </div>\n            </div>\n            ");
+        }
+      });
     }
 
-    var insertVal = '';
-
-    if (typeof getListVal != 'undefined') {
-      insertVal = getListVal[index];
-    }
-
-    var ignoreFields = ['count', 'time', 'updatedtime', 'file', 'edit', 'remove', 'subdetails'];
-
-    if (elm != '_' && ignoreFields.indexOf(func) == -1) {
-
-      var typeElm = "",
-          fullElm;
-      if (func.indexOf("[") >= 0) {
-        typeElm = func.split("[")[1].slice(0, -1);
-      }
-      console.log('func==', typeElm);
-
-      if (typeElm == 'ti' || typeElm == "") {
-        fullElm = "<input type=\"text\" class=\"form-control dynamicElem\" " + readOnly + " placeholder=\"" + elm + "\" value=\"" + insertVal + "\" data-filedname=\"" + func + "\" data-colindex=\"" + colIndex + "\">";
-      }
-      if (typeElm == 'ta') {
-        fullElm = "<textarea rows=\"4\" class=\"form-control dynamicElem\" " + readOnly + " placeholder=\"" + elm + "\" data-filedname=\"" + func + "\" data-colindex=\"" + colIndex + "\">" + insertVal + "</textarea>";
-      }
-
-      $('#detail-view .row').append("\n            <div class=\"col-md-4\">\n              <div class=\"form-group input-group-sm mb-3\">\n              <label>" + elm + "</label>\n              " + fullElm + "\n              </div>\n            </div>\n          ");
-    }
-    if (func == 'file') {
-      console.log(insertVal);
-      // $('[for="fileUpload"]').text('Choose image...')
-      var imageId = '',
-          imageName = 'Choose image...';
-
-      if (insertVal != '') {
-        imageId = getListVal[index + 1];
-        imageName = getListVal[index + 2];
-      }
-
-      $('#detail-view .row').append("\n            <div class=\"col-md-12\" style=\"display:flex; margin-bottom: 2rem;\">\n              <div class=\"listing-image-preview\"><img id=\"previewImage\" src=\"" + insertVal + "\"></div>\n              \n              <div class=\"img-section-arrange\">\n                <div>\n\n                  <div class=\"form-group input-group-sm mb-3\">\n                    <div class=\"custom-file\">\n                    <input type=\"file\" name=\"file\" accept=\".jpg,.jpeg,.png,.gif,.bmp,.tiff\" class=\"custom-file-input dynamicElem elm-" + func + "\" id=\"fileUpload\" data-filedname=\"" + func + "\" data-colindex=\"" + colIndex + "\" data-imageid=\"" + imageId + "\">\n                    <label class=\"custom-file-label\" for=\"fileUpload\">" + imageName + "</label>\n                    </div>\n                  </div>\n\n                  <div class=\"imageControls\">\n                    <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"zoom\" data-option=\"0.1\" title=\"Zoom In\"><i class=\"ion-ios-search-strong\"></i></button>\n                    <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"zoom\" data-option=\"-0.1\" title=\"Zoom In\"><i class=\"ion-ios-search-strong\"></i></button>\n\n                    <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"move\" data-option=\"-10\" data-second-option=\"0\" title=\"Move Left\"><i class=\"ion-android-arrow-back\"></i></button>\n                    <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"move\" data-option=\"10\" data-second-option=\"0\" title=\"Move Right\"><i class=\"ion-android-arrow-forward\"></i></button>\n                    <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"move\" data-option=\"0\" data-second-option=\"-10\" title=\"Move Up\"><i class=\"ion-android-arrow-up\"></i></button>\n                    <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"move\" data-option=\"0\" data-second-option=\"10\" title=\"Move Down\"><i class=\"ion-android-arrow-down\"></i></button>\n\n                    <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"rotate\" data-option=\"45\" title=\"Rotate Left\"><i class=\"ion-refresh\"></i></button>\n                    <button type=\"button\" class=\"btn btn-danger btn-sm remove-image\"><i class=\"ion-trash-a\"></i></button>\n                  </div>                \n\n                </div>\n              </div>\n            </div>\n            ");
+    if (ind > 1) {
+      multipleSection = true;
+      return false;
     }
   });
 
-  var allDiv = "";
-  var headerValues;
-  var row;
+  if (multipleSection) {
+    var globalElm,
+        dataRow,
+        elmHead,
+        dataArry = [],
+        dataOnly = [];
+    // var elmType,elmId/*,availTypes = ['table','detail']*/
+    // console.log(getListVal)
 
-  // var cnt = 1
-  var setName;
+    for (var i = 2; i < data.result.length; i++) {
+      // console.log()
+      dataRow = true;
+      if (data.result[i][0].indexOf('table') != -1) {
+        dataRow = false;
+        elmHead = 0;
+        globalElm = 'table';
 
-  // $.each(data.result, function(index, elm) {
+        if (!$.isEmptyObject(dataArry)) {
+          runSubSections(dataArry);
+        }
 
-  //   if(index == 0) {
-  //     headerValues = elm
-  //   } else {
+        dataOnly = [];
+        dataArry = [];
 
-  //     row = ``
+        dataArry.type = globalElm;
+        dataArry.mainHead = data.result[i];
+      }
 
+      if (data.result[i][0].indexOf('detail') != -1) {
+        dataRow = false;
+        elmHead = 0;
+        globalElm = 'detail';
 
-  //     $.each(elm, function(index1, elm1) {
-  //       /*var imgPath = `images/placeholder.png`
-  //       var imgView = `<img src="`+imgPath+`" alt="" />`
-  //       var updatedTimeVal = `-`*/
-  //       var innerDiv = ``
-  //       var func = headerValues[index1]
-  //       console.log(func)
-  //       if(func.charAt(0) == '_') {
-  //         func='_'
-  //       } else if(func.indexOf("(") >= 0) {
-  //         setName = func.split("(")[0]
-  //         func = func.split("(")[1].slice(0, -1)
-  //       }
+        if (dataArry) {
+          runSubSections(dataArry);
+        }
+        dataOnly = [];
+        dataArry = [];
 
-  //       if(func != '_') {
+        dataArry.type = globalElm;
+        dataArry.mainHead = data.result[i];
 
-  //         if(elm1 != '') {
+        // console.log('detailHead=',data.result[i])
+        // console.log('detailId',data.result[i][0])
+      }
 
-  //           if(func!='address') {
-  //             elm1 = `<label>`+setName+`</label>
-  //               <input type="text" class="form-control" readonly placeholder="`+setName+`" value="`+elm1+`">`
-  //           } 
-  //           else {
-  //             elm1 = `<label>`+setName+`</label>
-  //               <textarea class="form-control" rows="3" readonly placeholder="`+setName+`">`+elm1+`</textarea>`
-  //           }
+      if (dataRow && globalElm == 'table' || dataRow && globalElm == 'detail') {
 
-  //           row += `<div class="col-md-4 mb-3">`+elm1+`</div>`
+        // console.log('Table data==',data.result[i])
+        dataOnly.push(data.result[i]);
+        dataArry['data'] = dataOnly;
+        // var tableTitle = data.result[i]
+        // console.log('tableTitle==',tableTitle)
+        /*var td
+        $.each(data.result[i], function(index, el) {
+          // console.log()
+          if(elmHead == 0) {
+            td += `<th>`+el+`</th>`
+            elmHead ++
+          } else {
+            td += `<td>`+el+`</td>`
+          }
+        });
+        
+        tr += `<tr>`+td+`</tr>`
+        
+        console.log('tableDatas=',data.result[i])*/
+      }
+    }
 
-  //           /*innerDiv += `<div class="col-md-4 mb-3">`+elm1+`</div>`
-  //           if(cnt % 2 != 0) {
-  //             row += `<div class="row">`+innerDiv
-  //           } else {
-  //             if(cnt == 1) {
-  //               row += innerDiv
-  //             } else {
-  //               row += innerDiv+`</div>`
-  //             }
-  //           }
-  //           cnt++*/
-  //         }
+    runSubSections(dataArry);
 
-  //       }
-
-  //     });
-
-  //   }
-
-  // });
-
-  /*if(cnt % 2 == 0) {
-    row += `</div>`
-  }*/
-
-  // if(typeof row == 'undefined') {
-  //   row = `<p class="mb-0 w-100 text-center">No Records Found</p>`
-  //   // $('#detail-create-btn').trigger('click')
-  // }
-
-  // allDiv += `<div class="form-row">
-  // `+row+` 
-  // </div>`
+    // console.log(dataArry)
 
 
-  // $('#detail-view').html(allDiv)
+    /*  $.each(data.result, function(index, el) {
+    
+        if(index>=2) {
+    
+          getListVal = data.result[index]
+    
+         
+          $.each(availTypes,function(i, type) {
+            if(el[0].indexOf(type+'-') != -1) {
+              elmType = type
+              elmId = el[0]
+            }
+          });
+    
+          singleElm = ``
+    
+          $.each(getListVal, function(ix, dt) {
+              
+            if(getListVal[ix] != "") {
+    
+              if(elmType == 'table') {
+    
+                if(globalElm != 'table') {
+                  globalElm = 'table'
+                }
+    
+                if(globalElm == 'table') {
+                  singleElm += `<td>`+dt+`</td>`
+                }
+    
+              }
+    
+            } else {
+              return false 
+            }
+    
+          });
+    
+          fullElm += `<tr>`+singleElm+`</tr>`
+          
+        }
+    
+      });*/
 
+    // console.log(fullElm)
+  }
+
+  function runSubSections(dataArry) {
+    console.log('finalDataArry==', dataArry);
+
+    if (dataArry.type == 'table') {
+      var tableId = dataArry.mainHead[0];
+      var caption = dataArry.mainHead[2];
+
+      if (dataArry.mainHead[1] == '--') {
+        $('#details-all').append("\n        <div class=\"p-4 mb-3 bg-white rounded box-shadow detail-sections\">\n          <div id=\"" + tableId + "\">\n          </div>\n        </div>\n      ");
+      }
+      if (dataArry.mainHead[1] == '-') {
+        $('#details-all .detail-sections:last-of-type').append("\n        <hr>\n        <div id=\"" + tableId + "\">\n        </div>\n      ");
+      }
+      $('#' + tableId).append("\n      <h6>" + caption + "</h6>\n      <table class=\"table\"></table>\n    ");
+
+      var ignoreFields = ['count', 'time', 'updatedtime', 'file', 'edit', 'remove', 'subdetails'];
+
+      $.each(dataArry.data, function (index1, elm1) {
+        var tr = "";
+        $.each(elm1, function (index2, elm2) {
+
+          if (elm2 != '') {
+            if (elm2 != '_' && ignoreFields.indexOf(elm2) == -1) {
+              tr += "<td>" + elm2 + "</td>";
+            }
+          } else {
+            return false;
+          }
+        });
+
+        $('#' + tableId + ' table').append("<tr>" + tr + "</tr>");
+      });
+    }
+  }
 };
 
 exports.default = Detail;
