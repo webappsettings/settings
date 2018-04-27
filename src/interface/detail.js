@@ -25,15 +25,23 @@ class Detail {
       <div class="float-right d-none"><button type="button" class="btn btn-light btn-sm mb-4" id="detail-save-btn">Save Details</button></div>
 
       <div class="clearfix"></div>
-
-      <div class="p-4 mb-5 bg-white rounded box-shadow">
-        <div id="detail-view">
-          <form id="detail-view-create-form">
-            <div class="row">
-            </div>
-          </form>
+      
+      
+      <div id="details-all" class="mb-5">
+        
+        <div class="p-4 mb-3 bg-white rounded box-shadow detail-sections">
+          <div id="detail-view">
+            <form id="detail-view-create-form">
+              <div class="row">
+              </div>
+            </form>
+          </div>
         </div>
+
+        
       </div>
+
+
 
     </div> 
     `
@@ -53,11 +61,11 @@ class Detail {
 
     let readdetailParamURL = new CodeComp().mainCode()+'&pagetype=detail&pageid='+paramId+'&action=readpagedatas'
 
-    console.log('detail=',readdetailParamURL)
+    // console.log('detail=',readdetailParamURL)
 
     $('.loader').fadeIn()
     $.getJSON(readdetailParamURL, function(callback) {
-      console.log(callback)
+      // console.log(callback)
 
 
       if(callback.result != '{"result":false}') {
@@ -67,12 +75,12 @@ class Detail {
         } else {
           
             headings = callback.result[0];
-            console.log('callbackHeading===',headings)
+            // console.log('callbackHeading===',headings)
 
 
             self.listDatas.push(callback)
 
-            console.log('datas==',self.listDatas[0].result[1])
+            // console.log('datas==',self.listDatas[0].result[1])
             
             if(!self.listDatas[0].result[1]) {
               pushData(self.listDatas[0], 'create')
@@ -423,48 +431,47 @@ class Detail {
 const pushData = (data, action) => {
 
 
-  // let fileName
 
+  console.log('allDATA==',data)
+  
+  var getListVal, multipleSection
 
   var headings = data.result[0]
-  var getListVal = data.result[1]
 
-  var getRowId = ''
+  $.each(data.result, function(ind, el) {
 
-  console.log('getListVal',getListVal)
+    if(ind == 1) {
+      multipleSection = false
+      getListVal = data.result[ind]
 
-  var readOnly = ''
+      var getRowId = ''
+
+      // console.log('getListVal',getListVal)
+
+      var readOnly = ''
 
       $('#detail-view').attr('data-action',action)
       if(typeof getListVal != 'undefined') {
         getRowId = getListVal[0]
       }
       $('#detail-save-btn').attr({'data-action':action, 'data-rowid':getRowId})
-      // $('#detail-save-btn').attr('data-rowid', getListVal[0]);
       
       if(action == 'create') {
-        // $('#listing-modal').addClass('createList').removeClass('editList').find('.modal-title').text('Add Details')
-        // fileName = ''
         $('#detail-save-btn').parent().removeClass('d-none')
-        // $('#listing-okBtn').attr({'data-action':'create', 'data-rowid':''})
       }
       if(action == 'read') {
-          readOnly='readonly'
-           $('#detail-save-btn').parent().addClass('d-none')
-          $('#detail-edit-btn').parent().removeClass('d-none')
-        // $('#listing-modal').removeClass('createList').addClass('editList').find('.modal-title').text('Edit')
-        // $('#listing-okBtn').attr({'data-action':'edit', 'data-rowid':rowId})
+        readOnly='readonly'
+        $('#detail-save-btn').parent().addClass('d-none')
+        $('#detail-edit-btn').parent().removeClass('d-none')
       }
       if(action == 'edit') {
         $('#detail-edit-btn').parent().addClass('d-none')
         $('#detail-save-btn').parent().removeClass('d-none')
       }
 
-      // $('#listing-modal form .row').html('')
       $('#detail-view .row').html('')
 
-      console.log('modal-headings==',headings)
-
+      // console.log('modal-headings==',headings)
 
 
       $.each(headings, function(index, elm) {
@@ -489,17 +496,15 @@ const pushData = (data, action) => {
         }
         
 
-
-
         let ignoreFields = ['count','time','updatedtime','file','edit','remove','subdetails'];
 
         if((elm!='_') && ignoreFields.indexOf(func) == -1) {
-          
+
           var typeElm = ``, fullElm
           if(func.indexOf("[") >= 0) {
             typeElm = func.split("[")[1].slice(0, -1)
           }
-          console.log('func==',typeElm)
+          // console.log('func==',typeElm)
 
           if(typeElm == 'ti' || typeElm ==``) {
             fullElm = `<input type="text" class="form-control dynamicElem" `+readOnly+` placeholder="`+elm+`" value="`+insertVal+`" data-filedname="`+func+`" data-colindex="`+colIndex+`">`
@@ -507,19 +512,16 @@ const pushData = (data, action) => {
           if(typeElm == 'ta') {
             fullElm = `<textarea rows="4" class="form-control dynamicElem" `+readOnly+` placeholder="`+elm+`" data-filedname="`+func+`" data-colindex="`+colIndex+`">`+insertVal+`</textarea>`
           }
-
-
-
-          
+      
 
           $('#detail-view .row').append(`
             <div class="col-md-4">
-              <div class="form-group input-group-sm mb-3">
-              <label>`+elm+`</label>
-              `+fullElm+`
-              </div>
+            <div class="form-group input-group-sm mb-3">
+            <label>`+elm+`</label>
+            `+fullElm+`
             </div>
-          `)
+            </div>
+            `)
         }
         if(func=='file') {
           console.log(insertVal)
@@ -533,129 +535,235 @@ const pushData = (data, action) => {
 
           $('#detail-view .row').append(`
             <div class="col-md-12" style="display:flex; margin-bottom: 2rem;">
-              <div class="listing-image-preview"><img id="previewImage" src="`+insertVal+`"></div>
-              
-              <div class="img-section-arrange">
-                <div>
+            <div class="listing-image-preview"><img id="previewImage" src="`+insertVal+`"></div>
 
-                  <div class="form-group input-group-sm mb-3">
-                    <div class="custom-file">
-                    <input type="file" name="file" accept=".jpg,.jpeg,.png,.gif,.bmp,.tiff" class="custom-file-input dynamicElem elm-`+func+`" id="fileUpload" data-filedname="`+func+`" data-colindex="`+colIndex+`" data-imageid="`+imageId+`">
-                    <label class="custom-file-label" for="fileUpload">`+imageName+`</label>
-                    </div>
-                  </div>
+            <div class="img-section-arrange">
+            <div>
 
-                  <div class="imageControls">
-                    <button type="button" class="btn btn-primary btn-sm" data-method="zoom" data-option="0.1" title="Zoom In"><i class="ion-ios-search-strong"></i></button>
-                    <button type="button" class="btn btn-primary btn-sm" data-method="zoom" data-option="-0.1" title="Zoom In"><i class="ion-ios-search-strong"></i></button>
+            <div class="form-group input-group-sm mb-3">
+            <div class="custom-file">
+            <input type="file" name="file" accept=".jpg,.jpeg,.png,.gif,.bmp,.tiff" class="custom-file-input dynamicElem elm-`+func+`" id="fileUpload" data-filedname="`+func+`" data-colindex="`+colIndex+`" data-imageid="`+imageId+`">
+            <label class="custom-file-label" for="fileUpload">`+imageName+`</label>
+            </div>
+            </div>
 
-                    <button type="button" class="btn btn-primary btn-sm" data-method="move" data-option="-10" data-second-option="0" title="Move Left"><i class="ion-android-arrow-back"></i></button>
-                    <button type="button" class="btn btn-primary btn-sm" data-method="move" data-option="10" data-second-option="0" title="Move Right"><i class="ion-android-arrow-forward"></i></button>
-                    <button type="button" class="btn btn-primary btn-sm" data-method="move" data-option="0" data-second-option="-10" title="Move Up"><i class="ion-android-arrow-up"></i></button>
-                    <button type="button" class="btn btn-primary btn-sm" data-method="move" data-option="0" data-second-option="10" title="Move Down"><i class="ion-android-arrow-down"></i></button>
+            <div class="imageControls">
+            <button type="button" class="btn btn-primary btn-sm" data-method="zoom" data-option="0.1" title="Zoom In"><i class="ion-ios-search-strong"></i></button>
+            <button type="button" class="btn btn-primary btn-sm" data-method="zoom" data-option="-0.1" title="Zoom In"><i class="ion-ios-search-strong"></i></button>
 
-                    <button type="button" class="btn btn-primary btn-sm" data-method="rotate" data-option="45" title="Rotate Left"><i class="ion-refresh"></i></button>
-                    <button type="button" class="btn btn-danger btn-sm remove-image"><i class="ion-trash-a"></i></button>
-                  </div>                
+            <button type="button" class="btn btn-primary btn-sm" data-method="move" data-option="-10" data-second-option="0" title="Move Left"><i class="ion-android-arrow-back"></i></button>
+            <button type="button" class="btn btn-primary btn-sm" data-method="move" data-option="10" data-second-option="0" title="Move Right"><i class="ion-android-arrow-forward"></i></button>
+            <button type="button" class="btn btn-primary btn-sm" data-method="move" data-option="0" data-second-option="-10" title="Move Up"><i class="ion-android-arrow-up"></i></button>
+            <button type="button" class="btn btn-primary btn-sm" data-method="move" data-option="0" data-second-option="10" title="Move Down"><i class="ion-android-arrow-down"></i></button>
 
-                </div>
-              </div>
+            <button type="button" class="btn btn-primary btn-sm" data-method="rotate" data-option="45" title="Rotate Left"><i class="ion-refresh"></i></button>
+            <button type="button" class="btn btn-danger btn-sm remove-image"><i class="ion-trash-a"></i></button>
+            </div>                
+
+            </div>
+            </div>
             </div>
             `)
         }
       })
+  }
+
+  if(ind > 1) {
+    multipleSection = true
+    return false
+  }
+
+});
 
 
+if(multipleSection) {
+  var globalElm, dataRow, elmHead, dataArry = [], dataOnly = []
+  // var elmType,elmId/*,availTypes = ['table','detail']*/
+  // console.log(getListVal)
 
+  for(var i=2; i<data.result.length; i++) {
+    // console.log()
+    dataRow = true
+    if(data.result[i][0].indexOf('table') != -1) {
+      dataRow = false
+      elmHead = 0
+      globalElm = 'table'
 
+      if(!$.isEmptyObject(dataArry)) {
+        runSubSections(dataArry)
+      }
 
+      dataOnly = []
+      dataArry = []
 
-  var allDiv = ``
-  var headerValues
-  var row
-
-  // var cnt = 1
-  var setName
-
-
-
-
-  // $.each(data.result, function(index, elm) {
-
-  //   if(index == 0) {
-  //     headerValues = elm
-  //   } else {
-
-  //     row = ``
-
-      
-  //     $.each(elm, function(index1, elm1) {
-  //       /*var imgPath = `images/placeholder.png`
-  //       var imgView = `<img src="`+imgPath+`" alt="" />`
-  //       var updatedTimeVal = `-`*/
-  //       var innerDiv = ``
-  //       var func = headerValues[index1]
-  //       console.log(func)
-  //       if(func.charAt(0) == '_') {
-  //         func='_'
-  //       } else if(func.indexOf("(") >= 0) {
-  //         setName = func.split("(")[0]
-  //         func = func.split("(")[1].slice(0, -1)
-  //       }
-
-  //       if(func != '_') {
-
-  //         if(elm1 != '') {
-            
-  //           if(func!='address') {
-  //             elm1 = `<label>`+setName+`</label>
-  //               <input type="text" class="form-control" readonly placeholder="`+setName+`" value="`+elm1+`">`
-  //           } 
-  //           else {
-  //             elm1 = `<label>`+setName+`</label>
-  //               <textarea class="form-control" rows="3" readonly placeholder="`+setName+`">`+elm1+`</textarea>`
-  //           }
-
-  //           row += `<div class="col-md-4 mb-3">`+elm1+`</div>`
-
-  //           /*innerDiv += `<div class="col-md-4 mb-3">`+elm1+`</div>`
-  //           if(cnt % 2 != 0) {
-  //             row += `<div class="row">`+innerDiv
-  //           } else {
-  //             if(cnt == 1) {
-  //               row += innerDiv
-  //             } else {
-  //               row += innerDiv+`</div>`
-  //             }
-  //           }
-  //           cnt++*/
-  //         }
-
-  //       }
-
-  //     });
-
-  //   }
+      dataArry.type = globalElm
+      dataArry.mainHead = data.result[i]
+          
     
-  // });
-
-  /*if(cnt % 2 == 0) {
-    row += `</div>`
-  }*/
+    }
 
 
-  // if(typeof row == 'undefined') {
-  //   row = `<p class="mb-0 w-100 text-center">No Records Found</p>`
-  //   // $('#detail-create-btn').trigger('click')
-  // }
-
-  // allDiv += `<div class="form-row">
-  // `+row+` 
-  // </div>`
+    if(data.result[i][0].indexOf('detail') != -1) {
+      dataRow = false
+      elmHead = 0
+      globalElm = 'detail'
 
 
+      if(dataArry) {
+        runSubSections(dataArry)
+      }
+      dataOnly = []
+      dataArry = []
 
-  // $('#detail-view').html(allDiv)
+
+      dataArry.type = globalElm
+      dataArry.mainHead = data.result[i]
+
+
+      // console.log('detailHead=',data.result[i])
+      // console.log('detailId',data.result[i][0])
+    }
+
+
+    if(dataRow && globalElm=='table' || dataRow && globalElm=='detail') {
+
+
+
+      // console.log('Table data==',data.result[i])
+      dataOnly.push(data.result[i])
+      dataArry['data']=dataOnly
+      // var tableTitle = data.result[i]
+      // console.log('tableTitle==',tableTitle)
+      /*var td
+      $.each(data.result[i], function(index, el) {
+        // console.log()
+        if(elmHead == 0) {
+          td += `<th>`+el+`</th>`
+          elmHead ++
+        } else {
+          td += `<td>`+el+`</td>`
+        }
+      });
+      
+      tr += `<tr>`+td+`</tr>`
+      
+      console.log('tableDatas=',data.result[i])*/
+    }
+
+
+  }
+
+  runSubSections(dataArry)
+
+  // console.log(dataArry)
+
+
+
+/*  $.each(data.result, function(index, el) {
+
+    if(index>=2) {
+
+      getListVal = data.result[index]
+
+     
+      $.each(availTypes,function(i, type) {
+        if(el[0].indexOf(type+'-') != -1) {
+          elmType = type
+          elmId = el[0]
+        }
+      });
+
+      singleElm = ``
+
+      $.each(getListVal, function(ix, dt) {
+          
+        if(getListVal[ix] != "") {
+
+          if(elmType == 'table') {
+
+            if(globalElm != 'table') {
+              globalElm = 'table'
+            }
+
+            if(globalElm == 'table') {
+              singleElm += `<td>`+dt+`</td>`
+            }
+
+          }
+
+        } else {
+          return false 
+        }
+
+      });
+
+      fullElm += `<tr>`+singleElm+`</tr>`
+      
+    }
+
+  });*/
+
+
+
+  // console.log(fullElm)
+
+}
+
+
+function runSubSections(dataArry) {
+  console.log('finalDataArry==', dataArry)
+
+  if(dataArry.type == 'table') {
+    var tableId = dataArry.mainHead[0]
+    var caption = dataArry.mainHead[2]
+        
+    if(dataArry.mainHead[1] == '--') {
+      $('#details-all').append(`
+        <div class="p-4 mb-3 bg-white rounded box-shadow detail-sections">
+          <div id="`+tableId+`">
+          </div>
+        </div>
+      `)
+    }
+    if(dataArry.mainHead[1] == '-') {
+      $('#details-all .detail-sections:last-of-type').append(`
+        <hr>
+        <div id="`+tableId+`">
+        </div>
+      `)
+    }
+    $('#'+tableId).append(`
+      <h6>`+caption+`</h6>
+      <table class="table"></table>
+    `)
+
+
+    let ignoreFields = ['count','time','updatedtime','file','edit','remove','subdetails'];
+
+    $.each(dataArry.data, function(index1, elm1) {
+        var tr = ``
+        $.each(elm1, function(index2, elm2) {
+
+          if(elm2!='') {
+            if((elm2!='_') && ignoreFields.indexOf(elm2) == -1) {
+              tr += `<td>`+elm2+`</td>`
+            }
+          } else {
+            return false
+          }
+
+        })
+
+      $('#'+tableId+' table').append(`<tr>`+tr+`</tr>`)
+    })
+
+  }
+
+
+
+
+
+}
 
 
 }
