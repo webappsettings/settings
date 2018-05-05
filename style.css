@@ -336,4 +336,16 @@ h6.font-weight-400 {
 [data-action="read"] .img-section-arrange {
   display: none; }
 
+.subdetail-section {
+  /*  .form-control:disabled, .form-control[readonly] {
+   padding: 0;
+   font-size: 14px;
+   background-color: transparent;
+   border: none;
+ } */ }
+  .subdetail-section .subDynamicElem {
+    border: dashed 1px transparent; }
+    .subdetail-section .subDynamicElem[contenteditable="true"] {
+      border-color: #007bff; }
+
 /*# sourceMappingURL=style.css.map*/
