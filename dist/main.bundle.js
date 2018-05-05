@@ -35028,7 +35028,7 @@ var Detail = function () {
   _createClass(Detail, [{
     key: "render",
     value: function render() {
-      var tpl = "\n    <div class=\"container\">\n      <div class=\"section-top\">\n        <nav aria-label=\"breadcrumb\">\n          <ol class=\"breadcrumb\">\n            <li class=\"breadcrumb-item\"><a href=\"#dashboard\">Dashboard</a></li>\n            <li class=\"breadcrumb-item active\" aria-current=\"page\"></li>\n          </ol>\n        </nav>\n      </div>\n\n      <div class=\"float-right d-none\"><button type=\"button\" class=\"btn btn-light btn-sm mb-4\" id=\"detail-edit-btn\">Edit Details</button></div>\n      <div class=\"float-right d-none\"><button type=\"button\" class=\"btn btn-light btn-sm mb-4\" id=\"detail-save-btn\">Save Details</button></div>\n\n      <div class=\"clearfix\"></div>\n      \n      \n      <div id=\"details-all\" class=\"mb-5\">\n        \n        <div class=\"p-4 mb-3 bg-white rounded box-shadow detail-sections\">\n          <div id=\"detail-view\">\n            <form id=\"detail-view-create-form\">\n              <div class=\"row\">\n              </div>\n            </form>\n          </div>\n        </div>\n\n        \n      </div>\n\n\n\n    </div> \n    ";
+      var tpl = "\n    <div class=\"container\">\n      <div class=\"section-top\">\n        <nav aria-label=\"breadcrumb\">\n          <ol class=\"breadcrumb\">\n            <li class=\"breadcrumb-item\"><a href=\"#dashboard\">Dashboard</a></li>\n            <li class=\"breadcrumb-item active\" aria-current=\"page\"></li>\n          </ol>\n        </nav>\n      </div>\n\n      \n      <div class=\"clearfix\"></div>\n      \n      \n      <div id=\"details-all\" class=\"mb-5\">\n        \n        <div class=\"p-4 mb-3 bg-white rounded box-shadow detail-sections\">\n          <div id=\"detail-view\">\n            <form id=\"detail-view-create-form\">\n              <div class=\"float-right d-none\"><button type=\"button\" class=\"btn btn-outline-secondary btn-sm\" id=\"detail-edit-btn\">Edit Details</button></div>\n              <div class=\"float-right d-none\"><button type=\"button\" class=\"btn btn-outline-secondary btn-sm\" id=\"detail-save-btn\">Save Details</button></div>\n              <div class=\"row\">\n              </div>\n            </form>\n          </div>\n        </div>\n\n        \n      </div>\n\n\n\n    </div> \n    ";
       return tpl;
     }
   }, {
@@ -35074,6 +35074,11 @@ var Detail = function () {
               // elmentPushToModal('create')
             } else {
               pushData(self.listDatas[0], 'read');
+              var subDetailAvail = self.listDatas[0].result[2];
+              console.log('all_DATAS=', subDetailAvail);
+              if (subDetailAvail) {
+                pushSubData(self.listDatas[0], 'read');
+              }
             }
           }
         } else {
@@ -35082,83 +35087,6 @@ var Detail = function () {
 
         $('.loader').fadeOut();
       });
-
-      //Create New
-      /*$(document).on('click', '#detail-create-btn', function() {
-        elmentPushToModal('create')
-      });*/
-
-      /*function elmentPushToModal(action, rowId) {
-          var getListVal
-          
-        if(action == 'create') {
-          $('#listing-modal').addClass('createList').removeClass('editList').find('.modal-title').text('Add Details')
-          fileName = ''
-          $('#listing-okBtn').attr({'data-action':'create', 'data-rowid':''})
-        } else {
-          $('#listing-modal').removeClass('createList').addClass('editList').find('.modal-title').text('Edit')
-          $('#listing-okBtn').attr({'data-action':'edit', 'data-rowid':rowId})
-        }
-          $('#listing-modal form .row').html('')
-          console.log('modal-headings==',headings)
-          $.each(headings, function(index, elm) {
-            var colIndex = index+1
-          
-          var tElm,func = ``
-          if(elm.charAt(0) == '_') {
-            elm='_'
-          }
-          else if(elm.indexOf("(") >= 0){
-            tElm = elm.split("(")
-            elm = tElm[0]
-            func = tElm[1].slice(0, -1);
-          }
-            var insertVal = ''
-            if(getListVal) {
-            insertVal = getListVal[0][index]
-          }
-      
-          let ignoreFields = ['count','time','updatedtime','file','edit','remove','subdetails'];
-            if((elm!='_') && ignoreFields.indexOf(func) == -1) {
-            $('#detail-view').append(`
-              <div class="col-md-6">
-              <div class="form-group input-group-sm mb-3">
-              <label>`+elm+`</label>
-              <input type="text" class="form-control dynamicElem" placeholder="`+elm+`" value="`+insertVal+`" data-filedname="`+func+`" data-colindex="`+colIndex+`">
-              </div>
-              </div>
-              `)
-          }
-          if(func=='file') {
-            $('#detail-view').append(`
-              <div class="col-md-12" style="display:flex; margin-bottom: 2rem;">
-                <div class="listing-image-preview"><img id="previewImage"></div>
-                
-                <div class="img-section-arrange">
-                  <div>
-                      <div class="form-group input-group-sm mb-3">
-                      <div class="custom-file">
-                      <input type="file" name="file" accept=".jpg,.jpeg,.png,.gif,.bmp,.tiff" class="custom-file-input dynamicElem elm-`+func+`" id="fileUpload" data-filedname="`+func+`" data-colindex="`+colIndex+`">
-                      <label class="custom-file-label" for="fileUpload">Choose image...</label>
-                      </div>
-                    </div>
-                      <div class="imageControls">
-                      <button type="button" class="btn btn-primary btn-sm" data-method="zoom" data-option="0.1" title="Zoom In"><i class="ion-ios-search-strong"></i></button>
-                      <button type="button" class="btn btn-primary btn-sm" data-method="zoom" data-option="-0.1" title="Zoom In"><i class="ion-ios-search-strong"></i></button>
-                        <button type="button" class="btn btn-primary btn-sm" data-method="move" data-option="-10" data-second-option="0" title="Move Left"><i class="ion-android-arrow-back"></i></button>
-                      <button type="button" class="btn btn-primary btn-sm" data-method="move" data-option="10" data-second-option="0" title="Move Right"><i class="ion-android-arrow-forward"></i></button>
-                      <button type="button" class="btn btn-primary btn-sm" data-method="move" data-option="0" data-second-option="-10" title="Move Up"><i class="ion-android-arrow-up"></i></button>
-                      <button type="button" class="btn btn-primary btn-sm" data-method="move" data-option="0" data-second-option="10" title="Move Down"><i class="ion-android-arrow-down"></i></button>
-                        <button type="button" class="btn btn-primary btn-sm" data-method="rotate" data-option="45" title="Rotate Left"><i class="ion-refresh"></i></button>
-                      <button type="button" class="btn btn-danger btn-sm remove-image"><i class="ion-trash-a"></i></button>
-                    </div>                
-                    </div>
-                </div>
-              </div>
-              `)
-          }
-        })
-          }*/
 
       var uploadedImageType, uploadedImageURL;
 
@@ -35235,8 +35163,22 @@ var Detail = function () {
       });
 
       $(document).on('click', '#detail-edit-btn', function () {
-
         pushData(self.listDatas[0], 'edit');
+      });
+
+      $(document).on('click', '.subdetailedit', function () {
+        // pushData(self.listDatas[0], 'edit')
+        var subId = $(this).attr('data-subid');
+        $('#' + subId + ' .subDynamicElem').prop('contenteditable', true);
+        $(this).addClass('d-none');
+        $('.subdetailsave[data-subid="' + subId + '"]').removeClass('d-none');
+      });
+
+      $(document).on('click', '.subdetailsave', function () {
+        var subId = $(this).attr('data-subid');
+        $('#' + subId + ' .subDynamicElem').prop('contenteditable', false);
+        $(this).addClass('d-none');
+        $('.subdetailedit[data-subid="' + subId + '"]').removeClass('d-none');
       });
 
       $(document).on('click', '#detail-save-btn', function () {
@@ -35463,164 +35405,186 @@ var pushData = function pushData(data, action) {
       return false;
     }
   });
+};
 
-  if (multipleSection) {
-    var globalElm,
-        dataRow,
-        elmHead,
-        dataArry = [],
-        dataOnly = [];
-    // var elmType,elmId/*,availTypes = ['table','detail']*/
-    // console.log(getListVal)
+var innerRowIndex = 2;
 
-    for (var i = 2; i < data.result.length; i++) {
-      // console.log()
-      dataRow = true;
-      if (data.result[i][0].indexOf('table') != -1) {
-        dataRow = false;
-        elmHead = 0;
-        globalElm = 'table';
+var pushSubData = function pushSubData(data, action) {
 
-        if (!$.isEmptyObject(dataArry)) {
-          runSubSections(dataArry);
-        }
+  var globalElm,
+      dataRow,
+      elmHead,
+      dataArry = [],
+      dataOnly = [];
 
-        dataOnly = [];
-        dataArry = [];
+  for (var i = 2; i < data.result.length; i++) {
+    var addToArray = function addToArray() {
+      dataRow = false;
+      elmHead = 0;
 
-        dataArry.type = globalElm;
-        dataArry.mainHead = data.result[i];
+      if (!$.isEmptyObject(dataArry)) {
+        runSubSections(dataArry);
       }
+      dataOnly = [];
+      dataArry = [];
 
-      if (data.result[i][0].indexOf('detail') != -1) {
-        dataRow = false;
-        elmHead = 0;
-        globalElm = 'detail';
+      dataArry.type = globalElm;
+      dataArry.mainHead = data.result[i];
+    };
 
-        if (dataArry) {
-          runSubSections(dataArry);
-        }
-        dataOnly = [];
-        dataArry = [];
+    dataRow = true;
 
-        dataArry.type = globalElm;
-        dataArry.mainHead = data.result[i];
-
-        // console.log('detailHead=',data.result[i])
-        // console.log('detailId',data.result[i][0])
-      }
-
-      if (dataRow && globalElm == 'table' || dataRow && globalElm == 'detail') {
-
-        // console.log('Table data==',data.result[i])
-        dataOnly.push(data.result[i]);
-        dataArry['data'] = dataOnly;
-        // var tableTitle = data.result[i]
-        // console.log('tableTitle==',tableTitle)
-        /*var td
-        $.each(data.result[i], function(index, el) {
-          // console.log()
-          if(elmHead == 0) {
-            td += `<th>`+el+`</th>`
-            elmHead ++
-          } else {
-            td += `<td>`+el+`</td>`
-          }
-        });
-        
-        tr += `<tr>`+td+`</tr>`
-        
-        console.log('tableDatas=',data.result[i])*/
-      }
+    if (data.result[i][0].indexOf('table') != -1) {
+      globalElm = 'table';
+      addToArray();
+    }
+    if (data.result[i][0].indexOf('detail') != -1) {
+      globalElm = 'detail';
+      addToArray();
     }
 
-    runSubSections(dataArry);
-
-    // console.log(dataArry)
-
-
-    /*  $.each(data.result, function(index, el) {
-    
-        if(index>=2) {
-    
-          getListVal = data.result[index]
-    
-         
-          $.each(availTypes,function(i, type) {
-            if(el[0].indexOf(type+'-') != -1) {
-              elmType = type
-              elmId = el[0]
-            }
-          });
-    
-          singleElm = ``
-    
-          $.each(getListVal, function(ix, dt) {
-              
-            if(getListVal[ix] != "") {
-    
-              if(elmType == 'table') {
-    
-                if(globalElm != 'table') {
-                  globalElm = 'table'
-                }
-    
-                if(globalElm == 'table') {
-                  singleElm += `<td>`+dt+`</td>`
-                }
-    
-              }
-    
-            } else {
-              return false 
-            }
-    
-          });
-    
-          fullElm += `<tr>`+singleElm+`</tr>`
-          
-        }
-    
-      });*/
-
-    // console.log(fullElm)
+    if (dataRow && globalElm == 'table' || dataRow && globalElm == 'detail') {
+      dataOnly.push(data.result[i]);
+      dataArry['data'] = dataOnly;
+    }
   }
 
-  function runSubSections(dataArry) {
-    console.log('finalDataArry==', dataArry);
+  runSubSections(dataArry);
+};
 
-    if (dataArry.type == 'table') {
-      var tableId = dataArry.mainHead[0];
-      var caption = dataArry.mainHead[2];
+function runSubSections(dataArry) {
 
-      if (dataArry.mainHead[1] == '--') {
-        $('#details-all').append("\n        <div class=\"p-4 mb-3 bg-white rounded box-shadow detail-sections\">\n          <div id=\"" + tableId + "\">\n          </div>\n        </div>\n      ");
+  console.log('finalDataArry==', dataArry);
+
+  if (dataArry.type == 'table') {
+    var generateHeading = function generateHeading(headingVal) {
+
+      var pos = 0;
+
+      var ignoreFields = ['file', 'edit', 'remove'];
+
+      innerRowIndex++;
+
+      $.each(headingVal, function (index, elm) {
+
+        var tElm,
+            func = "";
+        if (elm.charAt(0) == '_') {
+          elm = '_';
+        } else if (elm.indexOf("(") >= 0) {
+          tElm = elm.split("(");
+          elm = tElm[0];
+          func = tElm[1].slice(0, -1);
+        }
+        if (elm != '_') {
+          console.log(elm);
+          tableHeading += "<th data-func=" + func + ">" + elm + "</th>";
+          if (ignoreFields.indexOf(func) != -1) {
+            getIndex.push(pos);
+          }
+          pos++;
+        }
+      });
+      console.log(getIndex);
+    };
+
+    var tableId = dataArry.mainHead[0];
+    var caption = dataArry.mainHead[2];
+
+    if (dataArry.mainHead[1] == '--') {
+      $('#details-all').append("\n        <div class=\"p-4 mb-3 bg-white rounded box-shadow detail-sections subdetail-section\">\n          <div class=\"float-right\">\n            <button type=\"button\" class=\"btn btn-outline-secondary btn-sm subdetailedit\" data-subid=\"" + tableId + "\"><i class=\"ion-edit\"></i> Edit</button>\n            <button type=\"button\" class=\"btn btn-secondary btn-sm subdetailsave d-none\" data-subid=\"" + tableId + "\"><i class=\"ion-checkmark\"></i> Save</button>\n          </div>\n          <div id=\"" + tableId + "\">\n          </div>\n        </div>\n      ");
+    }
+    if (dataArry.mainHead[1] == '-' || dataArry.mainHead[1] == '') {
+      var hr;
+      if (dataArry.mainHead[1] == '') {
+        hr = "";
+      } else {
+        hr = "<hr>\n        <div class=\"float-right\">\n          <button type=\"button\" class=\"btn btn-outline-secondary btn-sm subdetailedit\" data-subid=\"" + tableId + "\"><i class=\"ion-edit\"></i> Edit</button>\n          <button type=\"button\" class=\"btn btn-secondary btn-sm subdetailsave d-none\" data-subid=\"" + tableId + "\"><i class=\"ion-checkmark\"></i> Save</button>\n        </div>\n        ";
       }
-      if (dataArry.mainHead[1] == '-') {
-        $('#details-all .detail-sections:last-of-type').append("\n        <hr>\n        <div id=\"" + tableId + "\">\n        </div>\n      ");
-      }
-      $('#' + tableId).append("\n      <h6>" + caption + "</h6>\n      <table class=\"table\"></table>\n    ");
+      $('#details-all .detail-sections:last-of-type').append(hr + "\n        <div class=\"subdetail-section\">\n          <div id=\"" + tableId + "\">\n          </div>\n        </div>\n      ");
+    }
 
-      var ignoreFields = ['count', 'time', 'updatedtime', 'file', 'edit', 'remove', 'subdetails'];
+    innerRowIndex++;
 
-      $.each(dataArry.data, function (index1, elm1) {
-        var tr = "";
-        $.each(elm1, function (index2, elm2) {
+    $('#' + tableId).append("\n      <h6>" + caption + "</h6>\n      <table class=\"table\"></table>\n    ");
 
-          if (elm2 != '') {
-            if (elm2 != '_' && ignoreFields.indexOf(elm2) == -1) {
-              tr += "<td>" + elm2 + "</td>";
+    var tableHeading = "";
+    var getIndex = [];
+    var headingVal;
+    var listsInner;
+
+    var ignoreFields = ['count', 'edit', 'remove'];
+
+    var lists = "",
+        headerValues;
+
+    $.each(dataArry.data, function (index, elm) {
+
+      if (index == 0) {
+
+        headerValues = $.map(elm, function (el) {
+          return el !== '' ? el : null;
+        });
+
+        console.log(headerValues);
+
+        generateHeading(headerValues);
+
+        headerValues = elm;
+      } else {
+
+        listsInner = "";
+
+        $.each(elm, function (index1, elm1) {
+
+          var innerColIndex = index1 + 1;
+
+          var func = headerValues[index1];
+          var cntrlBtns = "";
+
+          if (func != '') {
+
+            if (func.charAt(0) == '_') {
+              func = '_';
+            } else if (func.indexOf("(") >= 0) {
+              func = func.split("(")[1].slice(0, -1);
+            }
+
+            if (func == 'edit') {
+              cntrlBtns = "<button class=\"btn btn-sm btn-outline-primary list-controls list-edit ion-edit\" data-rowindex=\"" + (index + 1) + "\" data-id=\"" + tableId + "\"></button>";
+            }
+            if (func == 'remove') {
+              cntrlBtns = "<button class=\"btn btn-sm btn-outline-danger list-controls list-remove ion-trash-a\" data-rowindex=\"" + (index + 1) + "\" data-id=\"" + tableId + "\"></button>";
+            }
+
+            if (func == 'count') {
+              // elm1 = index
+              listsInner += "<td>" + index + "</td>";
+            }
+
+            if (func != '_' && func != 'count' && cntrlBtns == "") {
+              // listsInner += `<td>`+elm1+`</td>`
+              // listsInner += `<td><textarea type="text" class="form-control" readonly="readonly" value="`+elm1+`">`+elm1+`</textarea></td>`
+              listsInner += "<td data-colindex=\"" + innerColIndex + "\"><div contenteditable=\"false\" class=\"subDynamicElem\">" + elm1 + "</div></td>";
+            }
+
+            if (func != '_' && func != 'count' && cntrlBtns != "") {
+              listsInner += "<td>" + cntrlBtns + "</td>";
             }
           } else {
             return false;
           }
         });
 
-        $('#' + tableId + ' table').append("<tr>" + tr + "</tr>");
-      });
-    }
+        innerRowIndex++;
+
+        lists += "<tr data-rowindex=\"" + innerRowIndex + "\">" + listsInner + "</tr>";
+      }
+    });
+
+    $('#' + tableId + ' table').html("\n      <thead>\n        <tr>\n          " + tableHeading + "\n        </tr>\n      </thead>\n      <tbody>\n        " + lists + "            \n      </tbody>\n  ");
   }
-};
+}
 
 exports.default = Detail;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
