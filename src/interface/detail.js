@@ -129,7 +129,7 @@ class Detail {
     var URL = window.URL || window.webkitURL
 
     if (URL) {
-          $(document).on('change', '#fileUpload', function(event) {
+        $(document).on('change', '#fileUpload', function(event) {
           var files = this.files
           var file
           if (files && files.length) {
@@ -176,15 +176,14 @@ class Detail {
             prevImg.cropper(method, option)
           }
         } else {
-            prevImg.cropper('destroy')
-            $('#fileUpload').val('')
-            $('[for="fileUpload"]').text('Choose image...')
-            fileChange = false
-            imageURI = undefined
-            $('#previewImage').attr('src','')
-            $('.imageControls').hide()
+          prevImg.cropper('destroy')
+          $('#fileUpload').val('')
+          $('[for="fileUpload"]').text('Choose image...')
+          fileChange = false
+          imageURI = undefined
+          $('#previewImage').attr('src','')
+          $('.imageControls').hide()
         }
-        
       });
 
 
@@ -193,19 +192,251 @@ class Detail {
       });
 
       $(document).on('click', '.subdetailedit', function() {
-        // pushData(self.listDatas[0], 'edit')
         let subId = $(this).attr('data-subid')
         $('#'+subId+' .subDynamicElem').prop('contenteditable', true)
         $(this).addClass('d-none')
         $('.subdetailsave[data-subid="'+subId+'"]').removeClass('d-none')
+
+        $('.subdetailcreate[data-subid="'+subId+'"]').addClass('d-none')
+        $('.subdetailcancel[data-subid="'+subId+'"]').removeClass('d-none')
+        
+        $('#'+subId+' .subtable-create-new').addClass('d-none')
+
+        $('.detail-sections').each(function(index, el) {
+          let getSection = $(this).attr('data-subdetailsection')
+          if(getSection != subId) {
+            $(this).addClass('disabled-subdetailsection')
+          }
+        });
       });
 
       $(document).on('click', '.subdetailsave', function() {
         let subId = $(this).attr('data-subid')
+        subdetailsave('editsub',subId)
         $('#'+subId+' .subDynamicElem').prop('contenteditable', false)
-        $(this).addClass('d-none')
-        $('.subdetailedit[data-subid="'+subId+'"]').removeClass('d-none')
+        $(this).prop('disabled',true)
+        $('.subdetailcancel[data-subid="'+subId+'"]').prop('disabled',true)
       });
+
+      $(document).on('click', '.subdetailcreate', function() {
+        let subId = $(this).attr('data-subid')
+        $('#'+subId+' .subtable-create-new').removeClass('d-none')
+        $('.subdetailedit[data-subid="'+subId+'"]').addClass('d-none')
+
+        $(this).addClass('d-none')
+        $('.subdetailcreateclose[data-subid="'+subId+'"]').removeClass('d-none')
+        $('.subdetailcreatesave[data-subid="'+subId+'"]').removeClass('d-none')
+
+      });
+
+
+      $(document).on('click', '.subdetailcancel', function() {
+        let subId = $(this).attr('data-subid')
+        $('#'+subId+' .subDynamicElem').prop('contenteditable', false)
+        
+        $(this).addClass('d-none')
+        $('.subdetailsave[data-subid="'+subId+'"]').addClass('d-none')
+        $('.subdetailcreate[data-subid="'+subId+'"]').removeClass('d-none')
+        $('.subdetailedit[data-subid="'+subId+'"]').removeClass('d-none')
+
+        pushSubData(self.listDatas[0], 'read')
+
+        $('.disabled-subdetailsection').removeClass('disabled-subdetailsection')
+
+      });
+
+
+      $(document).on('click', '.subdetailcreateclose', function() {
+        let subId = $(this).attr('data-subid')
+        $(this).addClass('d-none')
+        $('.subdetailcreatesave[data-subid="'+subId+'"]').addClass('d-none')
+        $('#'+subId+' .subtable-create-new').addClass('d-none')
+
+        $('.subdetailcreate[data-subid="'+subId+'"]').removeClass('d-none')
+        $('.subdetailedit[data-subid="'+subId+'"]').removeClass('d-none')
+      }); 
+
+      /*$(document).on('change', '.subdetail-section [contenteditable="true"]', function(event) {
+       alert($(this).attr('data-colindex'))
+      });*/
+
+      $(document).on("paste", '[contenteditable="true"]', function(e){
+        e.preventDefault();
+        var text = e.originalEvent.clipboardData.getData("text/plain");
+        var temp = document.createElement("div");
+        temp.innerHTML = text;
+        document.execCommand("insertHTML", false, temp.textContent);
+      });
+
+      
+      var allChangeArry = [];
+
+      $(document).on('change keydown keypress input', '.subdetail-section [contenteditable="true"]', function() {
+
+        var thisVal = $(this).text()
+
+        $(this).addClass('contenteditable-editing')
+       
+        let selectRow = $(this).closest('tr')
+        var colIndex = $(this).attr('data-colindex')
+        var headingindex = selectRow.attr('data-headingindex')
+        var rowindex = selectRow.attr('data-rowindex')
+        var tableId = selectRow.attr('data-tableid')
+        
+        if(typeof allChangeArry[tableId] == 'undefined') {
+          allChangeArry[tableId] = {}
+          allChangeArry[tableId].headingindex = headingindex
+        }
+
+        if(typeof allChangeArry[tableId].row == 'undefined') {
+          allChangeArry[tableId].row = {}
+        }
+
+        if(typeof allChangeArry[tableId].row[rowindex] == 'undefined') {
+          allChangeArry[tableId].row[rowindex] = {}
+        }
+
+        if(typeof allChangeArry[tableId].row[rowindex].column == 'undefined') {
+          allChangeArry[tableId].row[rowindex].column = {}
+        }
+
+        allChangeArry[tableId].row[rowindex].column[colIndex] = thisVal
+
+      });
+
+
+      function subdetailsave(action, subId) {
+
+        // console.log(allChangeArry[subId])
+
+        // console.log('headingindex=',allChangeArry[subId].headingindex)
+
+        /*for (var keyr in allChangeArry[subId].row) {
+          console.log('rowindex=',keyr)
+          for (var key in allChangeArry[subId].row[keyr].column) {
+            console.log('columnindex='+key)
+            console.log('columnvalue='+allChangeArry[subId].row[keyr].column[key])
+          }          
+        }*/
+        
+
+        var formdata = new FormData()
+        formdata.append('pagename', urlHash)
+        formdata.append('subsection', 'subsection')
+        formdata.append('pageid', paramId)
+        formdata.append('action', action)
+        formdata.append('subid', subId)
+
+        // alert(subId)
+
+        /*var dataRow = []
+
+        $('#'+subId+' table tbody tr').each(function(index, el) {
+          var rowindex = $(this).attr('data-rowindex')
+          var headingindex = $(this).attr('data-headingindex')
+
+          var mainObj = {}
+
+          mainObj.rowindex = rowindex
+          mainObj.headingindex = headingindex
+          
+          var obj = {}
+          var rowdata = []
+          $(this).find('.subDynamicElem').each(function(index, el) {
+            
+            var colindex = $(this).attr('data-colindex')
+            var values = $(this).text()
+            obj[colindex]=values
+          });
+
+          rowdata.push(obj)
+          mainObj.rowdata = rowdata
+
+          dataRow.push(mainObj)  
+
+        });*/
+   
+
+        /*for (var j=0; j<dataRow.length; j++) {
+          console.log('dataSubId=',subId)
+          console.log('dataHeadingIND=',dataRow[j].headingindex)
+          console.log('dataIND=',dataRow[j].rowindex)
+          console.log('dataaaa=',dataRow[j].rowdata[0])
+        }*/
+
+
+  
+
+        if(allChangeArry[subId]) {
+
+          var datarow = JSON.stringify(allChangeArry[subId])
+          console.log('datarow==',datarow)
+          formdata.append('datarow', datarow)
+
+          $.ajax({
+           method: 'POST',
+           url: new CodeComp().mainCode(),
+           data: formdata,
+           dataType: 'json',
+           contentType: false,
+           processData: false,
+           beforeSend: function(){
+            $('.loader').fadeIn()
+            }
+          })
+          .done(function(callback){
+
+            console.log(callback)
+
+            if(callback.result != '{"result":false}') {
+              if(callback.result == 'pageremoved'){
+                alert('This page removed!')
+                new HashControls('dashboard').setHash()
+              } 
+              if(callback.result == 'sectionremoved') {
+                alert('This section not available');
+                $('#'+subId).closest('.subdetail-section').slideUp('fast', function() {
+                  $(this).remove();
+                })
+              }
+
+              if(callback.result == 'success') {
+                alert('Success!')
+              }
+
+            }
+
+          })
+          .fail(function(callback) {
+            alert('This action not completed! Please try again')
+          })
+          .always(function(){
+
+            resetSubSection(subId)         
+
+            $('.loader').fadeOut()
+          });
+        } else {
+          // resetSubSection(subId)
+          $('.subdetailcancel[data-subid="'+subId+'"]').trigger('click')
+        }
+ 
+
+    }
+
+
+    function resetSubSection(subId) {
+      allChangeArry = []
+      $('[data-tableid="'+subId+'"]'+' .contenteditable-editing').removeClass('contenteditable-editing')
+
+      $('.disabled-subdetailsection').removeClass('disabled-subdetailsection')
+
+      $('.subdetailsave[data-subid="'+subId+'"]').prop('disabled',false).addClass('d-none')
+      $('.subdetailcancel[data-subid="'+subId+'"]').prop('disabled',false).addClass('d-none')
+      $('.subdetailedit[data-subid="'+subId+'"]').removeClass('d-none')
+      $('.subdetailcreate[data-subid="'+subId+'"]').removeClass('d-none')
+    }
+
 
 
       $(document).on('click', '#detail-save-btn', function() {
@@ -265,6 +496,8 @@ class Detail {
 
         dataRow = JSON.stringify(dataRow)
         formdata.append('coldatas', dataRow)
+
+        console.log('detailValues==',dataRow)
 
         /*for (var pair of formdata.entries()) {
           console.log(pair[0]+ '= ' + pair[1]); 
@@ -359,8 +592,6 @@ const pushData = (data, action) => {
       getListVal = data.result[ind]
 
       var getRowId = ''
-
-      // console.log('getListVal',getListVal)
 
       var readOnly = ''
 
@@ -495,7 +726,15 @@ const pushData = (data, action) => {
 
 var innerRowIndex = 2
 
-const pushSubData = (data, action) => {
+const pushSubData = (data, action, subAvailId) => {
+
+  if(action == 'read') {
+    if(!subAvailId) {
+      $('.subdetail-section').remove()
+    } else {
+
+    }
+  }
 
   var globalElm, dataRow, elmHead, dataArry = [], dataOnly = []
 
@@ -536,7 +775,7 @@ const pushSubData = (data, action) => {
   runSubSections(dataArry)
 }
 
-
+var tableHeadIndex
 
 function runSubSections(dataArry) {
 
@@ -545,14 +784,20 @@ function runSubSections(dataArry) {
   if(dataArry.type == 'table') {
     var tableId = dataArry.mainHead[0]
     var caption = dataArry.mainHead[2]
+
+    var controlBtns = `<div class="float-right">
+      <button type="button" class="btn btn-outline-secondary btn-sm subdetailedit" data-subid="`+tableId+`"><i class="ion-edit"></i> Edit</button>
+      <button type="button" class="btn btn-outline-secondary btn-sm subdetailcancel d-none" data-subid="`+tableId+`"><i class="ion-close"></i> Cancel</button>
+      <button type="button" class="btn btn-success btn-sm subdetailsave d-none" data-subid="`+tableId+`"><i class="ion-checkmark"></i> Save</button>
+      <button type="button" class="btn btn-success btn-sm subdetailcreate" data-subid="`+tableId+`"><i class="ion-plus"></i> Add New</button>
+      <button type="button" class="btn btn-outline-secondary btn-sm subdetailcreateclose d-none" data-subid="`+tableId+`"><i class="ion-close"></i> Close</button>
+      <button type="button" class="btn btn-success btn-sm subdetailcreatesave d-none" data-subid="`+tableId+`"><i class="ion-checkmark"></i> Save</button>
+    </div>`
         
     if(dataArry.mainHead[1] == '--') {
       $('#details-all').append(`
-        <div class="p-4 mb-3 bg-white rounded box-shadow detail-sections subdetail-section">
-          <div class="float-right">
-            <button type="button" class="btn btn-outline-secondary btn-sm subdetailedit" data-subid="`+tableId+`"><i class="ion-edit"></i> Edit</button>
-            <button type="button" class="btn btn-secondary btn-sm subdetailsave d-none" data-subid="`+tableId+`"><i class="ion-checkmark"></i> Save</button>
-          </div>
+        <div class="p-4 mb-3 bg-white rounded box-shadow detail-sections subdetail-section" data-subdetailsection="`+tableId+`">
+          `+controlBtns+`
           <div id="`+tableId+`">
           </div>
         </div>
@@ -564,10 +809,7 @@ function runSubSections(dataArry) {
         hr = ``
       } else {
         hr = `<hr>
-        <div class="float-right">
-          <button type="button" class="btn btn-outline-secondary btn-sm subdetailedit" data-subid="`+tableId+`"><i class="ion-edit"></i> Edit</button>
-          <button type="button" class="btn btn-secondary btn-sm subdetailsave d-none" data-subid="`+tableId+`"><i class="ion-checkmark"></i> Save</button>
-        </div>
+        `+controlBtns+`
         `
       }
       $('#details-all .detail-sections:last-of-type').append(hr+`
@@ -596,7 +838,7 @@ function runSubSections(dataArry) {
     let ignoreFields = ['count','edit','remove'];
 
 
-    var lists = ``,headerValues
+    var lists = ``,headerValues,tableCreateSection
 
     $.each(dataArry.data, function(index, elm) {
 
@@ -619,37 +861,31 @@ function runSubSections(dataArry) {
 
         $.each(elm, function(index1, elm1) {
 
-            var innerColIndex = index1+1
+          var innerColIndex = index1+1
+          var func = headerValues[index1]
+          var cntrlBtns = ``
 
-            var func = headerValues[index1]
-            var cntrlBtns = ``
+          if(func!='') {
 
-            if(func!='') {
-
-             if(func.charAt(0) == '_') {
-                  func='_'
-              } else if(func.indexOf("(") >= 0) {
-                 func = func.split("(")[1].slice(0, -1)
-              }
-
+            if(func.charAt(0) == '_') {
+              func='_'
+            } else if(func.indexOf("(") >= 0) {
+              func = func.split("(")[1].slice(0, -1)
+            }
             
             if(func=='edit') {
-              cntrlBtns = `<button class="btn btn-sm btn-outline-primary list-controls list-edit ion-edit" data-rowindex="`+(index+1)+`" data-id="`+tableId+`"></button>`
+              cntrlBtns = `<button class="btn btn-sm btn-outline-primary list-controls list-edit ion-edit" data-headingindex="`+tableHeadIndex+`" data-rowindex="`+(innerRowIndex+1)+`" data-id="`+tableId+`"></button>`
             }
             if(func=='remove') {
-              cntrlBtns = `<button class="btn btn-sm btn-outline-danger list-controls list-remove ion-trash-a" data-rowindex="`+(index+1)+`" data-id="`+tableId+`"></button>`
+              cntrlBtns = `<button class="btn btn-sm btn-outline-danger list-controls list-remove ion-trash-a" data-headingindex="`+tableHeadIndex+`" data-rowindex="`+(innerRowIndex+1)+`" data-id="`+tableId+`"></button>`
             }
 
-
             if(func=='count') {
-              // elm1 = index
               listsInner += `<td>`+index+`</td>`
             }
 
             if(func != '_' && func!='count' && cntrlBtns == ``) {
-              // listsInner += `<td>`+elm1+`</td>`
-              // listsInner += `<td><textarea type="text" class="form-control" readonly="readonly" value="`+elm1+`">`+elm1+`</textarea></td>`
-              listsInner += `<td data-colindex="`+innerColIndex+`"><div contenteditable="false" class="subDynamicElem">`+elm1+`</div></td>`
+              listsInner += `<td><div contenteditable="false" class="subDynamicElem" data-colindex="`+innerColIndex+`">`+elm1+`</div></td>`
             }
 
             if(func != '_' && func!='count' && cntrlBtns != ``) {
@@ -659,28 +895,31 @@ function runSubSections(dataArry) {
           } else {
             return false
           }
+
         })
 
         innerRowIndex++
 
-        lists += `<tr data-rowindex="`+innerRowIndex+`">`+listsInner+`</tr>`
+        lists += `<tr data-tableid="`+tableId+`" data-headingindex="`+tableHeadIndex+`" data-rowindex="`+innerRowIndex+`">`+listsInner+`</tr>`
         
       } 
 
-
-      
     })
 
-
+    
+    var tableFooter;
+    
     function generateHeading(headingVal) {
     
       var pos = 0
 
-      let ignoreFields = ['file','edit','remove'];
+      let ignoreFields = ['count','file','edit','remove'];
 
       innerRowIndex++
       
       $.each(headingVal, function(index, elm) {
+
+          var innerColIndex = index+1
               
           var tElm,func = ``
           if(elm.charAt(0) == '_') {
@@ -692,27 +931,42 @@ function runSubSections(dataArry) {
           }
           if(elm != '_') {
             console.log(elm)
-            tableHeading += `<th data-func=`+func+`>`+elm+`</th>`
+
+            tableHeadIndex = innerRowIndex
+
+            tableHeading += `<th data-func="`+func+`">`+elm+`</th>`
+
             if(ignoreFields.indexOf(func) != -1){
               getIndex.push(pos)
+              elm = `&nbsp;`
+            } else {
+              elm = `<div contenteditable="true" class="subCreateElem" data-colindex="`+innerColIndex+`">`+elm+`</div>`
             }
             pos++
+
+            tableFooter += `<td data-func="`+func+`">`+elm+`</td>`
+
           }
         
       })
-      console.log(getIndex)
+      console.log('getIndex==',getIndex)
     }
 
 
     $('#'+tableId+' table').html(`
       <thead>
-        <tr>
+        <tr data-tableid="`+tableId+`" data-headingindex="`+tableHeadIndex+`">
           `+tableHeading+`
         </tr>
       </thead>
       <tbody>
         `+lists+`            
       </tbody>
+      <tfoot class="subtable-create-new d-none">
+        <tr data-tableid="`+tableId+`">
+          `+tableFooter+`
+        </tr>
+      </tfoot>
   `)
 
   }

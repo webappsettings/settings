@@ -644,7 +644,7 @@ const pushData = (data) => {
         }
         if(elm != '_') {
           console.log(elm)
-          tableHeading += `<th data-func=`+func+`>`+elm+`</th>`
+          tableHeading += `<th data-func="`+func+`">`+elm+`</th>`
           if(ignoreFields.indexOf(func) != -1){
             getIndex.push(pos)
           } 
