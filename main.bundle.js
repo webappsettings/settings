@@ -35177,20 +35177,24 @@ var Detail = function () {
 
         $('#' + subId + ' .subtable-create-new').addClass('d-none');
 
+        disableAnotherSections(subId);
+      });
+
+      function disableAnotherSections(subId) {
         $('.detail-sections').each(function (index, el) {
-          var getSection = $(this).attr('data-subdetailsection');
+          var getSection = $(this).attr('data-subid');
           if (getSection != subId) {
             $(this).addClass('disabled-subdetailsection');
           }
         });
-      });
+      }
 
       $(document).on('click', '.subdetailsave', function () {
         var subId = $(this).attr('data-subid');
-        subdetailsave('editsub', subId);
         $('#' + subId + ' .subDynamicElem').prop('contenteditable', false);
         $(this).prop('disabled', true);
         $('.subdetailcancel[data-subid="' + subId + '"]').prop('disabled', true);
+        subdetailsave('editsubsection', subId);
       });
 
       $(document).on('click', '.subdetailcreate', function () {
@@ -35201,7 +35205,82 @@ var Detail = function () {
         $(this).addClass('d-none');
         $('.subdetailcreateclose[data-subid="' + subId + '"]').removeClass('d-none');
         $('.subdetailcreatesave[data-subid="' + subId + '"]').removeClass('d-none');
+
+        disableAnotherSections(subId);
       });
+
+      $(document).on('click', '.list-remove', function () {
+        var headingIndex = $(this).attr('data-headingindex');
+        var rowIndex = $(this).attr('data-rowindex');
+
+        var subId = $(this).attr('data-subid');
+
+        var formdata = new FormData();
+        formdata.append('pagename', urlHash);
+        formdata.append('subsection', 'subsection');
+        formdata.append('pageid', paramId);
+        formdata.append('action', 'deleterowbyindex');
+        formdata.append('subid', subId);
+        formdata.append('rowindex', rowIndex);
+        formdata.append('headingindex', headingIndex);
+
+        removeThisSubRow(formdata, subId, rowIndex);
+
+        // console.log(headingIndex + 'rowIndex=='+rowIndex)
+      });
+
+      function removeThisSubRow(formdata, subId, rowIndex) {
+
+        var result = confirm("Are you sure you want to remove this row?");
+
+        if (result) {
+
+          /* for (var pair of formdata.entries()) {
+             console.log(pair[0]+ '= ' + pair[1]); 
+           }*/
+
+          $.ajax({
+            method: 'POST',
+            url: new _codeComp2.default().mainCode(),
+            data: formdata,
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            beforeSend: function beforeSend() {
+              $('.loader').fadeIn();
+            }
+          }).done(function (callback) {
+
+            console.log(callback);
+            var output = JSON.parse(callback.result);
+            console.log('deleted=', output);
+            if (output.result) {
+              if (output.result != 'pageremoved') {
+                // $('[data-tableid="'+subId+'"][data-rowindex="'+rowIndex+'"]').remove()
+
+
+                // console.log('self.listDatas[0]==',self.listDatas[0].result)
+
+                self.listDatas[0].result.splice(rowIndex - 1, 1);
+
+                pushSubData(self.listDatas[0], 'read');
+              } else {
+                alert('This section already removed!');
+              }
+            } else {
+              alert('This page removed!');
+              // new CookieControls().deleteCookie()//Logout
+              new _hashControls2.default('dashboard').setHash();
+            }
+          }).fail(function (callback) {
+            alert('This action not completed! Please try again');
+          }).always(function () {
+            $('.loader').fadeOut();
+          });
+        }
+      }
+
+      var allChangeArry = [];
 
       $(document).on('click', '.subdetailcancel', function () {
         var subId = $(this).attr('data-subid');
@@ -35213,6 +35292,7 @@ var Detail = function () {
         $('.subdetailedit[data-subid="' + subId + '"]').removeClass('d-none');
 
         pushSubData(self.listDatas[0], 'read');
+        allChangeArry = [];
 
         $('.disabled-subdetailsection').removeClass('disabled-subdetailsection');
       });
@@ -35221,15 +35301,29 @@ var Detail = function () {
         var subId = $(this).attr('data-subid');
         $(this).addClass('d-none');
         $('.subdetailcreatesave[data-subid="' + subId + '"]').addClass('d-none');
-        $('#' + subId + ' .subtable-create-new').addClass('d-none');
+        $('#' + subId + ' .subtable-create-new').addClass('d-none').find('[contenteditable="true"]').text('').removeClass('contenteditable-editing').trigger('change');
 
         $('.subdetailcreate[data-subid="' + subId + '"]').removeClass('d-none');
         $('.subdetailedit[data-subid="' + subId + '"]').removeClass('d-none');
+
+        $('.disabled-subdetailsection').removeClass('disabled-subdetailsection');
+        allChangeArry = [];
       });
 
-      /*$(document).on('change', '.subdetail-section [contenteditable="true"]', function(event) {
-       alert($(this).attr('data-colindex'))
-      });*/
+      $(document).on('click', '.subdetailcreatesave', function () {
+        var subId = $(this).attr('data-subid');
+
+        /*let newRowIndex = $('#'+subId+' table tbody tr:last-of-type').attr('data-rowindex')
+        if(!newRowIndex) {
+          newRowIndex = $('#'+subId+' table thead tr').attr('data-headingindex')
+        }
+        newRowIndex = parseInt(newRowIndex)+1*/
+        $(this).prop('disabled', true);
+
+        subdetailsave('createsubsection', subId);
+
+        // alert(newRowIndex)
+      });
 
       $(document).on("paste", '[contenteditable="true"]', function (e) {
         e.preventDefault();
@@ -35239,19 +35333,33 @@ var Detail = function () {
         document.execCommand("insertHTML", false, temp.textContent);
       });
 
-      var allChangeArry = [];
-
       $(document).on('change keydown keypress input', '.subdetail-section [contenteditable="true"]', function () {
 
-        var thisVal = $(this).text();
+        if (this.textContent) {
+          this.dataset.divPlaceholderContent = 'true';
+          $(this).addClass('contenteditable-editing');
+        } else {
+          delete this.dataset.divPlaceholderContent;
+          $(this).removeClass('contenteditable-editing');
+        }
 
-        $(this).addClass('contenteditable-editing');
+        var thisVal = $(this).text();
 
         var selectRow = $(this).closest('tr');
         var colIndex = $(this).attr('data-colindex');
         var headingindex = selectRow.attr('data-headingindex');
         var rowindex = selectRow.attr('data-rowindex');
         var tableId = selectRow.attr('data-tableid');
+
+        if (typeof rowindex == 'undefined') {
+          rowindex = $('#' + tableId + ' table tbody tr:last-of-type').attr('data-rowindex');
+          headingindex = $('#' + tableId + ' table thead tr').attr('data-headingindex');
+          if (!rowindex) {
+            rowindex = headingindex;
+          }
+          rowindex = parseInt(rowindex) + 1;
+        }
+        $('#' + tableId).attr('data-lasteditedrowindex', rowindex);
 
         if (typeof allChangeArry[tableId] == 'undefined') {
           allChangeArry[tableId] = {};
@@ -35317,6 +35425,10 @@ var Detail = function () {
             dataRow.push(mainObj)  
           });*/
 
+        /*for (var pair of formdata.entries()) {
+          console.log(pair[0]+ '= ' + pair[1]); 
+        }*/
+
         /*for (var j=0; j<dataRow.length; j++) {
           console.log('dataSubId=',subId)
           console.log('dataHeadingIND=',dataRow[j].headingindex)
@@ -35328,6 +35440,7 @@ var Detail = function () {
 
           var datarow = JSON.stringify(allChangeArry[subId]);
           console.log('datarow==', datarow);
+          // return false;
           formdata.append('datarow', datarow);
 
           $.ajax({
@@ -35350,14 +35463,22 @@ var Detail = function () {
                 new _hashControls2.default('dashboard').setHash();
               }
               if (callback.result == 'sectionremoved') {
-                alert('This section not available');
-                $('#' + subId).closest('.subdetail-section').slideUp('fast', function () {
-                  $(this).remove();
-                });
+                alert('Failed!!! Please try again');
               }
+              if (callback.result.length >= 1) {
 
-              if (callback.result == 'success') {
-                alert('Success!');
+                var rowindex = $('#' + subId).attr('data-lasteditedrowindex');
+
+                if (action == 'createsubsection') {
+                  var editCreateAct = 0;
+                } else {
+                  var editCreateAct = 1;
+                }
+
+                self.listDatas[0].result.splice(parseInt(rowindex) - 1, editCreateAct, callback.result);
+
+                // console.log('ffffff==',self.listDatas[0])
+                pushSubData(self.listDatas[0], 'read');
               }
             }
           }).fail(function (callback) {
@@ -35370,20 +35491,28 @@ var Detail = function () {
           });
         } else {
           // resetSubSection(subId)
-          $('.subdetailcancel[data-subid="' + subId + '"]').trigger('click');
+          // alert(subId)
+          // $('.subdetailcancel[data-subid="'+subId+'"]').trigger('click')
+
+          resetSubSection(subId);
         }
       }
 
       function resetSubSection(subId) {
+
         allChangeArry = [];
+
         $('[data-tableid="' + subId + '"]' + ' .contenteditable-editing').removeClass('contenteditable-editing');
 
         $('.disabled-subdetailsection').removeClass('disabled-subdetailsection');
 
         $('.subdetailsave[data-subid="' + subId + '"]').prop('disabled', false).addClass('d-none');
         $('.subdetailcancel[data-subid="' + subId + '"]').prop('disabled', false).addClass('d-none');
-        $('.subdetailedit[data-subid="' + subId + '"]').removeClass('d-none');
-        $('.subdetailcreate[data-subid="' + subId + '"]').removeClass('d-none');
+        $('.subdetailedit[data-subid="' + subId + '"]').prop('disabled', false).removeClass('d-none');
+        $('.subdetailcreate[data-subid="' + subId + '"]').prop('disabled', false).removeClass('d-none');
+
+        $('.subdetailcreatesave[data-subid="' + subId + '"]').prop('disabled', false).addClass('d-none');
+        $('.subdetailcreateclose[data-subid="' + subId + '"]').prop('disabled', false).addClass('d-none');
       }
 
       $(document).on('click', '#detail-save-btn', function () {
@@ -35616,10 +35745,14 @@ var innerRowIndex = 2;
 
 var pushSubData = function pushSubData(data, action, subAvailId) {
 
+  innerRowIndex = 2;
+
   if (action == 'read') {
     if (!subAvailId) {
       $('.subdetail-section').remove();
-    } else {}
+    } else {
+      $('.subdetail-section[data-subid="' + subAvailId + '"]').remove();
+    }
   }
 
   var globalElm,
@@ -35672,7 +35805,7 @@ function runSubSections(dataArry) {
   if (dataArry.type == 'table') {
     var generateHeading = function generateHeading(headingVal) {
 
-      var pos = 0;
+      pos = 0;
 
       var ignoreFields = ['count', 'file', 'edit', 'remove'];
 
@@ -35699,26 +35832,32 @@ function runSubSections(dataArry) {
           tableHeading += "<th data-func=\"" + func + "\">" + elm + "</th>";
 
           if (ignoreFields.indexOf(func) != -1) {
-            getIndex.push(pos);
+            // getIndex.push(pos)
             elm = "&nbsp;";
           } else {
-            elm = "<div contenteditable=\"true\" class=\"subCreateElem\" data-colindex=\"" + innerColIndex + "\">" + elm + "</div>";
+            elm = "<div contenteditable=\"true\" class=\"subCreateElem\" data-colindex=\"" + innerColIndex + "\" data-placeholder=\"" + elm + "\"></div>";
           }
           pos++;
 
           tableFooter += "<td data-func=\"" + func + "\">" + elm + "</td>";
         }
       });
-      console.log('getIndex==', getIndex);
+      // console.log('getIndex==',getIndex)
     };
 
     var tableId = dataArry.mainHead[0];
     var caption = dataArry.mainHead[2];
 
-    var controlBtns = "<div class=\"float-right\">\n      <button type=\"button\" class=\"btn btn-outline-secondary btn-sm subdetailedit\" data-subid=\"" + tableId + "\"><i class=\"ion-edit\"></i> Edit</button>\n      <button type=\"button\" class=\"btn btn-outline-secondary btn-sm subdetailcancel d-none\" data-subid=\"" + tableId + "\"><i class=\"ion-close\"></i> Cancel</button>\n      <button type=\"button\" class=\"btn btn-success btn-sm subdetailsave d-none\" data-subid=\"" + tableId + "\"><i class=\"ion-checkmark\"></i> Save</button>\n      <button type=\"button\" class=\"btn btn-success btn-sm subdetailcreate\" data-subid=\"" + tableId + "\"><i class=\"ion-plus\"></i> Add New</button>\n      <button type=\"button\" class=\"btn btn-outline-secondary btn-sm subdetailcreateclose d-none\" data-subid=\"" + tableId + "\"><i class=\"ion-close\"></i> Close</button>\n      <button type=\"button\" class=\"btn btn-success btn-sm subdetailcreatesave d-none\" data-subid=\"" + tableId + "\"><i class=\"ion-checkmark\"></i> Save</button>\n    </div>";
+    // alert(dataArry.data.length)
+    var editCntrlBtns = "";
+    if (dataArry.data.length >= 2) {
+      editCntrlBtns = "\n      <button type=\"button\" class=\"btn btn-outline-secondary btn-sm subdetailedit\" data-subid=\"" + tableId + "\"><i class=\"ion-edit\"></i> Edit</button>\n      <button type=\"button\" class=\"btn btn-outline-secondary btn-sm subdetailcancel d-none\" data-subid=\"" + tableId + "\"><i class=\"ion-close\"></i> Cancel</button>\n      <button type=\"button\" class=\"btn btn-success btn-sm subdetailsave d-none\" data-subid=\"" + tableId + "\"><i class=\"ion-checkmark\"></i> Save</button>";
+    }
+
+    var controlBtns = "<div class=\"float-right\">" + editCntrlBtns + " \n      <button type=\"button\" class=\"btn btn-success btn-sm subdetailcreate\" data-subid=\"" + tableId + "\"><i class=\"ion-plus\"></i> Add New</button>\n      <button type=\"button\" class=\"btn btn-outline-secondary btn-sm subdetailcreateclose d-none\" data-subid=\"" + tableId + "\"><i class=\"ion-close\"></i> Close</button>\n      <button type=\"button\" class=\"btn btn-success btn-sm subdetailcreatesave d-none\" data-subid=\"" + tableId + "\"><i class=\"ion-checkmark\"></i> Save</button>\n    </div>";
 
     if (dataArry.mainHead[1] == '--') {
-      $('#details-all').append("\n        <div class=\"p-4 mb-3 bg-white rounded box-shadow detail-sections subdetail-section\" data-subdetailsection=\"" + tableId + "\">\n          " + controlBtns + "\n          <div id=\"" + tableId + "\">\n          </div>\n        </div>\n      ");
+      $('#details-all').append("\n        <div class=\"p-4 mb-3 bg-white rounded box-shadow detail-sections subdetail-section\" data-subid=\"" + tableId + "\">\n          " + controlBtns + "\n          <div id=\"" + tableId + "\">\n          </div>\n        </div>\n      ");
     }
     if (dataArry.mainHead[1] == '-' || dataArry.mainHead[1] == '') {
       var hr;
@@ -35735,7 +35874,6 @@ function runSubSections(dataArry) {
     $('#' + tableId).append("\n      <h6>" + caption + "</h6>\n      <table class=\"table\"></table>\n    ");
 
     var tableHeading = "";
-    var getIndex = [];
     var headingVal;
     var listsInner;
 
@@ -35758,6 +35896,10 @@ function runSubSections(dataArry) {
         generateHeading(headerValues);
 
         headerValues = elm;
+
+        if (dataArry.data.length < 2) {
+          lists += "<tr><td class=\"text-center\" colspan=" + pos + ">No Data</td></tr>";
+        }
       } else {
 
         listsInner = "";
@@ -35780,7 +35922,7 @@ function runSubSections(dataArry) {
               cntrlBtns = "<button class=\"btn btn-sm btn-outline-primary list-controls list-edit ion-edit\" data-headingindex=\"" + tableHeadIndex + "\" data-rowindex=\"" + (innerRowIndex + 1) + "\" data-id=\"" + tableId + "\"></button>";
             }
             if (func == 'remove') {
-              cntrlBtns = "<button class=\"btn btn-sm btn-outline-danger list-controls list-remove ion-trash-a\" data-headingindex=\"" + tableHeadIndex + "\" data-rowindex=\"" + (innerRowIndex + 1) + "\" data-id=\"" + tableId + "\"></button>";
+              cntrlBtns = "<button class=\"btn btn-sm btn-outline-danger list-controls list-remove ion-trash-a\" data-headingindex=\"" + tableHeadIndex + "\" data-rowindex=\"" + (innerRowIndex + 1) + "\" data-subid=\"" + tableId + "\"></button>";
             }
 
             if (func == 'count') {
@@ -35806,6 +35948,7 @@ function runSubSections(dataArry) {
     });
 
     var tableFooter;
+    var pos;
 
     $('#' + tableId + ' table').html("\n      <thead>\n        <tr data-tableid=\"" + tableId + "\" data-headingindex=\"" + tableHeadIndex + "\">\n          " + tableHeading + "\n        </tr>\n      </thead>\n      <tbody>\n        " + lists + "            \n      </tbody>\n      <tfoot class=\"subtable-create-new d-none\">\n        <tr data-tableid=\"" + tableId + "\">\n          " + tableFooter + "\n        </tr>\n      </tfoot>\n  ");
   }
