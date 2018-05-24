@@ -349,20 +349,37 @@ h6.font-weight-400 {
       border-color: #007bff; }
 
 .subtable-create-new {
-  background-color: rgba(0, 0, 0, 0.1);
   -webkit-box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.31);
           box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.31);
-  border-radius: 3px; }
-  .subtable-create-new div[contenteditable="true"] {
+  border-radius: 3px;
+  /* div[contenteditable="true"] {
     border: solid 1px #b1b4b7;
     background-color: #ffffff;
-    -webkit-box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.21);
-            box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.21);
+    box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.21);
     border-radius: 3px;
-    outline: none !important; }
-    .subtable-create-new div[contenteditable="true"]:focus {
-      -webkit-box-shadow: 0px 0px 2px #b1b4b7;
-              box-shadow: 0px 0px 2px #b1b4b7; }
+    outline: none !important;
+    &:focus {
+      box-shadow: 0px 0px 2px #b1b4b7;
+    }
+  } */ }
+  .subtable-create-new td {
+    border-right: solid 1px #eae6e6;
+    /* div[contenteditable="true"] {
+        position: relative;
+        &:after {
+          position: absolute;
+          content: attr(data-placeholder);
+          color: gray;
+        }
+        
+      } */ }
+    .subtable-create-new td:last-of-type {
+      border-right: none; }
+  .subtable-create-new div[data-placeholder]:not(:focus):not([data-div-placeholder-content]):before {
+    content: attr(data-placeholder);
+    float: left;
+    margin-left: 2px;
+    color: #b3b3b3; }
 
 .contenteditable-editing {
   border-color: #ff0000 !important;
