@@ -402,4 +402,7 @@ h6.font-weight-400 {
     background-color: rgba(255, 255, 255, 0.63);
     z-index: 1; }
 
+.custom-file-input[disabled] + .custom-file-label, .custom-file-input[disabled="disabled"] + .custom-file-label {
+  background-color: #e9ecef; }
+
 /*# sourceMappingURL=style.css.map*/
