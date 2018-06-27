@@ -405,4 +405,10 @@ h6.font-weight-400 {
 .custom-file-input[disabled] + .custom-file-label, .custom-file-input[disabled="disabled"] + .custom-file-label {
   background-color: #e9ecef; }
 
+.custom-file-label {
+  overflow: hidden;
+  padding-right: 5rem;
+  text-overflow: ellipsis;
+  white-space: nowrap; }
+
 /*# sourceMappingURL=style.css.map*/
