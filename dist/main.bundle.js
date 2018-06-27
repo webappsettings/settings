@@ -35184,6 +35184,7 @@ var Detail = function () {
 
         if (type == 'detail') {
           $('#' + subId + ' .dynamicElem').prop('readonly', false);
+          $('#fileUpload-' + subId).prop('disabled', false);
         }
 
         $(this).addClass('d-none');
@@ -35315,6 +35316,7 @@ var Detail = function () {
 
         pushSubData(self.listDatas[0], 'read');
         allChangeArry = [];
+        fileChange = false;
 
         $('.disabled-subdetailsection').removeClass('disabled-subdetailsection');
       });
@@ -35394,10 +35396,27 @@ var Detail = function () {
         var rowindex = _this.attr('data-rowindex');
 
         var tableId = _this.closest('.subdetail-section').attr('data-subid');
+
         var thisVal = _this.val();
 
         // console.log(colIndex,headingindex,rowindex,tableId,thisVal)
+
+        /*if(fileChange) {
+          thisVal = fileChange
+        }*/
+
+        if (_this.hasClass('elm-file')) {
+          thisVal = fileName;
+          colIndex = parseInt(colIndex) + 2;
+          // alert(colIndex)
+          // console.log('aaaaa')
+        }
+
+        // if(!_this.hasClass('elm-file')) {
+        // var thisVal = 
         addToChangeArry(colIndex, headingindex, rowindex, tableId, thisVal);
+        // } 
+
       });
 
       function addToChangeArry(colIndex, headingindex, rowindex, tableId, thisVal) {
@@ -35425,6 +35444,9 @@ var Detail = function () {
 
         console.log('allChangeArry==:', allChangeArry);
 
+        // return false
+
+
         var formdata = new FormData();
         formdata.append('pagename', urlHash);
         formdata.append('subsection', 'subsection');
@@ -35432,7 +35454,52 @@ var Detail = function () {
         formdata.append('action', action);
         formdata.append('subid', subId);
 
-        // return false
+        if (fileChange) {
+          // alert('prevImg-'+subId)
+
+          var prevImg = $('#prevImg-' + subId);
+          imageURI = prevImg.cropper('getCroppedCanvas', { 'width': prevImg.parent().outerWidth(), 'height': prevImg.parent().outerHeight() }).toDataURL(uploadedImageType);
+
+          // console.log(imageURI)
+          var filetype = imageURI.substring(5, imageURI.indexOf(';'));
+
+          var img = imageURI.replace(/^.*,/, '');
+
+          formdata.append('filechange', fileChange);
+          formdata.append('file', img);
+          formdata.append('filename', fileName);
+          formdata.append('filetype', filetype);
+          formdata.append('foldername', 'listing');
+        } else {
+          formdata.append('file', '');
+        }
+
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
+
+        try {
+          for (var _iterator = formdata.entries()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var pair = _step.value;
+
+            console.log(pair[0] + ', ' + pair[1]);
+          }
+
+          // return false
+        } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion && _iterator.return) {
+              _iterator.return();
+            }
+          } finally {
+            if (_didIteratorError) {
+              throw _iteratorError;
+            }
+          }
+        }
 
         if (allChangeArry[subId]) {
 
@@ -35453,7 +35520,10 @@ var Detail = function () {
             }
           }).done(function (callback) {
 
-            console.log('serverCallback=', callback);
+            // console.log('serverCallback=',callback.result["0"]["0"])
+
+
+            pushSubData(self.listDatas[0], 'read');
 
             if (callback.result != '{"result":false}') {
               if (callback.result == 'pageremoved') {
@@ -35463,25 +35533,34 @@ var Detail = function () {
               if (callback.result == 'sectionremoved') {
                 alert('Failed!!! Please try again');
               }
-              if (callback.result == 'true' || callback.result.length >= 1) {
+              if (callback.result.length >= 1) {
 
                 console.log('changesHere=', allChangeArry[subId]);
                 console.log('ffffffFinal==', self.listDatas[0]);
 
-                if (action == 'createsubsection') {
-                  var rowindex = $('#' + subId).attr('data-lasteditedrowindex');
-                  self.listDatas[0].result.splice(parseInt(rowindex) - 1, 0, callback.result);
+                $.each(callback.result, function (index, el) {
+                  var rowIndex = el[0].rowindex;
+                  var rowData = el[0].data;
+                  var crt = 1;
+                  if (action == 'createsubsection') {
+                    crt = 0;
+                  }
+                  self.listDatas[0].result.splice(parseInt(rowIndex) - 1, crt, rowData);
+                });
+
+                /*if(action == 'createsubsection') {
+                  let rowindex = $('#'+subId).attr('data-lasteditedrowindex');
+                  self.listDatas[0].result.splice(parseInt(rowindex)-1, 0, callback.result);
                 } else {
-                  for (var keyr in allChangeArry[subId].row) {
-
+                    for (var keyr in allChangeArry[subId].row) {
+                    
                     var dataRowIndex = keyr;
-
-                    for (var key in allChangeArry[subId].row[dataRowIndex].column) {
+                      for (var key in allChangeArry[subId].row[dataRowIndex].column) {
                       // alert('row='+dataRowIndex+'    column='+key+ '    value='+allChangeArry[subId].row[dataRowIndex].column[key])
-                      self.listDatas[0].result[dataRowIndex - 1][key - 1] = allChangeArry[subId].row[dataRowIndex].column[key];
+                      self.listDatas[0].result[dataRowIndex-1][key-1] = allChangeArry[subId].row[dataRowIndex].column[key]
                     }
                   }
-                }
+                }*/
 
                 pushSubData(self.listDatas[0], 'read');
               }
@@ -35506,6 +35585,7 @@ var Detail = function () {
       function resetSubSection(subId) {
 
         allChangeArry = [];
+        fileChange = false;
 
         $('[data-tableid="' + subId + '"]' + ' .contenteditable-editing').removeClass('contenteditable-editing');
 

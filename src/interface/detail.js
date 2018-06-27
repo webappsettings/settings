@@ -199,6 +199,7 @@ class Detail {
 
         if(type == 'detail') {
           $('#'+subId+' .dynamicElem').prop('readonly', false)
+          $('#fileUpload-'+subId).prop('disabled', false)
         }
 
         
@@ -351,6 +352,7 @@ class Detail {
 
         pushSubData(self.listDatas[0], 'read')
         allChangeArry = []
+        fileChange = false
 
         $('.disabled-subdetailsection').removeClass('disabled-subdetailsection')
 
@@ -444,12 +446,30 @@ class Detail {
         var rowindex = _this.attr('data-rowindex')
 
         var tableId = _this.closest('.subdetail-section').attr('data-subid')
+
         var thisVal = _this.val()
 
         // console.log(colIndex,headingindex,rowindex,tableId,thisVal)
-        addToChangeArry(colIndex, headingindex, rowindex, tableId, thisVal)
+
+        /*if(fileChange) {
+          thisVal = fileChange
+        }*/
+
+        if(_this.hasClass('elm-file')) {
+          thisVal = fileName
+          colIndex = parseInt(colIndex)+2
+          // alert(colIndex)
+          // console.log('aaaaa')
+        }
+
+        // if(!_this.hasClass('elm-file')) {
+           // var thisVal = 
+           addToChangeArry(colIndex, headingindex, rowindex, tableId, thisVal)
+        // } 
+       
 
       });
+
 
 
 
@@ -478,11 +498,11 @@ class Detail {
 
 
       function subdetailsave(action, subId) {
-
-
         
 
         console.log('allChangeArry==:',allChangeArry)
+
+        // return false
 
 
         var formdata = new FormData()
@@ -491,6 +511,34 @@ class Detail {
         formdata.append('pageid', paramId)
         formdata.append('action', action)
         formdata.append('subid', subId)
+
+
+        if(fileChange){
+          // alert('prevImg-'+subId)
+
+          let prevImg = $('#prevImg-'+subId)
+          imageURI = prevImg.cropper('getCroppedCanvas',{'width':prevImg.parent().outerWidth(),'height':prevImg.parent().outerHeight()}).toDataURL(uploadedImageType)
+
+          // console.log(imageURI)
+          let filetype = imageURI.substring(5,imageURI.indexOf(';'))
+
+          let img = imageURI.replace(/^.*,/, '')
+
+          formdata.append('filechange', fileChange)
+          formdata.append('file', img)
+          formdata.append('filename', fileName)
+          formdata.append('filetype', filetype)
+          formdata.append('foldername', 'listing')
+
+        } else {
+          formdata.append('file', '')
+        }
+
+
+        for (var pair of formdata.entries()) {
+          console.log(pair[0]+ ', ' + pair[1]); 
+        }
+
 
         // return false
 
@@ -514,7 +562,11 @@ class Detail {
           })
           .done(function(callback){
 
-            console.log('serverCallback=',callback)
+            // console.log('serverCallback=',callback.result["0"]["0"])
+
+            
+
+            pushSubData(self.listDatas[0], 'read')
 
             if(callback.result != '{"result":false}') {
               if(callback.result == 'pageremoved'){
@@ -524,12 +576,22 @@ class Detail {
               if(callback.result == 'sectionremoved') {
                 alert('Failed!!! Please try again')
               }
-              if(callback.result == 'true' || callback.result.length >= 1) {
+              if(callback.result.length >= 1) {
 
                 console.log('changesHere=', allChangeArry[subId])
                 console.log('ffffffFinal==',self.listDatas[0])
+
+                $.each(callback.result, function(index, el) {
+                 let rowIndex = el[0].rowindex
+                 let rowData = el[0].data
+                 var crt = 1
+                 if(action == 'createsubsection') {
+                  crt = 0
+                 } 
+                 self.listDatas[0].result.splice(parseInt(rowIndex)-1, crt, rowData);
+                });
                 
-                if(action == 'createsubsection') {
+                /*if(action == 'createsubsection') {
                   let rowindex = $('#'+subId).attr('data-lasteditedrowindex');
                   self.listDatas[0].result.splice(parseInt(rowindex)-1, 0, callback.result);
                 } else {
@@ -542,7 +604,7 @@ class Detail {
                       self.listDatas[0].result[dataRowIndex-1][key-1] = allChangeArry[subId].row[dataRowIndex].column[key]
                     }
                   }
-                }
+                }*/
 
                 pushSubData(self.listDatas[0], 'read')
               }
@@ -574,6 +636,7 @@ class Detail {
     function resetSubSection(subId) {
 
       allChangeArry = []
+      fileChange = false
       
       $('[data-tableid="'+subId+'"]'+' .contenteditable-editing').removeClass('contenteditable-editing')
 
