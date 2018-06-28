@@ -148,7 +148,7 @@ class Detail {
 
               $('#prevImg-'+dataSectionId).cropper('destroy').attr('src', uploadedImageURL).cropper(options)
 
-              $('[data-section="'+dataSectionId+'"].imageControls').show()
+              $('[data-section="'+dataSectionId+'"].imageControls').show().find('button').prop('disabled',false)
 
             } else {
               window.alert('Please choose an image file.')
@@ -179,10 +179,15 @@ class Detail {
           prevImg.cropper('destroy')
           $('[data-section="'+dataSectionId+'"].fileUpload').val('')
           $('[for="fileUpload-'+dataSectionId+'"]').text('Choose image...')
-          fileChange = false
+          fileChange = undefined
           imageURI = undefined
           prevImg.attr('src','')
           $('[data-section="'+dataSectionId+'"].imageControls').hide()
+
+          let colIndex = parseInt($('[data-section="'+dataSectionId+'"].fileUpload').attr('data-colindex')) + 2
+          let headingindex = $('[data-section="'+dataSectionId+'"].fileUpload').attr('data-headingindex')
+          let rowindex = $('[data-section="'+dataSectionId+'"].fileUpload').attr('data-rowindex')
+          addToChangeArry(colIndex, headingindex, rowindex, dataSectionId, '')
         }
       });
 
@@ -200,6 +205,8 @@ class Detail {
         if(type == 'detail') {
           $('#'+subId+' .dynamicElem').prop('readonly', false)
           $('#fileUpload-'+subId).prop('disabled', false)
+
+          $(`.imageControls[data-imgavl="true"][data-section="`+subId+`"]`).show().find('button:not(.remove-image)').prop('disabled',true)
         }
 
         
@@ -512,6 +519,7 @@ class Detail {
         formdata.append('action', action)
         formdata.append('subid', subId)
 
+        // alert(fileChange)
 
         if(fileChange){
           // alert('prevImg-'+subId)
@@ -524,7 +532,7 @@ class Detail {
 
           let img = imageURI.replace(/^.*,/, '')
 
-          formdata.append('filechange', fileChange)
+          
           formdata.append('file', img)
           formdata.append('filename', fileName)
           formdata.append('filetype', filetype)
@@ -534,10 +542,14 @@ class Detail {
           formdata.append('file', '')
         }
 
+        // alert(fileChange)
 
-        for (var pair of formdata.entries()) {
+        formdata.append('filechange', fileChange)
+
+
+        /*for (var pair of formdata.entries()) {
           console.log(pair[0]+ ', ' + pair[1]); 
-        }
+        }*/
 
 
         // return false
@@ -566,7 +578,7 @@ class Detail {
 
             
 
-            pushSubData(self.listDatas[0], 'read')
+            // pushSubData(self.listDatas[0], 'read')
 
             if(callback.result != '{"result":false}') {
               if(callback.result == 'pageremoved'){
@@ -606,7 +618,7 @@ class Detail {
                   }
                 }*/
 
-                pushSubData(self.listDatas[0], 'read')
+                // pushSubData(self.listDatas[0], 'read')
               }
 
             }
@@ -617,16 +629,21 @@ class Detail {
           })
           .always(function(){
 
-            resetSubSection(subId)         
+            resetSubSection(subId) 
+            // allChangeArry = []
+            pushSubData(self.listDatas[0], 'read')        
 
             $('.loader').fadeOut()
           });
         } else {
-          // resetSubSection(subId)
+          resetSubSection(subId)
+          pushSubData(self.listDatas[0], 'read')
+          // allChangeArry = []
+          
           // alert(subId)
           // $('.subdetailcancel[data-subid="'+subId+'"]').trigger('click')
           
-          resetSubSection(subId)
+          // resetSubSection(subId)
         }
  
 
@@ -1128,7 +1145,9 @@ function runSubSections(dataArry, action) {
             $('#details-all').append(`
               <div class="p-4 mb-3 bg-white rounded box-shadow subdetail-section" data-type="`+dataArry.type+`" data-subid="`+tableId+`">
                 <div id="`+tableId+`" class="detail-sections">
+                  <h6 class="float-left mb-0">`+caption+`</h6>
                    `+controlBtns+`
+                   <div class="clearfix mb-3"></div>
                    <div class="row">
                   </div>
                 </div>
@@ -1143,7 +1162,9 @@ function runSubSections(dataArry, action) {
               hr = `<hr>`
             }
             $('#details-all .subdetail-section:last-of-type').append(hr+`
-              `+controlBtns+`              
+              <h6 class="float-left mb-0">`+caption+`</h6> 
+              `+controlBtns+`
+              <div class="clearfix mb-3"></div>        
               <div id="`+tableId+`" class="detail-sections" data-subid="`+tableId+`">
                   <div class="row">                  
                 </div>
@@ -1151,7 +1172,9 @@ function runSubSections(dataArry, action) {
             `)
           }
 
-         
+        /*$('#'+tableId).append(`
+            <h6>`+caption+`</h6>
+          `)*/     
 
 
   var getListVal
@@ -1267,10 +1290,12 @@ function runSubSections(dataArry, action) {
           console.log(insertVal)
           // $('[for="fileUpload"]').text('Choose image...')
           let imageId = '', imageName = 'Choose image...'
+          let imageAvl = false
 
           if(insertVal != '') {
             imageId = dataArry.data[topIndex][colIndex]
             imageName = dataArry.data[topIndex][colIndex+1]
+            imageAvl = true
           }
 
           $('#'+tableId+ ' .row').append(`
@@ -1287,7 +1312,7 @@ function runSubSections(dataArry, action) {
               </div>
             </div>
 
-            <div class="imageControls" data-section="`+tableId+`">
+            <div class="imageControls" data-imgavl="`+imageAvl+`" data-section="`+tableId+`">
             <button type="button" class="btn btn-primary btn-sm" data-method="zoom" data-option="0.1" title="Zoom In"><i class="ion-ios-search-strong"></i></button>
             <button type="button" class="btn btn-primary btn-sm" data-method="zoom" data-option="-0.1" title="Zoom In"><i class="ion-ios-search-strong"></i></button>
 

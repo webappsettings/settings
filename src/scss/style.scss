@@ -429,6 +429,18 @@ h6.font-weight-400 {
   height: auto !important;
   &:after {
     height: auto !important;
+    background-color: white;
+    cursor: pointer;
+  }
+}
+
+.custom-file-input {
+  &:disabled {
+    +.custom-file-label {
+      &:after {
+        background-color: #e9ecef;
+      }
+    }
   }
 }
 

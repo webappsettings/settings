@@ -331,7 +331,12 @@ h6.font-weight-400 {
 .custom-file-label {
   height: auto !important; }
   .custom-file-label:after {
-    height: auto !important; }
+    height: auto !important;
+    background-color: white;
+    cursor: pointer; }
+
+.custom-file-input:disabled + .custom-file-label:after {
+  background-color: #e9ecef; }
 
 [data-action="read"] .img-section-arrange {
   display: none; }
