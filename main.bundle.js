@@ -35138,7 +35138,7 @@ var Detail = function () {
 
               $('#prevImg-' + dataSectionId).cropper('destroy').attr('src', uploadedImageURL).cropper(options);
 
-              $('[data-section="' + dataSectionId + '"].imageControls').show();
+              $('[data-section="' + dataSectionId + '"].imageControls').show().find('button').prop('disabled', false);
             } else {
               window.alert('Please choose an image file.');
             }
@@ -35166,10 +35166,15 @@ var Detail = function () {
           prevImg.cropper('destroy');
           $('[data-section="' + dataSectionId + '"].fileUpload').val('');
           $('[for="fileUpload-' + dataSectionId + '"]').text('Choose image...');
-          fileChange = false;
+          fileChange = undefined;
           imageURI = undefined;
           prevImg.attr('src', '');
           $('[data-section="' + dataSectionId + '"].imageControls').hide();
+
+          var colIndex = parseInt($('[data-section="' + dataSectionId + '"].fileUpload').attr('data-colindex')) + 2;
+          var headingindex = $('[data-section="' + dataSectionId + '"].fileUpload').attr('data-headingindex');
+          var rowindex = $('[data-section="' + dataSectionId + '"].fileUpload').attr('data-rowindex');
+          addToChangeArry(colIndex, headingindex, rowindex, dataSectionId, '');
         }
       });
 
@@ -35185,6 +35190,8 @@ var Detail = function () {
         if (type == 'detail') {
           $('#' + subId + ' .dynamicElem').prop('readonly', false);
           $('#fileUpload-' + subId).prop('disabled', false);
+
+          $(".imageControls[data-imgavl=\"true\"][data-section=\"" + subId + "\"]").show().find('button:not(.remove-image)').prop('disabled', true);
         }
 
         $(this).addClass('d-none');
@@ -35454,6 +35461,8 @@ var Detail = function () {
         formdata.append('action', action);
         formdata.append('subid', subId);
 
+        // alert(fileChange)
+
         if (fileChange) {
           // alert('prevImg-'+subId)
 
@@ -35465,7 +35474,6 @@ var Detail = function () {
 
           var img = imageURI.replace(/^.*,/, '');
 
-          formdata.append('filechange', fileChange);
           formdata.append('file', img);
           formdata.append('filename', fileName);
           formdata.append('filetype', filetype);
@@ -35474,32 +35482,15 @@ var Detail = function () {
           formdata.append('file', '');
         }
 
-        var _iteratorNormalCompletion = true;
-        var _didIteratorError = false;
-        var _iteratorError = undefined;
+        // alert(fileChange)
 
-        try {
-          for (var _iterator = formdata.entries()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var pair = _step.value;
+        formdata.append('filechange', fileChange);
 
-            console.log(pair[0] + ', ' + pair[1]);
-          }
+        /*for (var pair of formdata.entries()) {
+          console.log(pair[0]+ ', ' + pair[1]); 
+        }*/
 
-          // return false
-        } catch (err) {
-          _didIteratorError = true;
-          _iteratorError = err;
-        } finally {
-          try {
-            if (!_iteratorNormalCompletion && _iterator.return) {
-              _iterator.return();
-            }
-          } finally {
-            if (_didIteratorError) {
-              throw _iteratorError;
-            }
-          }
-        }
+        // return false
 
         if (allChangeArry[subId]) {
 
@@ -35523,7 +35514,7 @@ var Detail = function () {
             // console.log('serverCallback=',callback.result["0"]["0"])
 
 
-            pushSubData(self.listDatas[0], 'read');
+            // pushSubData(self.listDatas[0], 'read')
 
             if (callback.result != '{"result":false}') {
               if (callback.result == 'pageremoved') {
@@ -35562,7 +35553,7 @@ var Detail = function () {
                   }
                 }*/
 
-                pushSubData(self.listDatas[0], 'read');
+                // pushSubData(self.listDatas[0], 'read')
               }
             }
           }).fail(function (callback) {
@@ -35570,15 +35561,20 @@ var Detail = function () {
           }).always(function () {
 
             resetSubSection(subId);
+            // allChangeArry = []
+            pushSubData(self.listDatas[0], 'read');
 
             $('.loader').fadeOut();
           });
         } else {
-          // resetSubSection(subId)
+          resetSubSection(subId);
+          pushSubData(self.listDatas[0], 'read');
+          // allChangeArry = []
+
           // alert(subId)
           // $('.subdetailcancel[data-subid="'+subId+'"]').trigger('click')
 
-          resetSubSection(subId);
+          // resetSubSection(subId)
         }
       }
 
@@ -35965,7 +35961,7 @@ function runSubSections(dataArry, action) {
     innerRowIndex++;
 
     if (dataArry.mainHead[1] == '--') {
-      $('#details-all').append("\n              <div class=\"p-4 mb-3 bg-white rounded box-shadow subdetail-section\" data-type=\"" + dataArry.type + "\" data-subid=\"" + tableId + "\">\n                <div id=\"" + tableId + "\" class=\"detail-sections\">\n                   " + controlBtns + "\n                   <div class=\"row\">\n                  </div>\n                </div>\n              </div>\n            ");
+      $('#details-all').append("\n              <div class=\"p-4 mb-3 bg-white rounded box-shadow subdetail-section\" data-type=\"" + dataArry.type + "\" data-subid=\"" + tableId + "\">\n                <div id=\"" + tableId + "\" class=\"detail-sections\">\n                  <h6 class=\"float-left mb-0\">" + caption + "</h6>\n                   " + controlBtns + "\n                   <div class=\"clearfix mb-3\"></div>\n                   <div class=\"row\">\n                  </div>\n                </div>\n              </div>\n            ");
     }
     if (dataArry.mainHead[1] == '-' || dataArry.mainHead[1] == '') {
       var hr;
@@ -35974,8 +35970,12 @@ function runSubSections(dataArry, action) {
       } else {
         hr = "<hr>";
       }
-      $('#details-all .subdetail-section:last-of-type').append(hr + "\n              " + controlBtns + "              \n              <div id=\"" + tableId + "\" class=\"detail-sections\" data-subid=\"" + tableId + "\">\n                  <div class=\"row\">                  \n                </div>\n              </div>\n            ");
+      $('#details-all .subdetail-section:last-of-type').append(hr + "\n              <h6 class=\"float-left mb-0\">" + caption + "</h6> \n              " + controlBtns + "\n              <div class=\"clearfix mb-3\"></div>        \n              <div id=\"" + tableId + "\" class=\"detail-sections\" data-subid=\"" + tableId + "\">\n                  <div class=\"row\">                  \n                </div>\n              </div>\n            ");
     }
+
+    /*$('#'+tableId).append(`
+        <h6>`+caption+`</h6>
+      `)*/
 
     var getListVal;
     var headings;
@@ -36063,13 +36063,15 @@ function runSubSections(dataArry, action) {
             // $('[for="fileUpload"]').text('Choose image...')
             var imageId = '',
                 imageName = 'Choose image...';
+            var imageAvl = false;
 
             if (insertVal != '') {
               imageId = dataArry.data[topIndex][colIndex];
               imageName = dataArry.data[topIndex][colIndex + 1];
+              imageAvl = true;
             }
 
-            $('#' + tableId + ' .row').append("\n            <div class=\"col-md-12\" style=\"display:flex; margin-bottom: 2rem;\">\n            <div class=\"listing-image-preview " + tableId + "\"><img id=\"prevImg-" + tableId + "\" src=\"" + insertVal + "\"></div>\n\n            <div class=\"img-section-arrange " + tableId + "\">\n            <div>\n\n            <div class=\"form-group input-group-sm mb-3\">\n              <div class=\"custom-file\">\n                <input type=\"file\" name=\"file\" accept=\".jpg,.jpeg,.png,.gif,.bmp,.tiff\" class=\"fileUpload custom-file-input dynamicElem elm-" + func + "\" id=\"fileUpload-" + tableId + "\" data-section=\"" + tableId + "\" data-filedname=\"" + func + "\" data-colindex=\"" + colIndex + "\" data-rowindex=\"" + innerRowIndex + "\" data-headingindex=\"" + tableHeadIndex + "\" data-imageid=\"" + imageId + "\" disabled=\"disabled\">\n                <label class=\"custom-file-label\" for=\"fileUpload-" + tableId + "\">" + imageName + "</label>\n              </div>\n            </div>\n\n            <div class=\"imageControls\" data-section=\"" + tableId + "\">\n            <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"zoom\" data-option=\"0.1\" title=\"Zoom In\"><i class=\"ion-ios-search-strong\"></i></button>\n            <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"zoom\" data-option=\"-0.1\" title=\"Zoom In\"><i class=\"ion-ios-search-strong\"></i></button>\n\n            <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"move\" data-option=\"-10\" data-second-option=\"0\" title=\"Move Left\"><i class=\"ion-android-arrow-back\"></i></button>\n            <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"move\" data-option=\"10\" data-second-option=\"0\" title=\"Move Right\"><i class=\"ion-android-arrow-forward\"></i></button>\n            <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"move\" data-option=\"0\" data-second-option=\"-10\" title=\"Move Up\"><i class=\"ion-android-arrow-up\"></i></button>\n            <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"move\" data-option=\"0\" data-second-option=\"10\" title=\"Move Down\"><i class=\"ion-android-arrow-down\"></i></button>\n\n            <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"rotate\" data-option=\"45\" title=\"Rotate Left\"><i class=\"ion-refresh\"></i></button>\n            <button type=\"button\" class=\"btn btn-danger btn-sm remove-image\"><i class=\"ion-trash-a\"></i></button>\n            </div>                \n\n            </div>\n            </div>\n            </div>\n            ");
+            $('#' + tableId + ' .row').append("\n            <div class=\"col-md-12\" style=\"display:flex; margin-bottom: 2rem;\">\n            <div class=\"listing-image-preview " + tableId + "\"><img id=\"prevImg-" + tableId + "\" src=\"" + insertVal + "\"></div>\n\n            <div class=\"img-section-arrange " + tableId + "\">\n            <div>\n\n            <div class=\"form-group input-group-sm mb-3\">\n              <div class=\"custom-file\">\n                <input type=\"file\" name=\"file\" accept=\".jpg,.jpeg,.png,.gif,.bmp,.tiff\" class=\"fileUpload custom-file-input dynamicElem elm-" + func + "\" id=\"fileUpload-" + tableId + "\" data-section=\"" + tableId + "\" data-filedname=\"" + func + "\" data-colindex=\"" + colIndex + "\" data-rowindex=\"" + innerRowIndex + "\" data-headingindex=\"" + tableHeadIndex + "\" data-imageid=\"" + imageId + "\" disabled=\"disabled\">\n                <label class=\"custom-file-label\" for=\"fileUpload-" + tableId + "\">" + imageName + "</label>\n              </div>\n            </div>\n\n            <div class=\"imageControls\" data-imgavl=\"" + imageAvl + "\" data-section=\"" + tableId + "\">\n            <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"zoom\" data-option=\"0.1\" title=\"Zoom In\"><i class=\"ion-ios-search-strong\"></i></button>\n            <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"zoom\" data-option=\"-0.1\" title=\"Zoom In\"><i class=\"ion-ios-search-strong\"></i></button>\n\n            <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"move\" data-option=\"-10\" data-second-option=\"0\" title=\"Move Left\"><i class=\"ion-android-arrow-back\"></i></button>\n            <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"move\" data-option=\"10\" data-second-option=\"0\" title=\"Move Right\"><i class=\"ion-android-arrow-forward\"></i></button>\n            <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"move\" data-option=\"0\" data-second-option=\"-10\" title=\"Move Up\"><i class=\"ion-android-arrow-up\"></i></button>\n            <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"move\" data-option=\"0\" data-second-option=\"10\" title=\"Move Down\"><i class=\"ion-android-arrow-down\"></i></button>\n\n            <button type=\"button\" class=\"btn btn-primary btn-sm\" data-method=\"rotate\" data-option=\"45\" title=\"Rotate Left\"><i class=\"ion-refresh\"></i></button>\n            <button type=\"button\" class=\"btn btn-danger btn-sm remove-image\"><i class=\"ion-trash-a\"></i></button>\n            </div>                \n\n            </div>\n            </div>\n            </div>\n            ");
           }
         });
 
