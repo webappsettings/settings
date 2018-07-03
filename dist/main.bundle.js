@@ -35461,8 +35461,6 @@ var Detail = function () {
         formdata.append('action', action);
         formdata.append('subid', subId);
 
-        // alert(fileChange)
-
         if (fileChange) {
           // alert('prevImg-'+subId)
 
@@ -35495,7 +35493,7 @@ var Detail = function () {
         if (allChangeArry[subId]) {
 
           var datarow = JSON.stringify(allChangeArry[subId]);
-          console.log('datarow==', datarow);
+          console.log('datarow-CCC==', datarow);
           // return false;
           formdata.append('datarow', datarow);
 
@@ -35511,8 +35509,7 @@ var Detail = function () {
             }
           }).done(function (callback) {
 
-            // console.log('serverCallback=',callback.result["0"]["0"])
-
+            console.log('serverCallback=', callback);
 
             // pushSubData(self.listDatas[0], 'read')
 
@@ -35526,8 +35523,8 @@ var Detail = function () {
               }
               if (callback.result.length >= 1) {
 
-                console.log('changesHere=', allChangeArry[subId]);
-                console.log('ffffffFinal==', self.listDatas[0]);
+                // console.log('changesHere=', allChangeArry[subId])
+                // console.log('ffffffFinal==',self.listDatas[0])
 
                 $.each(callback.result, function (index, el) {
                   var rowIndex = el[0].rowindex;

@@ -518,8 +518,7 @@ class Detail {
         formdata.append('pageid', paramId)
         formdata.append('action', action)
         formdata.append('subid', subId)
-
-        // alert(fileChange)
+        
 
         if(fileChange){
           // alert('prevImg-'+subId)
@@ -546,7 +545,6 @@ class Detail {
 
         formdata.append('filechange', fileChange)
 
-
         /*for (var pair of formdata.entries()) {
           console.log(pair[0]+ ', ' + pair[1]); 
         }*/
@@ -557,7 +555,7 @@ class Detail {
         if(allChangeArry[subId]) {
 
           var datarow = JSON.stringify(allChangeArry[subId])
-          console.log('datarow==',datarow)
+          console.log('datarow-CCC==',datarow)
           // return false;
           formdata.append('datarow', datarow)
 
@@ -574,7 +572,7 @@ class Detail {
           })
           .done(function(callback){
 
-            // console.log('serverCallback=',callback.result["0"]["0"])
+            console.log('serverCallback=',callback)
 
             
 
@@ -590,8 +588,8 @@ class Detail {
               }
               if(callback.result.length >= 1) {
 
-                console.log('changesHere=', allChangeArry[subId])
-                console.log('ffffffFinal==',self.listDatas[0])
+                // console.log('changesHere=', allChangeArry[subId])
+                // console.log('ffffffFinal==',self.listDatas[0])
 
                 $.each(callback.result, function(index, el) {
                  let rowIndex = el[0].rowindex
