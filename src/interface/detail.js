@@ -44,11 +44,9 @@ class Detail {
 
     let readdetailParamURL = new CodeComp().mainCode()+'&pagetype=detail&pageid='+paramId+'&action=readpagedatas'
 
-    // console.log('detail=',readdetailParamURL)
 
     $('.loader').fadeIn()
     $.getJSON(readdetailParamURL, function(callback) {
-      // console.log(callback)
 
 
       if(callback.result != '{"result":false}') {

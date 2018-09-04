@@ -35185,12 +35185,8 @@ var Detail = function () {
 
       var readdetailParamURL = new _codeComp2.default().mainCode() + '&pagetype=detail&pageid=' + paramId + '&action=readpagedatas';
 
-      // console.log('detail=',readdetailParamURL)
-
       $('.loader').fadeIn();
       $.getJSON(readdetailParamURL, function (callback) {
-        // console.log(callback)
-
 
         if (callback.result != '{"result":false}') {
           if (callback.result[0] == 'pageremoved') {
