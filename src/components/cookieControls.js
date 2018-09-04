@@ -57,7 +57,7 @@ class CookieControls {
 
             self.getClientIp(callback.ipapi, callback.ipapixtra)
 
-            console.log(GlobalArray.globalArray)
+            // console.log(GlobalArray.globalArray)
 
             // callback.main != self.getCookie('main') ||
 
@@ -190,7 +190,7 @@ class CookieControls {
             callKey = callback
           }
           let localIp = callKey.replace(/\./g, "-").replace(/\:/g, "_")
-          console.log(localIp)
+          // console.log(localIp)
 
           let formdata = new FormData()
 

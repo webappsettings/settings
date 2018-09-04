@@ -20,19 +20,11 @@ class Detail {
           </ol>
         </nav>
       </div>
-
       
-      <div class="clearfix"></div>
-      
+      <div class="clearfix"></div>      
       
       <div id="details-all" class="mb-5">
-        
-        
-
-        
       </div>
-
-
 
     </div> 
     `
@@ -99,6 +91,18 @@ class Detail {
       $('.loader').fadeOut()
     }) 
 
+    /*function randomstring(L,N){
+      var s= '';
+      var randomchar=function(){
+        var n= Math.floor(Math.random()*62);
+        if(n<10) return n;
+        if(n<36) return String.fromCharCode(n+55);
+        return String.fromCharCode(n+61);
+      }
+      while(s.length< L-1) s+= randomchar();
+      return N+s;
+    }*/
+
 
 
     var uploadedImageType,uploadedImageURL
@@ -125,7 +129,21 @@ class Detail {
           var files = this.files
           var file
 
-          var dataSectionId = $(this).attr('data-section')
+          var getSection = $(this).attr('data-section')
+          var getRow = $(this).attr('data-rowindex');
+          var getCol = $(this).attr('data-colindex');
+
+
+
+          var dataSectionId = $(this).attr('data-imageid')
+          /*
+          if(dataSectionId == '') {
+            
+            var dataSectionId = randomstring(12,'ftemp_');
+
+            $(this).attr('data-imageid',dataSectionId)
+            
+          }*/
 
           if (files && files.length) {
 
@@ -136,8 +154,13 @@ class Detail {
             file = files[0]
             fileChange = true
             fileName = file.name
-            $('[for="fileUpload-'+dataSectionId+'"]').text(fileName)
-            console.log('mainFILE=',file)
+            // $('[for="fileUpload-'+dataSectionId+'"]').text(fileName)
+
+            $('.custom-file-label[data-section="'+getSection+'"][data-colindex="'+getCol+'"][data-rowindex="'+getRow+'"]').text(fileName)
+
+
+            $('.fileUpload[data-section="'+getSection+'"][data-colindex="'+getCol+'"][data-rowindex="'+getRow+'"]').attr('data-filename',fileName)
+            // console.log('mainFILE=',file)
 
             if (/^image\/\w+$/.test(file.type)) {
               uploadedImageType = file.type
@@ -146,9 +169,15 @@ class Detail {
               }
               uploadedImageURL = URL.createObjectURL(file)
 
-              $('#prevImg-'+dataSectionId).cropper('destroy').attr('src', uploadedImageURL).cropper(options)
+              // $('#fileUpload-'+dataSectionId).attr('data-changedfile',true)
+              $('.fileUpload[data-section="'+getSection+'"][data-colindex="'+getCol+'"][data-rowindex="'+getRow+'"]').attr('data-changedfile',true)
 
-              $('[data-section="'+dataSectionId+'"].imageControls').show().find('button').prop('disabled',false)
+
+              // $('#prevImg-'+dataSectionId).cropper('destroy').attr('src', uploadedImageURL).cropper(options)
+              $('.image-preview[data-section="'+getSection+'"][data-colindex="'+getCol+'"][data-rowindex="'+getRow+'"]').cropper('destroy').attr('src', uploadedImageURL).cropper(options)
+
+              // $('[data-section="'+dataSectionId+'"].imageControls').show().find('button').prop('disabled',false)
+              $('.imageControls[data-section="'+getSection+'"][data-colindex="'+getCol+'"][data-rowindex="'+getRow+'"]').show().find('button').prop('disabled',false)
 
             } else {
               window.alert('Please choose an image file.')
@@ -164,9 +193,19 @@ class Detail {
         var dataSectionId = $(this).parent().attr('data-section')
 
         // let prevImg = $('.listing-image-preview.'+dataSectionId+' img')
-        let prevImg = $('#prevImg-'+dataSectionId)
+        // let prevImg = $('#prevImg-'+dataSectionId)
+
+        var getSection = $(this).parent().attr('data-section')
+        var getRow = $(this).parent().attr('data-rowindex')
+        var getCol = $(this).parent().attr('data-colindex')
+
+        let prevImg = $('.image-preview[data-section="'+getSection+'"][data-colindex="'+getCol+'"][data-rowindex="'+getRow+'"]')
+
+// $('.fileUpload[data-section="'+getSection+'"][data-colindex="'+getCol+'"][data-rowindex="'+getRow+'"]').attr('data-changedfile',true)
+
 
         if(!$(this).hasClass('remove-image')){
+
           let method = $(this).data('method')
           let option = $(this).data('option')
           let secondOption = $(this).data('second-option')
@@ -176,18 +215,21 @@ class Detail {
             prevImg.cropper(method, option)
           }
         } else {
+          $('.fileUpload[data-section="'+getSection+'"][data-colindex="'+getCol+'"][data-rowindex="'+getRow+'"]').removeAttr('data-changedfile')
           prevImg.cropper('destroy')
-          $('[data-section="'+dataSectionId+'"].fileUpload').val('')
-          $('[for="fileUpload-'+dataSectionId+'"]').text('Choose image...')
-          fileChange = undefined
+          $('.fileUpload[data-section="'+getSection+'"][data-colindex="'+getCol+'"][data-rowindex="'+getRow+'"]').val('')
+          $('.custom-file-label[data-section="'+getSection+'"][data-colindex="'+getCol+'"][data-rowindex="'+getRow+'"]').text('Choose image...')
+          fileChange = true
           imageURI = undefined
           prevImg.attr('src','')
-          $('[data-section="'+dataSectionId+'"].imageControls').hide()
+          $('.imageControls[data-section="'+getSection+'"][data-colindex="'+getCol+'"][data-rowindex="'+getRow+'"]').hide()
+          
 
-          let colIndex = parseInt($('[data-section="'+dataSectionId+'"].fileUpload').attr('data-colindex')) + 2
-          let headingindex = $('[data-section="'+dataSectionId+'"].fileUpload').attr('data-headingindex')
-          let rowindex = $('[data-section="'+dataSectionId+'"].fileUpload').attr('data-rowindex')
-          addToChangeArry(colIndex, headingindex, rowindex, dataSectionId, '')
+          let colIndex = parseInt(getCol) + 2
+          let headingindex = $('.fileUpload[data-section="'+getSection+'"][data-colindex="'+getCol+'"][data-rowindex="'+getRow+'"]').attr('data-headingindex')
+          // let rowindex = $('[data-imgsection="'+dataSectionId+'"].fileUpload').attr('data-rowindex')
+
+          addToChangeArry(colIndex, headingindex, getRow, dataSectionId, '')
         }
       });
 
@@ -204,9 +246,9 @@ class Detail {
 
         if(type == 'detail') {
           $('#'+subId+' .dynamicElem').prop('readonly', false)
-          $('#fileUpload-'+subId).prop('disabled', false)
+          $('.fileUpload[data-section="'+subId+'"]').prop('disabled', false)
 
-          $(`.imageControls[data-imgavl="true"][data-section="`+subId+`"]`).show().find('button:not(.remove-image)').prop('disabled',true)
+          $(`#`+subId+`.detail-sections .imageControls[data-imgavl="true"]`).show().find('button:not(.remove-image)').prop('disabled',true)
         }
 
         
@@ -343,9 +385,6 @@ class Detail {
 
 
 
-
-
-
       var allChangeArry = []
 
       $(document).on('click', '.subdetailcancel', function() {
@@ -439,6 +478,8 @@ class Detail {
         }
         $('#'+tableId).attr('data-lasteditedrowindex', rowindex);
 
+
+
         addToChangeArry(colIndex,headingindex,rowindex,tableId, thisVal)
           
 
@@ -447,6 +488,7 @@ class Detail {
 
       $(document).on('change keyup input', '.subdetail-section[data-type="detail"] .dynamicElem', function() {
         // alert($(this).val())
+
         var _this = $(this)
         var colIndex = _this.attr('data-colindex')
         var headingindex = _this.attr('data-headingindex')
@@ -469,6 +511,8 @@ class Detail {
           // console.log('aaaaa')
         }
 
+
+
         // if(!_this.hasClass('elm-file')) {
            // var thisVal = 
            addToChangeArry(colIndex, headingindex, rowindex, tableId, thisVal)
@@ -483,6 +527,9 @@ class Detail {
 
 
       function addToChangeArry(colIndex, headingindex, rowindex, tableId, thisVal) {
+
+        
+
         if(typeof allChangeArry[tableId] == 'undefined') {
           allChangeArry[tableId] = {}
           allChangeArry[tableId].headingindex = headingindex
@@ -499,18 +546,19 @@ class Detail {
         if(typeof allChangeArry[tableId].row[rowindex].column == 'undefined') {
           allChangeArry[tableId].row[rowindex].column = {}
         }
+        
 
         allChangeArry[tableId].row[rowindex].column[colIndex] = thisVal
       }
 
 
       function subdetailsave(action, subId) {
+
+
         
-
         console.log('allChangeArry==:',allChangeArry)
-
+        
         // return false
-
 
         var formdata = new FormData()
         formdata.append('pagename', urlHash)
@@ -518,46 +566,94 @@ class Detail {
         formdata.append('pageid', paramId)
         formdata.append('action', action)
         formdata.append('subid', subId)
-        
 
-        if(fileChange){
+        var fileArry = []
+
+        // if(fileChange){
           // alert('prevImg-'+subId)
 
-          let prevImg = $('#prevImg-'+subId)
-          imageURI = prevImg.cropper('getCroppedCanvas',{'width':prevImg.parent().outerWidth(),'height':prevImg.parent().outerHeight()}).toDataURL(uploadedImageType)
-
-          // console.log(imageURI)
-          let filetype = imageURI.substring(5,imageURI.indexOf(';'))
-
-          let img = imageURI.replace(/^.*,/, '')
-
           
-          formdata.append('file', img)
-          formdata.append('filename', fileName)
-          formdata.append('filetype', filetype)
+
           formdata.append('foldername', 'listing')
 
-        } else {
-          formdata.append('file', '')
-        }
+          $('[data-changedfile="true"]').each(function(index, el) {
 
-        // alert(fileChange)
-
-        formdata.append('filechange', fileChange)
-
-        /*for (var pair of formdata.entries()) {
-          console.log(pair[0]+ ', ' + pair[1]); 
-        }*/
+            var fileName = $(this).attr('data-filename')
+            var getImgId = $(this).attr('data-imageid');
+            var colIndex = parseInt($(this).attr('data-colindex'));
+            var headingindex = parseInt($(this).attr('data-headingindex'));
+            var rowindex = parseInt($(this).attr('data-rowindex'));
 
 
-        // return false
+
+            var getSection = $(this).attr('data-section')
+          // var getRow = $(this).attr('data-rowindex');
+          // var getCol = $(this).attr('data-colindex');
+// $('.fileUpload[data-section="'+getSection+'"][data-colindex="'+getCol+'"][data-rowindex="'+getRow+'"]').attr('data-changedfile',true)
+
+
+
+            // var prevImg = $('#prevImg-'+getImgId)
+            var prevImg = $('.image-preview[data-section="'+getSection+'"][data-colindex="'+colIndex+'"][data-rowindex="'+rowindex+'"]')
+            imageURI = prevImg.cropper('getCroppedCanvas',{'width':prevImg.parent().outerWidth(),'height':prevImg.parent().outerHeight()}).toDataURL(uploadedImageType)
+
+            // console.log(imageURI)
+            var filetype = imageURI.substring(5,imageURI.indexOf(';'))
+
+            var img = imageURI.replace(/^.*,/, '')
+
+            /*formdata.append('file', img)
+            formdata.append('filename', fileName)
+            formdata.append('filetype', filetype)*/
+
+            
+              /*if(typeof fileArry[index] == 'undefined') {
+                fileArry[index] = {}
+                fileArry[index].headingindex = headingindex
+                fileArry[index].row = rowindex
+                fileArry[index].col = colIndex
+              }
+*/
+              /*if(typeof fileArry[index].row == 'undefined') {
+                fileArry[index].row = {}
+              }
+
+              if(typeof fileArry[index].row[rowindex] == 'undefined') {
+                fileArry[index].row[rowindex] = {}
+              }
+
+              if(typeof fileArry[index].row[rowindex].column == 'undefined') {
+                fileArry[index].row[rowindex].column = {}
+              }*/
+
+              let file = {'headingindex':headingindex,'rowindex':rowindex,'colindex':colIndex,'file':img,'filename':fileName,'filetype':filetype,'fileid':getImgId}
+              fileArry[index] = file
+              // fileArry[index].row[rowindex].column[colIndex] = file
+            // }
+                 
+
+          });
+
+          console.log('myFiles==', fileArry)
+
+          let allFiles = JSON.stringify(fileArry)
+
+          formdata.append('files', allFiles)
+
+
+          formdata.append('filechange', fileChange)
+
 
         if(allChangeArry[subId]) {
 
           var datarow = JSON.stringify(allChangeArry[subId])
-          console.log('datarow-CCC==',datarow)
+          // console.log('datarow-CCC==',datarow)
           // return false;
           formdata.append('datarow', datarow)
+
+           for (var pair of formdata.entries()) {
+              console.log(pair[0]+ ', ' + pair[1]); 
+            }
 
           $.ajax({
            method: 'POST',
@@ -572,11 +668,8 @@ class Detail {
           })
           .done(function(callback){
 
-            console.log('serverCallback=',callback)
+            // console.log('serverCallback=',callback)
 
-            
-
-            // pushSubData(self.listDatas[0], 'read')
 
             if(callback.result != '{"result":false}') {
               if(callback.result == 'pageremoved'){
@@ -588,9 +681,6 @@ class Detail {
               }
               if(callback.result.length >= 1) {
 
-                // console.log('changesHere=', allChangeArry[subId])
-                // console.log('ffffffFinal==',self.listDatas[0])
-
                 $.each(callback.result, function(index, el) {
                  let rowIndex = el[0].rowindex
                  let rowData = el[0].data
@@ -601,22 +691,6 @@ class Detail {
                  self.listDatas[0].result.splice(parseInt(rowIndex)-1, crt, rowData);
                 });
                 
-                /*if(action == 'createsubsection') {
-                  let rowindex = $('#'+subId).attr('data-lasteditedrowindex');
-                  self.listDatas[0].result.splice(parseInt(rowindex)-1, 0, callback.result);
-                } else {
-                    for (var keyr in allChangeArry[subId].row) {
-                    
-                    var dataRowIndex = keyr;
-
-                    for (var key in allChangeArry[subId].row[dataRowIndex].column) {
-                      // alert('row='+dataRowIndex+'    column='+key+ '    value='+allChangeArry[subId].row[dataRowIndex].column[key])
-                      self.listDatas[0].result[dataRowIndex-1][key-1] = allChangeArry[subId].row[dataRowIndex].column[key]
-                    }
-                  }
-                }*/
-
-                // pushSubData(self.listDatas[0], 'read')
               }
 
             }
@@ -627,8 +701,8 @@ class Detail {
           })
           .always(function(){
 
-            resetSubSection(subId) 
-            // allChangeArry = []
+            resetSubSection(subId)
+
             pushSubData(self.listDatas[0], 'read')        
 
             $('.loader').fadeOut()
@@ -636,12 +710,8 @@ class Detail {
         } else {
           resetSubSection(subId)
           pushSubData(self.listDatas[0], 'read')
-          // allChangeArry = []
-          
-          // alert(subId)
-          // $('.subdetailcancel[data-subid="'+subId+'"]').trigger('click')
-          
-          // resetSubSection(subId)
+
+
         }
  
 
@@ -668,171 +738,8 @@ class Detail {
     }
 
 
-
-
   }
 }
-
-
-
-
-
-/*function capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-}*/
-
-
-const pushData = (data, action) => {
-
-
-  console.log('allDATA==',data)
-  
-  var getListVal, multipleSection
-
-  var headings = data.result[0]
-
-  $.each(data.result, function(ind, el) {
-
-    /*if(ind == 1) {
-      multipleSection = false
-      getListVal = data.result[ind]
-
-      var getRowId = ''
-
-      var readOnly = ''
-
-      $('#detail-view').attr('data-action',action)
-      if(typeof getListVal != 'undefined') {
-        getRowId = getListVal[0]
-      }
-      $('#detail-save-btn').attr({'data-action':action, 'data-rowid':getRowId})
-      
-      if(action == 'create') {
-        $('#detail-save-btn').parent().removeClass('d-none')
-      }
-      if(action == 'read') {
-        readOnly='readonly'
-        $('#detail-save-btn').parent().addClass('d-none')
-        $('#detail-edit-btn').parent().removeClass('d-none')
-      }
-      if(action == 'edit') {
-        $('#detail-edit-btn').parent().addClass('d-none')
-        $('#detail-save-btn').parent().removeClass('d-none')
-      }
-
-      $('#detail-view .row').html('')
-
-      // console.log('modal-headings==',headings)
-
-
-      $.each(headings, function(index, elm) {
-
-        var colIndex = index+1
-        
-        var tElm,func = ``
-        if(elm.charAt(0) == '_') {
-          elm='_'
-        }
-        else if(elm.indexOf("(") >= 0){
-          tElm = elm.split("(")
-          elm = tElm[0]
-          func = tElm[1].slice(0, -1);
-        }
-
-
-        var insertVal = ''
-
-        if(typeof getListVal != 'undefined') {
-          insertVal = getListVal[index]
-        }
-        
-
-        let ignoreFields = ['count','time','updatedtime','file','edit','remove','subdetails'];
-
-        if((elm!='_') && ignoreFields.indexOf(func) == -1) {
-
-          var typeElm = ``, fullElm
-          if(func.indexOf("[") >= 0) {
-            typeElm = func.split("[")[1].slice(0, -1)
-          }
-          // console.log('func==',typeElm)
-
-          if(typeElm == 'ti' || typeElm ==``) {
-            fullElm = `<input type="text" class="form-control dynamicElem" `+readOnly+` placeholder="`+elm+`" value="`+insertVal+`" data-filedname="`+func+`" data-colindex="`+colIndex+`">`
-          } 
-          if(typeElm == 'ta') {
-            fullElm = `<textarea rows="4" class="form-control dynamicElem" `+readOnly+` placeholder="`+elm+`" data-filedname="`+func+`" data-colindex="`+colIndex+`">`+insertVal+`</textarea>`
-          }
-      
-
-          $('#detail-view .row').append(`
-            <div class="col-md-4">
-            <div class="form-group input-group-sm mb-3">
-            <label>`+elm+`</label>
-            `+fullElm+`
-            </div>
-            </div>
-            `)
-        }
-        if(func=='file') {
-          console.log(insertVal)
-          // $('[for="fileUpload"]').text('Choose image...')
-          let imageId = '', imageName = 'Choose image...'
-
-          if(insertVal != '') {
-            imageId = getListVal[index+1]
-            imageName = getListVal[index+2]
-          }
-
-          $('#detail-view .row').append(`
-            <div class="col-md-12" style="display:flex; margin-bottom: 2rem;">
-            <div class="listing-image-preview"><img id="previewImage" src="`+insertVal+`"></div>
-
-            <div class="img-section-arrange">
-            <div>
-
-            <div class="form-group input-group-sm mb-3">
-            <div class="custom-file">
-            <input type="file" name="file" accept=".jpg,.jpeg,.png,.gif,.bmp,.tiff" class="custom-file-input dynamicElem elm-`+func+`" id="fileUpload" data-filedname="`+func+`" data-colindex="`+colIndex+`" data-imageid="`+imageId+`">
-            <label class="custom-file-label" for="fileUpload">`+imageName+`</label>
-            </div>
-            </div>
-
-            <div class="imageControls">
-            <button type="button" class="btn btn-primary btn-sm" data-method="zoom" data-option="0.1" title="Zoom In"><i class="ion-ios-search-strong"></i></button>
-            <button type="button" class="btn btn-primary btn-sm" data-method="zoom" data-option="-0.1" title="Zoom In"><i class="ion-ios-search-strong"></i></button>
-
-            <button type="button" class="btn btn-primary btn-sm" data-method="move" data-option="-10" data-second-option="0" title="Move Left"><i class="ion-android-arrow-back"></i></button>
-            <button type="button" class="btn btn-primary btn-sm" data-method="move" data-option="10" data-second-option="0" title="Move Right"><i class="ion-android-arrow-forward"></i></button>
-            <button type="button" class="btn btn-primary btn-sm" data-method="move" data-option="0" data-second-option="-10" title="Move Up"><i class="ion-android-arrow-up"></i></button>
-            <button type="button" class="btn btn-primary btn-sm" data-method="move" data-option="0" data-second-option="10" title="Move Down"><i class="ion-android-arrow-down"></i></button>
-
-            <button type="button" class="btn btn-primary btn-sm" data-method="rotate" data-option="45" title="Rotate Left"><i class="ion-refresh"></i></button>
-            <button type="button" class="btn btn-danger btn-sm remove-image"><i class="ion-trash-a"></i></button>
-            </div>                
-
-            </div>
-            </div>
-            </div>
-            `)
-        }
-      })
-    }
-
-    if(ind > 1) {
-      multipleSection = true
-      return false
-    }*/
-
-
-
-  });
-
-  
-
-}
-
-
 
 
 
@@ -840,8 +747,6 @@ const pushData = (data, action) => {
 var innerRowIndex = 0
 
 const pushSubData = (data, action, subAvailId) => {
-
-
 
   innerRowIndex = 0
 
@@ -872,11 +777,7 @@ const pushSubData = (data, action, subAvailId) => {
       addToArray()
     }
 
-    /*alert(data.result[i][0])
-    globalElm = data.result[i][0].split('-')[0]
-    addToArray()*/
-
-
+ 
 
     function addToArray() {
       dataRow = false
@@ -907,7 +808,7 @@ var tableHeadIndex
 
 function runSubSections(dataArry, action) {
 
-  console.log('finalDataArry==', dataArry)
+  // console.log('finalDataArry==', dataArry)
 
   var tableId = dataArry.mainHead[0]
   var caption = dataArry.mainHead[2]
@@ -930,14 +831,9 @@ function runSubSections(dataArry, action) {
     </div>`
 
 
-    // alert(dataArry.type)
-
 
   if(dataArry.type == 'table') {
-    
 
-    // alert(dataArry.data.length)
-    
         
     if(dataArry.mainHead[1] == '--') {
       $('#details-all').append(`
@@ -1083,7 +979,7 @@ function runSubSections(dataArry, action) {
             func = tElm[1].slice(0, -1)
           }
           if(elm != '_') {
-            console.log(elm)
+            // console.log(elm)
 
             tableHeadIndex = innerRowIndex
 
@@ -1131,7 +1027,7 @@ function runSubSections(dataArry, action) {
   if(dataArry.type == 'detail') {
         /*alert('a')*/
 
-        console.log('dataArry-==a',dataArry)
+        // console.log('dataArry-==a',dataArry)
 
 
         //var tableId = dataArry.mainHead[0]
@@ -1285,7 +1181,7 @@ function runSubSections(dataArry, action) {
 
         }
         if(func=='file') {
-          console.log(insertVal)
+          // console.log(insertVal)
           // $('[for="fileUpload"]').text('Choose image...')
           let imageId = '', imageName = 'Choose image...'
           let imageAvl = false
@@ -1298,19 +1194,19 @@ function runSubSections(dataArry, action) {
 
           $('#'+tableId+ ' .row').append(`
             <div class="col-md-12" style="display:flex; margin-bottom: 2rem;">
-            <div class="listing-image-preview `+tableId+`"><img id="prevImg-`+tableId+`" src="`+insertVal+`"></div>
+            <div class="listing-image-preview `+tableId+`"><img class="image-preview" data-section="`+tableId+`" data-colindex="`+colIndex+`" data-rowindex="`+innerRowIndex+`" id="prevImg-`+imageId+`" src="`+insertVal+`"></div>
 
             <div class="img-section-arrange `+tableId+`">
             <div>
 
             <div class="form-group input-group-sm mb-3">
               <div class="custom-file">
-                <input type="file" name="file" accept=".jpg,.jpeg,.png,.gif,.bmp,.tiff" class="fileUpload custom-file-input dynamicElem elm-`+func+`" id="fileUpload-`+tableId+`" data-section="`+tableId+`" data-filedname="`+func+`" data-colindex="`+colIndex+`" data-rowindex="`+innerRowIndex+`" data-headingindex="`+tableHeadIndex+`" data-imageid="`+imageId+`" disabled="disabled">
-                <label class="custom-file-label" for="fileUpload-`+tableId+`">`+imageName+`</label>
+                <input type="file" name="file" accept=".jpg,.jpeg,.png,.gif,.bmp,.tiff" class="fileUpload custom-file-input dynamicElem elm-`+func+`" id="fileUpload-`+imageId+`" data-section="`+tableId+`" data-filedname="`+func+`" data-colindex="`+colIndex+`" data-rowindex="`+innerRowIndex+`" data-headingindex="`+tableHeadIndex+`" data-imageid="`+imageId+`" disabled="disabled">
+                <label class="custom-file-label" data-section="`+tableId+`" data-colindex="`+colIndex+`" data-rowindex="`+innerRowIndex+`" for="fileUpload-`+imageId+`">`+imageName+`</label>
               </div>
             </div>
 
-            <div class="imageControls" data-imgavl="`+imageAvl+`" data-section="`+tableId+`">
+            <div class="imageControls" data-imgavl="`+imageAvl+`" data-imgsection="`+imageId+`" data-section="`+tableId+`" data-colindex="`+colIndex+`" data-rowindex="`+innerRowIndex+`">
             <button type="button" class="btn btn-primary btn-sm" data-method="zoom" data-option="0.1" title="Zoom In"><i class="ion-ios-search-strong"></i></button>
             <button type="button" class="btn btn-primary btn-sm" data-method="zoom" data-option="-0.1" title="Zoom In"><i class="ion-ios-search-strong"></i></button>
 
